@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson04.html">
+<link rel="next" href="lesson06.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 5 Net と .NET</title>
+</head>
+
+<body>
+
+<div class='header'>
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 5 <strong>Net と .NET</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson04.html'>&laquo; 前へ</a>
+ | <a href='lesson06.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson5.php">&lowast; 原文</a>
+</div>
+
+<div class="main">
+<br>
+<div class="section">
+
+<h2 id="CH-5.1">5.1 .NET の枠組み</h2>
+
+<p>.NET Framework に基づいたプログラムを配布しようとする場合、ユーザーがフレームワークをインストール済みであることを確かめなければなりません。Microsoft はフレームワークの再頒布を許可していますが、再頒布の形式は元の <kbd>Dotnetfx.exe</kbd> ファイルに限るとしています(Microsoft による解説、<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconDistributingCommonLanguageRuntime.asp">Redistributing the .NET Framework</a> を参照して下さい)。</p>
+
+<p class="transnote">&dagger; 訳註：上記記事の日本語版は <a href="http://msdn.microsoft.com/ja-jp/library/xak0tsbd(VS.80).aspx">.NET Framework の再頒布</a> です。</p>
+
+<p id="install.NET">このことは、フレームワークを自分自身の <kbd>.msi</kbd> パッケージに組み込むことは出来ない、ということも意味しています。マージ・モジュールやそれに類するものは手に入りません。独立したブートストラップ・インストーラを提供する必要があります。ブートストラップ・インストーラ(<kbd>Steup.exe</kbd>)は、フレームワークがインストールされているかどうかを調べて、再頒布用の <kbd>Dotnetfx.exe</kbd> を起動します(あるいは、別の方法としては、ネットからダウンロードしてインストールします)。そして、.NET Framework のインストールが完了した後で、あなた自身のインストーラ・パッケージを呼び出すようにするのです。</p>
+
+<p>しかし、そのようなブートストラップ・インストーラを自分で書く必要はありません。次のバージョンの WiX、バージョン 3.5 には <kbd>Burn</kbd> と呼ばれる独自のブートストラッパーが付属します。しかし、3.5 がリリースされるまでは、<a href="http://msdn2.microsoft.com/en-us/library/ms994336.aspx">Microsoft によって提供されているもの</a>を使うか、あるいは、無料でオープン・ソースのブートストラッパー、<a href="http://www.codeplex.com/dotnetinstaller/">dotNetInstaller</a> を使うことが出来ます。または、もう一つの選択肢としては、<a href="http://www.autoitscript.com/autoit3/">AutoIt スクリプト言語</a> を使って自分で書くことも出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：dotNetInstaller に関しては、<a href="http://cml.s10.xrea.com/">http://cml.s10.xrea.com/</a> の「和訳文書」中にユーザーズ・ガイドの日本語訳があります。</p>
+
+<p id="detect.NET">ユーザーのコンピュータに .NET Framework が存在するかどうかを調べる必要があるときは、WiX に付属している <em>WixNetFx</em> 拡張モジュールを使うことが出来ます。この拡張モジュールは、フレームワークのすべてのバージョンについて、数多くのプロパティを設定します(完全なリストは WiX のヘルプ・ファイルにあります)。その中で、最も重要なものは以下のものでしょう。</p>
+
+<dl>
+  <dt>NETFRAMEWORKxx</dt>
+  <dd>指定されたバージョンのフレームワークがインストールされている場合にセットされる。</dd>
+  <dt>NETFRAMEWORKxx_SP_LEVEL</dt>
+  <dd>フレームワークのサービス・パックのレベルがセットされる。</dd>
+  <dt>NETFRAMEWORKxxINSTALLROOTDIR</dt>
+  <dd>フレームワークのインストール・フォルダがセットされる。</dd>
+</dl>
+
+<p>これらすべてのプロパティの値は、<strong>PropertyRef</strong> タグを使ってプロパティを参照するだけで簡単に読むことが出来ます。</p>
+
+<pre>
+&lt;<strong>PropertyRef</strong> Id="NETFRAMEWORK10"/&gt;
+&lt;<strong>Condition</strong> Message='このセットアップを実行するためには、.NET Framework 1.0 がインストールされている必要があります。'&gt;
+  &lt;![CDATA[Installed OR NETFRAMEWORK10]]&gt;
+&lt;/<strong>Condition</strong>&gt;
+</pre>
+
+<p id="detect.NET.sp">サービス・パックを確認する必要がある場合、フレームワークのバージョンそのものは確認する必要がありません。SP プロパティは、ベースのフレームワークが存在している場合にしか、セットされないからです。しかし、まず最初にそもそもプロパティが設定されているかどうかをチェックして、それから、実際にどういう値がセットされているかのチェックに進む必要があります。</p>
+
+<pre>
+&lt;<strong>PropertyRef</strong> Id="NETFRAMEWORK20_SP_LEVEL"/&gt;
+&lt;<strong>Condition</strong> Message='このセットアップを実行するためには、.NET Framework 2.0 と Service Pack 1 がインストールされている必要があります。'&gt;
+  &lt;![CDATA[Installed OR (NETFRAMEWORK20_SP_LEVEL AND NETFRAMEWORK20_SP_LEVEL = "#1")]]&gt;
+&lt;/<strong>Condition</strong>&gt;
+</pre>
+
+<p>最近のフレームワークのバージョンでは、利用可能なプロパティが追加されています。</p>
+
+<pre>
+&lt;<strong>PropertyRef</strong> Id="NETFRAMEWORK35_CLIENT"/&gt;
+&lt;<strong>Condition</strong> Message='このセットアップを実行するためには、.NET Framework 3.5 Client Profile がインストールされている必要があります。'&gt;
+  &lt;![CDATA[Installed OR NETFRAMEWORK35_CLIENT]]&gt;
+&lt;/<strong>Condition</strong>&gt;
+</pre>
+
+<p>インストーラをリンクするときには、<em>WixNetFxExtension</em> モジュールをリンクするのを忘れないようにして下さい。</p>
+
+<pre class="command">
+candle.exe SampleDotNET.wxs
+light.exe -ext WixNetFxExtension SampleDotNET.wixobj
+</pre>
+
+<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampledotnet.zip&amp;type=application/zip">SampleDotNET</a> をダウンロードすることが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：SampleDotNET の日本語版は <a href="download/Sample-5-1-DotNET.zip">Sample-5-1-DotNET.zip</a> です。</p>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-5.2">5.2 インターネットを起動する</h2>
+
+<p id="URL">ローカルまたはオンラインで、何かをブラウザで起動したい場合があるでしょう。そうするために、ユーザーのディスク上に URL のリンクを作成することが出来ます。URL のリンクは実際には <kbd>.ini</kbd> ファイルの形式を取りますので、<strong>IniFile</strong> を使ってリンクを作成します。</p>
+
+<pre>
+&lt;<strong>Component</strong>&gt;
+  ...
+  &lt;<strong>IniFile</strong> Id='Launch' Action='addLine' Name='Launch.url'
+           Directory='INSTALLDIR' Section='InternetShortcut'
+           Key='URL' Value='http://www.acmefoobar.com' /&gt;
+  ...
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p id="browser">既定のブラウザを直接起動するためには、最初に既定のブラウザのパスを調べて、インストールの完了後に、そのパスを使って、通常の方法でカスタム・アクションとして起動します(ただし、インストールの時だけです。アンインストールの時はブラウザを起動しません)。ユーザーが既定のブラウザとして選んでいるブラウザが必ず起動されるように、必ずこの方法を使ってください。<strong>決して特定のブラウザをハード・コーディングしないで下さい</strong>。</p>
+
+<pre>&lt;<strong>Property</strong> Id="BROWSER"&gt;
+  &lt;<strong>RegistrySearch</strong> Id='DefaultBrowser' Type='raw'
+                  Root='HKCR' Key='http\shell\open\command' /&gt;
+&lt;/<strong>Property</strong>&gt;
+
+&lt;<strong>CustomAction</strong> Id='LaunchBrowser' Property='BROWSER'
+              ExeCommand='www.piyosoftware.co.jp' Return='asyncNoWait' /&gt;
+
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  ...
+  &lt;<strong>Custom</strong> Action='LaunchBrowser' After='InstallFinalize'&gt;NOT Installed&lt;/<strong>Custom</strong>&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplebrowser.zip&amp;type=application/zip">SampleBrowser</a> をダウンロードすることが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：SampleBrowser の日本語版は <a href="download/Sample-5-2-Browser.zip">Sample-5-2-Browser.zip</a> です。</p>
+
+<p id="webshortcut">デスクトップやスタート・メニューに、既定のブラウザを起動して特定のウェブ・サイトに飛ぶショートカットを作ることは、さらに簡単に出来ます。注意しなければならないことは、URL にプロパティを使用する、ということだけです。ショートカットの <strong>Target</strong> 属性に直接に URL を書くと、コンパイラがそれを配置すべきローカル・ファイルの名前だと見なすために、うまく行きません。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="URL" Value="http://www.something.com" /&gt;
+
+&lt;<strong>Shortcut</strong> Id="WebShortcut" Name="ぴよソフトのウェブ"
+          Description="ぴよソフトのウェブサイトにジャンプします。" Target="[URL]" /&gt;
+</pre>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-5.3">5.3 ウェブ・ディレクトリ</h2>
+
+<p id="IIS">WiX ツールセットの追加のライブラリの中には、IIS のウェブ・ディレクトリを作成するような付加的な仕事をインストーラが実行出来るようにするものもあります。このような拡張機能は、適切な WiX ライブラリをリンクするだけで使用出来ます。リンカが、必要なヘルパー DLL を自動的にインストーラ・パッケージに含めてくれます。</p>
+
+<p>最初に、ウェブ・サイトと、それに所属するファイルを作らなければなりません。</p>
+
+<pre>
+&lt;<strong>Directory</strong> Id='TARGETDIR' Name='SourceDir'&gt;
+  &lt;<strong>Directory</strong> Id='ProgramFilesFolder' Name='PFiles'&gt;
+    &lt;<strong>Directory</strong> Id='InstallDir' Name='Piyo'&gt;
+
+      &lt;<strong>Component</strong> Id='default.phpComponent'
+                 Guid='YOURGUID-5314-4689-83CA-9DB5C04D5742'&gt;
+        &lt;<strong>File</strong> Id='default.htmFile' Name='default.htm'
+              Source='default.htm' DiskId='1' KeyPath='yes' /&gt;
+      &lt;/<strong>Component</strong>&gt;
+
+    &lt;/<strong>Directory</strong>&gt;
+  &lt;/<strong>Directory</strong>&gt;
+</pre>
+
+<p>次のステップは、仮想ディレクトリの作成です。</p>
+
+<pre>
+  &lt;<strong>Component</strong> Id='TestWebVirtualDirComponent'
+             Guid='YOURGUID-6304-410E-A808-E3585379EADB'&gt;
+    &lt;<strong>WebVirtualDir</strong> Id='TestWebVirtualDir' Alias='Test' Directory='InstallDir'
+                   WebSite='DefaultWebSite'&gt;
+      &lt;<strong>WebApplication</strong> Id='TestWebApplication' Name='Test' /&gt;
+    &lt;/<strong>WebVirtualDir</strong>&gt;
+  &lt;/<strong>Component</strong>&gt;
+
+&lt;/<strong>Directory</strong>&gt;
+</pre>
+
+<p>最後に、ウェブ・サイトを参照する項目を作成します。</p>
+
+<pre>
+&lt;<strong>WebSite</strong> Id='DefaultWebSite' Description='Default Web Site'&gt;
+  &lt;<strong>WebAddress</strong> Id='AllUnassigned' Port='80' /&gt;
+&lt;/<strong>WebSite</strong>&gt;
+</pre>
+
+<p>インストーラ・パッケージをリンクするときは、適切な WiX ライブラリとリンクしなければなりません。リンカに複数の WiX オブジェクト・ファイルを渡しますので、出力ファイルの名前も指定しなければなりません。</p>
+
+<pre>
+light.exe -out SampleWebDir.msi SampleWebDir.wixobj <span class="path">path</span>\sca.wixlib
+</pre>
+
+<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewebdir.zip&amp;type=application/zip">SampleWebDir</a> をダウンロードすることが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：上記は WiX 2 の IIS 拡張に基づくものであり、WiX 3 には適用出来ない所があります。また、提供されている SampleWebDir も、そのままでは、WiX 3 でビルド出来ません。</p>
+<p class="transnote">(1) WiX 3 では IIS 拡張が独立の名前空間に移動されたために、<em>Wix</em> 要素で IIS 拡張のスキーマを参照する必要があります(&lt;Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' <em>xmlns:iis='http://schemas.microsoft.com/wix/IIsExtension'</em>&gt;)。同様に、IIS 拡張に属する要素には IIS 拡張の名前空間の修飾が必要です(<em>iis:WebVirtualDir</em>, <em>iis:WebApplication</em>, <em>iis:WebSite</em> および <em>iis:WebAddress</em>)。</p>
+<p class="transnote">(2) WiX 3 では IIS 拡張は sca.wixlib ではなく WixIISExtension.dll で提供されています。コンパイラおよびリンカのコマンド・ラインにおいて、<em>&quot;-ext WixIISExtension&quot;</em> を指定する必要があります。</p>
+<p class="transnote">WiX 3 に対応した日本語版 <a href="download/Sample-5-3-WebDir.zip">Sample-5-3-WebDir.zip</a> を参照して下さい。</p>
+<p class="transnote">なお、WixIISExtension の日本語地域化ファイルは(まだ)提供されていませんので、<em>&quot;-cultures:ja-jp&quot;</em> を指定する場合は、日本語地域化ファイルを自分で書く必要があります。</p>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-5.4">5.4 サービスの提供</h2>
+
+<p>サービスをインストールして開始することも自動的に出来ます。</p>
+
+<pre>
+&lt;<strong>Component</strong> Id='ServiceExeComponent'
+           Guid='YOURGUID-D752-4C4F-942A-657B02AE8325'
+           SharedDllRefCount='no' KeyPath='no' NeverOverwrite='no' Permanent='no'
+           Transitive='no' Win64='no' Location='either'&gt;
+
+  &lt;<strong>File</strong> Id='ServiceExeFile' Name='ServiceExe.exe' Source='ServiceExe.exe'
+        ReadOnly='no' Compressed='yes' KeyPath='yes' Vital='yes' Hidden='no'
+        System='no' Checksum='no' PatchAdded='no' /&gt;
+
+  &lt;<strong>ServiceInstall</strong> Id='MyServiceInstall' DisplayName='My Test Service'
+                  Name='MyServiceExeName' ErrorControl='normal' Start='auto'
+                  Type='ownProcess' Vital='yes' /&gt;
+
+  &lt;<strong>ServiceControl</strong> Id='MyServiceControl' Name='MyServiceExeName'
+                  Start='install' Stop='uninstall' Remove='uninstall' /&gt;
+
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson04.html'>&laquo; 前へ</a>
+ | <a href='lesson06.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson5.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

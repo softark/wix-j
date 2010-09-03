@@ -1,0 +1,498 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson02.html">
+<link rel="next" href="lesson04.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 3 イベントとアクション</title>
+</head>
+
+<body>
+
+<div class='header'>
+
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 3 <strong>イベントとアクション</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+| <a href='lesson02.html'>&laquo; 前へ</a>
+| <a href='lesson04.html'>次へ &raquo;</a>
+| <a href="http://www.tramontana.co.hu/wix/lesson3.php">&lowast; 原文</a>
+</div>
+
+<div class="main">
+
+<p>前のレッスンで、私たちは、完全にカスタマイズ可能な本格的インストーラ・パッケージの作成方法を学びました。既にそこには、よくある見た目と使い勝手、ビットマップ、アイコン、使用許諾契約など、他の人たちのインストーラ・パッケージで見たことがある全てがあります。インストールの課題の圧倒的多数は、前のレッスンまでで積み重ねた知識によって解決することが出来ます。それでも、時として、まだもう少し、標準的なパッケージには無い何かが必要だ、という事があります。</p>
+
+<div class="section">
+
+<h2 id="CH-3.1">3.1 列に並んで</h2>
+
+<p>Windows Installer は、インストールの間に、数多くのステップ、いわゆるアクションを実行します。基本的なアクションも、特定のインストーラによって要求される追加のアクションも、自動的にスケジュールされます(どんなアクションが追加されるかは、レジストリ・サーチやユーザー・インタフェイスなど、使用する機能によって左右されます)。言い換えると、アクションの順序は、ツールセットによって、インストーラ・データベースが作成される時に、前もって決められます。普通の <kbd>.msi</kbd> ファイルの場合は以下のようになります。</p>
+
+<ol id="standard">
+<li>AppSearch</li>
+<li>LaunchConditions</li>
+<li>ValidateProductID</li>
+<li>CostInitialize</li>
+<li>FileCost</li>
+<li>CostFinalize</li>
+<li>InstallValidate</li>
+<li>InstallInitialize</li>
+<li>ProcessComponents</li>
+<li>UnpublishFeatures</li>
+<li>RemoveShortcuts</li>
+<li>RemoveFiles</li>
+<li>InstallFiles</li>
+<li>CreateShortcuts</li>
+<li>RegisterUser</li>
+<li>RegisterProduct</li>
+<li>PublishFeatures</li>
+<li>PublishProduct</li>
+<li>InstallFinalize</li>
+<li>RemoveExistingProducts</li>
+</ol>
+
+<p>インストーラの実際のアクションの順序は、<a href="http://support.microsoft.com/kb/255905">Windows Installer SDK</a> に入っている Orca という MSI エディタを使って確認することが出来ます。</p>
+
+<!--<p style="text-align: center"><img src="./images/orca.gif" width="600" height="427" style="padding: 5px 0px 5px 0px" alt="Orca screenshot"></p> -->
+<p style="text-align: center"><img src="./images/orca.png" width="609" height="419" style="padding: 5px 0px 5px 0px" alt="Orca screenshot"></p>
+
+<p>これらのイベントの順序を変更することは、適切なタグを使うことで可能になります。実際、そういうタグが四つもあります。</p>
+
+<ul>
+<li>AdminUISequence</li>
+<li>InstallUISequence</li>
+<li>AdminExecuteSequence</li>
+<li>InstallExecuteSequence</li>
+</ul>
+
+<p><strong>Admin-</strong> で始まるものは、(<kbd>msiexec /a</kbd> で起動される)管理インストールです。管理インストールは、アプリケーションのソース・イメージをネットワーク上に作成して、後でワークグループのユーザーが元のメディアの代りにこのソース・イメージからインストール出来るようにします。この機能は無料で付いてきます。今までこの機能について思い悩んだ覚えはありませんが、私たちが作ったサンプルは全てこの方法でインストールすることが出来ます(試してみて下さい!)。</p>
+
+<p>と言うわけで、差し当って残されているのは二つのタグだけです。<strong>InstallExecuteSequence</strong> は、アクションを決定するために、常にインストーラによって参照されます。一方、<strong>InstallUISequence</strong> は、インストーラが完全 UI モードか、簡易 UI モードで走るときだけ考慮に入れられます(この機能も実験できます。<kbd>msiexec /qn</kbd>, <kbd>/qb</kbd> および <kbd>/qr</kbd> を試してみて下さい)。どんな UI のモードの場合でも、レジストリ・サーチを起動条件の前に予定しておく必要がありますので、そのことを示す行を二つのタグの両方に挿入します。コンパイルして、レジストリ・キーの名前を変更しながら、走らせてみて下さい。期待通りに動くはずです。</p>
+
+<p class="transnote">&dagger; 訳註：<kbd>/q[n|b|r|f]</kbd> は msiexec の表示オプションで、ユーザー・インタフェイスのレベルを設定します。レベルの低い方から、<kbd>/qn</kbd> = UI 無し, <kbd>/qb</kbd> = 基本 UI, <kbd>/qr</kbd> = 簡易 UI, <kbd>/qf</kbd> = 完全 UI となります。省略時は完全 UI モードです。</p>
+
+<p>上の Orca のスクリーンショットで、アクションの順序を示す番号を見ることが出来ます。この番号を使うことも出来ますが、番号で頭を悩ますよりも、WiX にアクションの相対的な順序を指示する方がもっと簡単です。単に、そのアクションが、どのアクションの <strong>Before</strong> または <strong>After</strong> に来るかを指定すれば良いのです。アクションを実行のチェーンから削除したい場合は、<strong>Suppress&nbsp;=&nbsp;yes</strong> 属性を使って下さい。</p>
+
+<pre>
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  &lt;<strong>LaunchConditions</strong> After='AppSearch' /&gt;
+  &lt;<strong>RemoveExistingProducts</strong> After='InstallFinalize' /&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-3.2">3.2 追加のアクション</h2>
+
+<p id="reboot"><a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/msi/setup/standard_actions_reference.asp">スタンダード・アクション</a>には、この他にも、既定ではスケジュールされない利用可能なアクションが数多くあります。例えば、<strong>ScheduleReboot</strong> は、インストールの後でシステムを再起動するようにユーザーに指示します。</p>
+
+<pre>
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  &lt;<strong>ScheduleReboot</strong> After='InstallFinalize' /&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+<p>再起動の必要性が何らかの条件(例えば、インストーラが走っているオペレーティング・システム)に依存する場合は、条件文を使います。</p>
+
+<pre>
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  &lt;<strong>ScheduleReboot</strong> After='InstallFinalize'&gt;Version9X&lt;/<strong>ScheduleReboot</strong>&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+<p id="custom">予定に入れたり予定を変更したり出来るのは、いわゆるスタンダード・アクションだけではありません。二～三のカスタム・アクションも同様に出来ます(ここで言う<em>カスタム</em>とは、通常のイベントの進行には出現しないけれども、望むときには、いつでもどこでも使うことが出来る、という意味です)。非常によくある要望として、インストールしたアプリケーションを起動したい、というものがあります。</p>
+
+<p id="launch">カスタム・アクションはソース・ファイルの二箇所で言及しなければなりません。第一に、<strong>Product</strong> タグの子供として(例えば、<strong>Feature</strong> の終了タグと <strong>UI</strong> の開始タグの間で)、カスタム・アクションを定義します。この <strong>CustomAction</strong> タグで何をするかを指定します。インストールした実行ファイルを起動する場合は、そのファイルを定義している <strong>File</strong> タグの <strong>Id</strong> 識別子を使って実行ファイルを参照します。コマンド・ラインも指定しなければなりませんが、必要でなければ空文字列にしておくことも出来ます。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='LaunchFile' FileKey='FoobarEXE'
+              ExeCommand='' Return='asyncNoWait' /&gt;
+</pre>
+
+<p>第二に、通常と同じ方法で、アクションを予定に入れなければなりません。アクションとスケジュール項目の間のリンクは、<strong>Id &mdash; Action</strong> の整合する属性のペアで指定します。カスタム・アクションの実行に条件がある場合は、<strong>Custom</strong> タグの中で条件を定義することが出来ます。ここでは、インストールを実行する場合にだけ実行ファイルを起動し、製品を削除するときは起動しないように、条件を設定する必要があります。</p>
+
+<pre>
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  ...
+  &lt;<strong>Custom</strong> Action='LaunchFile' After='InstallFinalize'&gt;NOT Installed&lt;/<strong>Custom</strong>&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+<p class="transnote">&dagger; 訳註：上記ソース断片の NOT Installed は、間違いではありません。Installed は、製品がインストールされているかどうかを示す定義済みプロパティですが、その値が取得されるのは、インストーラの初期化時であり、完了時ではありません。従って、インストールを実行するときの Installed は、false になっています。</p>
+
+<p id="launchbundle">場合によっては、インストーラ・パッケージに入れて持ち回るけれども、ユーザーのマシンにはインストールしたくないヘルパー・ユーティリティ(例えば、readme ファイルのビュワーや、特別な設定ユーティリティ)を起動したいことがあります。その場合は、<strong>File</strong> ではなく、<strong>Binary</strong> タグの識別子を参照するようにします。スケジューリングの方法は同じです。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='LaunchFile' BinaryKey='FoobarEXE'
+              ExeCommand='' Return='asyncNoWait' /&gt;
+</pre>
+
+<p id="launchexternal">また、ユーザーのマシン上にある他のどんな実行ファイルでも、プロパティで名前を指定すれば、起動することが出来ます。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='NOTEPAD'&gt;Notepad.exe&lt;/<strong>Property</strong>&gt;
+&lt;<strong>CustomAction</strong> Id='LaunchFile' Property='NOTEPAD'
+              ExeCommand='[SourceDir]Readme.txt' Return='asyncNoWait' /&gt;
+</pre>
+
+<p id="customreturn">カスタム・アクションは、<strong>Return</strong> 属性を使って、アクションの完了をどのように扱うかを指定することも出来ます。指定できる値は以下の通りです &mdash; <em>check</em> は、カスタム・アクションの完了を待って、その戻り値をチェックします。<em>ignore</em> は、アクションの完了を待ちますが、戻り値は無視します。<em>asyncWait</em> は、非同期的にアクションを走らせますが、インストーラはスケジュールされた一連のイベントの最後で、アクションから戻り値が返ってくるのを待ちます。そして、<em>asyncNoWait</em> は、単にアクションを起動して、その後は放置します。この場合、起動されたアクションは、インストーラが終了した後も走り続けることが出来ます。インストール完了後にアプリケーションを起動したり、readme ファイルを表示したりする場合は、この最後の値を使います。</p>
+
+<p id="error">通常の機構では表示できないエラーに遭遇した場合に、エラー・メッセージを表示してインストールを終了することが出来ます。<strong>Error</strong> 属性には、実際のメッセージのテキストを入れることも、<strong>Error</strong> タグの <strong>Id</strong> 識別子を入れることも出来ます。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='AbortError' Error='この謎は解けません。諦めます。' /&gt;
+</pre>
+
+<p id="assign">プロパティの値を別のプロパティの値に割り当てる直接的な方法はありません。しかし、カスタム・アクションを使うと、この間隙を乗り越えることが出来ます。<strong>Value</strong> 属性は書式指定文字列でも構いませんので、ちょっとした文字列操作もすることが出来ます(パスの参照には、常に末尾のバックスラッシュが自動的に追加されている事に注意して下さい。バックスラッシュをもう一つ余計に追加する必要はありません)。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='PropertyAssign' Property='PathProperty'
+              Value='[INSTALLDIR][FilenameProperty].[ExtensionProperty]' /&gt;
+</pre>
+
+<p>ディレクトリも、同様のパスを示す書式指定文字列として設定することが出来ます。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='PropertyAssign' Directory='INSTALLDIR'
+              Value='[TARGETDIR]\Program Files\Acme\Foobar 1.0\bin' /&gt;
+</pre>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-3.3">3.3 本に書かれていないこと</h2>
+
+<p>Windows Installer が解決方法を提供してくれない非常に特殊なアクション(例えば、ユーザーが入力した登録キーの妥当性と整合性をチェックすること)に対しては、もう一つ別のタイプのカスタム・アクションを使うことが出来ます。すなわち、私たちが書く DLL です。ここでは、例として、ユーザー・キーの最初の数字が '1' であれば承認する、という極めて安直な手法を使います。</p>
+
+<p id="CA_DLL">以下のソースは Visual C++ ではそのままコンパイル出来ます。別のコンパイラでコンパイルする場合でも、必要な修正は、(有るとしても)ほんの少しでしょう。ヘッダ・ファイル、<kbd>msi.h</kbd> と <kbd>msiquery.h</kbd> は、MSI SDK から取得できます。更に <kbd>msi.lib</kbd> もリンクする必要があります。</p>
+
+<pre>
+#include &lt;windows.h&gt;
+#include &lt;msi.h&gt;
+#include &lt;msiquery.h&gt;
+
+#pragma comment(linker, "/EXPORT:CheckPID=_CheckPID@4")
+
+extern "C" UINT __stdcall CheckPID (MSIHANDLE hInstall) {
+  char Pid[MAX_PATH];
+  DWORD PidLen = MAX_PATH;
+
+  MsiGetProperty (hInstall, "PIDKEY", Pid, &amp;PidLen);
+  MsiSetProperty (hInstall, "PIDACCEPTED", Pid[0] == '1' ? "1" : "0");
+  return ERROR_SUCCESS;
+}
+</pre>
+
+<p>この DLL を使うために、下記の数行を適切な場所に追加します(今や、三回目のレッスンの終り近くですから、これぐらいは自分で出来るでしょうが、ずるをしたい場合は、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleca.zip&amp;type=application/zip">SampleCA</a> をダウンロードして下さい)。</p>
+
+<p class="transnote">&dagger; 訳註：SampleCA の日本語版は <a href="download/Sample-3-3-CA.zip">Sample-3-3-CA.zip</a> です。</p>
+
+<pre>
+&lt;<strong>Condition</strong> Message='このインストーラは完全 UI モードでのみ実行出来ます。'&gt;
+  &lt;![CDATA[UILevel = 5]]&gt;
+&lt;/<strong>Condition</strong>&gt;
+
+&lt;<strong>CustomAction</strong> Id='CheckingPID' BinaryKey='CheckPID' DllEntry='CheckPID' /&gt;
+&lt;<strong>CustomAction</strong> Id='RefusePID' Error='無効なキーです。インストールを中止します。' /&gt;
+
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  &lt;<strong>Custom</strong> Action='CheckingPID' After='CostFinalize' /&gt;
+  &lt;<strong>Custom</strong> Action='RefusePID' After='CheckingPID'&gt;
+    PIDACCEPTED = "0" AND NOT Installed
+  &lt;/<strong>Custom</strong>&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+
+&lt;<strong>Binary</strong> Id='CheckPID' SourceFile='CheckPID.dll' /&gt;
+</pre>
+
+<p>簡単に説明します。最初に、私たちはこのインストーラが簡易 UI モードや UI 無しのモードで走ることを許可しません。なぜなら、それらのモードでは、ユーザーが登録キーを入力することが出来ないからです。醜い CDATA ラッパーを使っている理由は、XML がいくつかの文字、とりわけ <kbd>&quot;&lt;&quot;</kbd> と <kbd>&quot;&gt;&quot;</kbd> に特別な意味を与えているからです。これらの文字が、<em>より小さい</em> や <em>より大きい</em> を意味する別の文脈で出現する場合には、常に、式全体を CDATA に入れてエスケープしなければなりません。この実例の場合は、等価であることをチェックしているだけなので、エスケープしなくても済みます。しかし、このような条件式をすべて CDATA で包むようにするのは、良い習慣です。そうしておけば、万一、後で条件を修正する必要があっても、そういう XML の衝突を招かずに済みます。</p>
+
+<p>次に、<em>CheckingPID</em> という名前のカスタム・アクションを <em>CostFinalize</em> の後に走らせます。すなわち、どの機能が必要で、どこにインストールしたいかを決定した後、インストーラに実際のインストールを開始するように指示する時です。このカスタム・アクションは、インストーラに同梱されている <kbd>CheckPID.dll</kbd> の <em>CheckPID</em> という関数を呼び出します。DLL は、関連するコントロールによって入力されて <em>PIDKEY</em> プロパティに保存されているユーザー・キーの正当性を判断して、<em>PIDACCEPTED</em> プロパティを 1 または 0 に設定します。カスタム・アクションとの間で引数を渡したり戻り値を受け取ったりするためには、プロパティを使うしか方法がないということを覚えておいて下さい。また、そのプロパティの名前はすべて大文字でなければなりません。そうでないと、Windows Installer はそのプロパティを public なものとは見なしません。</p>
+
+<p>そして、<em>RefusePID</em> という名前の第二のカスタム・アクションを第一のアクションの後に走らせるように予定します。これは条件付きのカスタム・アクションで、戻り値の <em>PIDACCEPTED</em> プロパティがゼロであった場合にだけ走らせます。その場合、このカスタム・アクションはエラー・メッセージを表示して、インストールを中止します。ただし、私たちが PIDACCEPTED の値に関心を持つのは、インストールの時だけです。製品をアンインストールする場合には、PIDACCEPTED の値を問題にしません。</p>
+
+<p>これらのアクションがどのように呼び出され、お互いにどのように関係しているのかを理解するためには、詳細ロギングを有効にしてインストーラを走らせてみるのが良いでしょう。ログは<em>本当に</em>詳細なものになりますから、実際に起っている事を記録している箇所を探すためには、テキスト・エディタを使って、プロパティやカスタム・アクションの名前(&#8220;PID&#8221;でも大丈夫です)を検索するのが良いでしょう。</p>
+
+<pre class="command">
+msiexec /i SampleCA.msi /l*v SampleCA.log
+</pre>
+
+<p id="callDLL">呼び出す必要がある DLL が単にパッケージに含まれているのではなくて、インストールされている場合は、次のように記述することが出来ます。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='CheckingPID' FileKey='HelperDLL' DllEntry='CheckPID' /&gt;
+</pre>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-3.4">3.4 コントロールのカスタム・アクション</h2>
+
+<p>いや、確かに、前の章で私たちがしたことは、エレガントではありませんでした。私たちは、後の段階になってからインストールを中止するのではなく、ユーザーがキーを入力するその場でチェックし、警告を表示して、キーを入力し直すチャンスをユーザーに提供するべきです。どうすればそれを達成できるか、見ていきましょう。</p>
+
+<p id="customcontrol">カスタム・アクションは、二種類のユーザー・インタフェイス・コントロール、プッシュ・ボタンとチェック・ボックスにリンクすることが出来ます。このリンクを実行するためには、既に知っている <strong>Publish</strong> タグを使います。<strong>Value</strong> 属性がカスタム・アクションの名前を保持します。</p>
+
+<pre>
+&lt;<strong>Control</strong> Id="..." Type="PushButton" ...&gt;
+  &lt;<strong>Publish</strong> Event="DoAction" Value="CheckingPID"&gt;1&lt;/<strong>Publish</strong>&gt;
+&lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>このようにすると、ユーザーが「ユーザー情報」ページの「次へ」ボタンを押した時に、DLL を呼ぶカスタム・アクションが引き起こされます。カスタム・アクションはこの UI イベントにリンクされますので、もう <strong>InstallExecuteSequence</strong> タグの中にスケジュールする必要は有りません。ただし、カスタム・アクションの定義はソースの中に残ります。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='CheckingPID' BinaryKey='CheckPID' DllEntry='CheckPID' /&gt;
+</pre>
+
+<p>ユーザーに警告をするためにメッセージ・ボックスが要ります。これも、また、前に作成した「ユーザー情報」ページと同じようなダイアログです。前と同じように、断片(fragment)として独立したソース・ファイルに入れて、<strong>DialogRef</strong> タグを使って参照することも出来ます。しかし、ここでは、もう一つの解法があることを示すために、直接にメインのソース・ファイルの <strong>UI</strong> セクションの直下で定義することにします。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="InvalidPidDlg" Width="260" Height="85"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+  &lt;<strong>Control</strong> Id="Icon" Type="Icon"
+           X="15" Y="15" Width="24" Height="24"
+           ToolTip="Information icon" FixedSize="yes" IconSize="32" Text="Exclam.ico" /&gt;
+  &lt;<strong>Control</strong> Id="Return" Type="PushButton"
+           X="100" Y="57" Width="56" Height="17"
+           Default="yes" Cancel="yes" Text="&amp;amp;Return"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+  &lt;<strong>Control</strong> Id="Text" Type="Text"
+           X="48" Y="15" Width="194" Height="30" TabSkip="no"&gt;
+    &lt;<strong>Text</strong>&gt;
+      入力されたユーザー・キーは無効です。インストール CD のケースのラベルに
+      印刷されているキーを入力してください。
+    &lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>「ユーザー情報」ページも更新しなければなりません。と言うのは、このダイアログからカスタム・アクションと新しいメッセージ・ボックスを呼び出さなければならないからです。</p>
+
+<pre>
+&lt;<strong>Control</strong> Id="Next" Type="PushButton"
+         X="236" Y="243" Width="56" Height="17"
+         Default="yes" Text="[ButtonText_Next]"&gt;
+  &lt;<strong>Publish</strong> Event="DoAction" Value="CheckingPID"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;<strong>Publish</strong> Event="SpawnDialog" Value="InvalidPidDlg"&gt;PIDACCEPTED = "0"&lt;/<strong>Publish</strong>&gt;
+  &lt;<strong>Publish</strong> Event="NewDialog" Value="SetupTypeDlg"&gt;PIDACCEPTED = "1"&lt;/<strong>Publish</strong>&gt;
+&lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>さあ、これで、ユーザーが「次へ」ボタンを押すと、DLL の中の関数が呼ばれます(条件が<em>真</em>に評価されるため、毎回呼ばれます)。DLL の中の関数は <em>PIDKEY</em> プロパティをチェックして、キーが承認されたかどうかを示すために <em>PIDACCEPTED</em> をセットします。承認された場合は、<em>SetupTypeDlg</em> へと進みます。承認されなかった場合は、エラー・メッセージを表示します。</p>
+
+<p>あと一つだけ、小さな項目が残っています。メッセージ・ボックスの中でアイコンに言及していますので、これもインストーラの中に入れなければなりません。</p>
+
+<pre>
+  &lt;<strong>Binary</strong> Id="Exclam.ico" SourceFile="Exclam.ico" /&gt;
+</pre>
+
+<p>全体のソースは、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleaskkey.zip&amp;type=application/zip">SampleAskKey</a> として、ダウンロードすることが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：SampleAskKey の日本語版は <a href="download/Sample-3-4-AskKey.zip">Sample-3-4-AskKey.zip</a> です。</p>
+
+<p id="hide">ところで、ログ・ファイルにユーザー・キーが出現するのは、必ずしも、良いことでも安全なことでもありません。これを回避するためには、以下のように記述します。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="PIDKEY" <span class="red">Hidden='yes'</span> /&gt;
+</pre>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-3.5">3.5 カスタム・アクションをマネージする方法？</h2>
+
+<p>よくある質問の一つは、カスタム・アクションはマネージ・コード、つまり、C#、VB.NET またはそれに類するもので書くことが出来るか、というものです。何と言っても、それらの実行時環境は、はるかに豊かな機能セットを提供してくれますからね。それに、これらの言語で仕事をしているプログラマには、他のプログラミング言語をあまり知らない人もいるようです。</p>
+
+<p>以前、WiX 2 の時代には、マネージ・コードでカスタム・アクションを書くためには裏技(hack)が必要で、それは良くない危険な行為だと考えられていました。しかし、WiX 3 になって、Deployment Tools Foundation (DTF) という .NET クラス・ライブラリと関連するリソースのセットが導入されたことによって、事情が変りました。依存性による制約は明白です(インストール対象マシンに .NET が入っていることを確認しなければなりません。おそらくは、ブートストラップ・インストーラを初めに使う必要があるでしょう。また、ユーザーがアプリケーションをアンインストールする<em>前に</em> .NET Framework を削除すると、アンインストールの際にも問題が生じる可能性があります)が、その制約を受け入れることが出来るのであれば、前のサンプルのカスタム・アクションを C# に移植したものを以下に示します。</p>
+
+<pre>
+namespace WiXTutorial.Samples
+{
+  using System;
+  using System.Collections.Generic;
+  using System.IO;
+  using Microsoft.Deployment.WindowsInstaller;
+
+  public class SampleCheckPID
+  {
+
+    [CustomAction]
+    public static ActionResult CheckPID(Session session)
+    {
+      string Pid = session["PIDKEY"];
+      session["PIDACCEPTED"] = Pid.StartsWith("1") ? "1" : "0";
+      return ActionResult.Success;
+    }
+
+  }
+}
+</pre>
+
+<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleaskkeynet.zip&amp;type=application/zip">SampleAskKeyNET</a> のソース・コードには、ほんの一箇所だけ、修正が必要なところがあります。DLL の名前は違うものになります。と言うのは、Windows Installer とマネージされた世界の間隙を埋めるために、純粋なマネージ DLL を特殊なパッケージに包む必要があるためです。</p>
+
+<p class="transnote">&dagger; 訳註：SampleAskKeyNET の日本語版は <a href="download/Sample-3-5-AskKeyNet.zip">Sample-3-5-AskKeyNet.zip</a> です。</p>
+
+<pre>
+  &lt;<strong>Binary</strong> Id="CheckPID" SourceFile="CheckPIDPackage.dll" /&gt;
+</pre>
+
+<p>加えて、<kbd>CustomAction.config</kbd> という小さなファイルも用意して下さい。このファイルは、マネージ・カスタム・アクションが依存するランタイムについて記述するものです。</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;configuration&gt;
+  &lt;startup&gt;
+    &lt;supportedRuntime version="v2.0.50727"/&gt;
+  &lt;/startup&gt;
+&lt;/configuration&gt;
+</pre>
+
+<p>.NET 言語で仕事をするときの相対的な容易さには代償があります。それは、ビルドのプロセスが複雑になるということです。IDE を使えばいくらか簡単になるでしょう。WiX ソース・パッケージの DTF 部門の下にサンプル・プロジェクト・ファイルがあります。ここでは、コマンド・ラインによる方法を示すことしか出来ません。<kbd>Microsoft.Deployment.WindowsInstaller.dll</kbd>, <kbd>MakeSfxCA.exe</kbd> および <kbd>sfxca.dll</kbd> を探して下さい。インストールした WiX ツールセットの中にある筈です。下記のコマンドで、<em>path</em> として記述している箇所は、省略しない絶対パスを指定しなければいけません。そうしないと、MakeSfxCA はエラー・メッセージを出し、作成される DLL は役に立たない物になります。</p>
+
+<pre class="command">
+csc.exe /target:library /reference:path\Microsoft.Deployment.WindowsInstaller.dll
+        /out:CheckPID.dll CheckPID.cs
+MakeSfxCA.exe path\CheckPIDPackage.dll path\sfxca.dll path\CheckPID.dll
+              path\CustomAction.config path\Microsoft.Deployment.WindowsInstaller.dll
+candle.exe SampleAskKeyNET.wxs UserRegistrationDlg.wxs
+light.exe -ext WixUIExtension -out SampleAskKeyNET.msi
+          SampleAskKeyNET.wixobj UserRegistrationDlg.wixobj
+</pre>
+
+<p>ツールセットの中には DTF 自体のドキュメントがあります。従って、このチュートリアルでは、DTF についてこれ以上言及しません。そちらのドキュメントとサンプル・コードを使って下さい。</p>
+
+</div>
+
+<div class="section">
+
+<h2 id="CH-3.6">3.6 後の段階で</h2>
+
+<p>カスタム・アクションは、シーケンス・テーブルに行を挿入することによって、プロパティをセットしたり、機能やコンポーネントの状態を変更したり、インストール先ディレクトリを設定したり、あるいはシステムの操作をスケジュールしたりします。たいていの場合、それらのカスタム・アクションは即時に実行しても支障の無いものです。しかし、システムを直接に変更したり、他のシステム・サービスを呼んだりする必要があるカスタム・アクションは、インストール・スクリプトが実行される時まで延期されなければなりません。Windows Installer は、こういう<em>遅延実行の(deferred)</em>カスタム・アクションをインストール・スクリプトに書き込んで、後で実行します。</p>
+
+<p>遅延実行のカスタム・アクションは、下記のように定義します。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id="MyAction" Return="check" <span class="red">Execute="deferred"</span>
+              BinaryKey="CustomActionsLibrary" <span class="red">DllEntry="MyAction"
+              HideTarget="yes"</span>/&gt;
+</pre>
+
+<p><strong>Execute</strong> 属性が、カスタム・アクションが遅延実行されるものであることを指し示しています。呼び出さなければならない DLL 関数を <strong>DllEntry</strong> 属性で参照しなければなりません(コンパイル環境が要求する場合は <kbd>_MyAction@4</kbd> のような C++ スタイルの関数名に対する装飾を忘れないで下さい)。そして、最後に、セキュリティー上の判断が命ずる場合は、<strong>HideTarget</strong> を指定して、このカスタム・アクションに渡される引数のロギングを無効にすることが出来ます。</p>
+
+<p>インストール・スクリプトは通常のインストール・セッションの外で実行されますので、遅延実行のアクションが実行される時には元のセッションはもう存在しません。元のセッションのハンドルも、元のインストールのシーケンスで設定されたプロパティ・データも、遅延実行アクションからは使うことが出来ません。遅延実行のアクションが取得できる非常に限られた量の情報は、以下の三つのプロパティから成り立っています。</p>
+
+<dl>
+
+<dt>CustomActionData</dt>
+<dd>カスタム・アクションがシーケンス・テーブルで処理される時の値。このプロパティは遅延実行のカスタム・アクションだけが使用出来るもので、即時実行のカスタム・アクションからはアクセス出来ません。</dd>
+
+<dt>ProductCode</dt>
+<dd>製品の一意の GUID コード。</dd>
+
+<dt>UserSID</dt>
+<dd>ユーザーのセキュリティー識別子(SID)。インストーラによってセットされます。</dd>
+
+</dl>
+
+<p>遅延実行のアクションに他のプロパティ・データを渡す必要がある場合は、その値を前もって設定する第二のカスタム・アクションを使うことが出来ます。一番簡単な解法はプロパティ設定のカスタム・アクションです。設定されるプロパティの名前が遅延実行のカスタム・アクションの <strong>Id</strong> 属性と同じになるように設定して下さい。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="<span class="red">SOME_PUBLIC_PROPERTY</span>"&gt;こんにちは、遅延実行 CA です。&lt;/<strong>Property</strong>&gt;
+&lt;<strong>CustomAction</strong> Id="<span class="red">MyAction.SetProperty</span>" Return="check"
+              Property="MyAction" Value="[<span class="red">SOME_PUBLIC_PROPERTY</span>]" /&gt;
+</pre>
+
+<p>プロパティの設定を遅延実行のアクションの<em>前に</em>スケジュールすることも重要です。</p>
+
+<pre>
+&lt;<strong>InstallExecuteSequence</strong>&gt;
+  &lt;<strong>Custom</strong> Action="MyAction.SetProperty" After="ValidateProductID" /&gt;
+  &lt;<strong>Custom</strong> Action="MyAction" After="MyAction.SetProperty" /&gt;
+&lt;/<strong>InstallExecuteSequence</strong>&gt;
+</pre>
+
+<p>渡そうとしたデータは、<strong>CustomActionData</strong> プロパティの中に出現します。複数の情報を渡す必要がある場合は、それらをこの単一のプロパティに組み入れる方法を工夫しなければなりません。例えば、セミコロンで区切られた <kbd>Name=Value</kbd> のペアのリストを使う等です。</p>
+
+<pre>
+#include &lt;windows.h&gt;
+#include &lt;msi.h&gt;
+#include &lt;msiquery.h&gt;
+#include &lt;tchar.h&gt;
+
+#pragma comment(linker, "/EXPORT:MyAction=_MyAction@4")
+
+extern "C" UINT __stdcall MyAction (MSIHANDLE hInstall) {
+  TCHAR szActionData[MAX_PATH] = {0};
+  DWORD dActionDataLen = MAX_PATH;
+
+  MsiGetProperty (hInstall, _T(<span class="red">"CustomActionData"</span>), szActionData, &amp;dActionDataLen);
+  MessageBox (NULL, szActionData, _T("遅延実行のカスタムアクション"),
+              MB_OK | MB_ICONINFORMATION);
+  return ERROR_SUCCESS;
+}
+</pre>
+
+<p class="contributor">Vadym Stetsyak</p>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson02.html'>&laquo; 前へ</a>
+ | <a href='lesson04.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson3.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

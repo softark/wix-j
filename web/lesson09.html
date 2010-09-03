@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson08.html">
+<link rel="next" href="lesson10.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 9 トランスフォーム</title>
+</head>
+
+<body>
+
+<div class='header'>
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 9 <strong>トランスフォーム</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson08.html'>&laquo; 前へ</a>
+ | <a href='lesson10.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson9.php">&lowast; 原文</a>
+</div>
+
+<div class='main'>
+
+<p>トランスフォームは、一つのインストーラを別のインストーラに変更するためのものです。既に存在するインストーラにトランスフォームを適用すると、内部のどのテーブルでも変更する事が出来て、それに応じてインストーラの動作を変更することが出来ます。トランスフォームに出来ない事の一つは、パッケージに埋め込まれているファイルを修正することです。</p>
+
+<div class='section'>
+
+<h2 id="CH-9.1">9.1 インストーラを変形する</h2>
+
+<p id="multilang">トランスフォームを使う理由として、一つ面白いものがあります。それは、ユーザー・インタフェイスの文字列を別の言語に変更する、というものです。以前、<a href='lesson02.html#CH-2.4'>Lesson 2.4</a> で既に論じたように、WiX は WixUI のインタフェイス言語を地域化(ローカライズ)することを許しています。その機能を使えば、さまざまな言語でインストーラを作成することが出来ます。しかし、複数の言語を必要とする場合は、この簡単な解法では、複数の平行するインストーラが作成できるだけです。それぞれのインストーラがそれぞれ固有の言語を表示するのは結構なことですが、配置すべき全てのファイルを別々のパッケージに重複して保存しなければなりません。</p>
+
+<p>こういう場合にトランスフォームが役立ちます。まず、基本となるインストーラ(これは英語でも何でも構いません)から始めます。追加するすべての言語は実際には実行時のパッチになります。Windows Installer が最初のページを表示する前にそのパッチを呼び出して、UI の文字列を指定された言語に翻訳するのです。こうして、全ての言語は同一のインストーラ・パッケージを共有します。インストールされるべきファイルはパッケージの中に一度しか出現せず、それぞれの追加される言語はパッケージのサイズを少し増加させるだけになります。</p>
+
+<p>インストールは小さなブートストラッパーで起動します(WiX はもうすぐ独自のブートストラッパーを提供しますが、それまでは、以前に <a href='lesson05.html#CH-5.1'>Lesson 5.1</a> で推奨したものを使って下さい)。ブートストラッパーは表示可能な言語をリストアップして、おそらくは実行中のオペレーティング・システムの言語を既定値として選ぶでしょうが、ユーザーが好きな言語を選ぶことも出来ます。言語の選択が終ると、ブートストラッパーは適用すべきトランスフォームを指定して実際のインストーラを起動します。</p>
+
+<p>そのような<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampletransform.zip&amp;type=application/zip">複数言語インストーラ</a>を作成するために必要となる変更は驚くほど小さいものです。</p>
+
+<p class="transnote">&dagger; 訳註：このレッスンについては、日本語版のサンプルは提供していません。ここで説明されている事柄に関しては、WiX のソース自体には、注目すべきところはほとんど有りません。</p>
+
+<pre>
+&lt;?xml version='1.0' encoding='windows-1252'?&gt;
+&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi'&gt;
+
+  &lt;<strong>Product</strong> Name='Hoge 1.0'
+           Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
+           UpgradeCode='YOURGUID-7349-453F-94F6-BCB5110BA4FD'
+           Language='1033' Codepage=<SPAN class="red">'$(var.codepage)'</SPAN>
+           Version='1.0.0' Manufacturer='Piyo Software'&gt;
+
+    &lt;<strong>Package</strong> Id='*' Keywords='Installer'
+             Description="Piyo Software's Hoge 1.0 Installer"
+             Comments='Hoge is a registered trademark of Piyo Software.'
+             Manufacturer='Piyo Software' InstallerVersion='100' Languages='1033'
+             Compressed='yes' SummaryCodepage=<SPAN class="red">'$(var.codepage)'</SPAN> /&gt;
+
+  ...
+
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p>最初のステップとして、地域化されたインストーラを別々にビルドします。以前とほとんど同じですが、それぞれのインストーラに<a href='lesson02.html#CH-2.4'>サポートされている言語</a>のテーブルで示されている正しい<strong>コードページ</strong>を指定しなければなりません。</p>
+
+<pre class="command">
+candle.exe SampleMulti.wxs -dcodepage=1252
+light.exe -ext WixUIExtension -cultures:en-us -out SampleMulti.msi SampleMulti.wixobj
+
+candle.exe SampleMulti.wxs -dcodepage=1250
+light.exe -ext WixUIExtension -cultures:hu-hu -out Sample_Hu-hu.msi SampleMulti.wixobj
+
+candle.exe SampleMulti.wxs -dcodepage=1252
+light.exe -ext WixUIExtension -cultures:fr-fr -out Sample_Fr-fr.msi SampleMulti.wixobj
+</pre>
+
+<p>次に、WiX のトランスフォーム・ツール <em>Torch</em> を使って、順番に、地域化されたインストーラとベースになるインストーラ<kbd>(SampleMulti.msi)</kbd>を比較して、両者間の差異を含んだ <kbd>.mst</kbd> トランスフォーム・ファイルを作成します。</p>
+
+<pre class="command">
+torch.exe -p -t language SampleMulti.msi Sample_Hu-hu.msi -out hu-hu.mst
+torch.exe -p -t language SampleMulti.msi Sample_Fr-fr.msi -out fr-fr.mst
+</pre>
+
+<p>これで、ブートストラップ・インストーラが、適切な言語パッケージを指定してベースのインストーラ・パッケージを呼び出すことが出来るようになります。</p>
+
+<pre class="command">
+msiexec /i SampleMulti.msi TRANSFORMS="fr-fr.mst"
+</pre>
+
+<p>この場合、ブートストラッパーが必要になる他に、独立したトランスフォーム・ファイルも配布する必要が生じます。より良い方法は、トランスフォームを元のパッケージに埋め込むことです(今のところ WiX ではサポートされていませんが、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/embedtransform.zip&amp;type=application/zip"><strong>EmbedTransform</strong></a> というツールをダウンロードして使うことが出来ます)。</p>
+
+<pre class="command">
+EmbedTransform.exe SampleMulti.msi hu-hu.mst
+EmbedTransform.exe SampleMulti.msi fr-fr.mst
+</pre>
+
+<p>使い方で違うところは一点だけ、トランスフォーム・ファイルの名前の前にコロンを付けて、Windows Installer にパッケージ内部を探すように指示することだけです。</p>
+
+<pre class="command">
+msiexec /i SampleMulti.msi TRANSFORMS=":fr-fr.mst"
+</pre>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson08.html'>&laquo; 前へ</a>
+ | <a href='lesson10.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson9.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

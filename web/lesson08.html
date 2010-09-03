@@ -1,0 +1,894 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson07.html">
+<link rel="next" href="lesson09.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 8 ユーザー・インタフェイス再び</title>
+</head>
+
+<body>
+
+<div class='header'>
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 8 <strong>ユーザー・インタフェイス再び</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson07.html'>&laquo; 前へ</a>
+ | <a href='lesson09.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson8.php">&lowast; 原文</a>
+</div>
+
+<div class='main'>
+
+<p>既に Lesson 2 で述べたように、WiX にはそれ自身の標準的なユーザー・インタフェイス・ライブラリが付属しています。このライブラリはほとんどの標準的な要求を満たすものですが、あなたが自分自身のユーザー・インタフェイスを作成しなければならない時が来るかも知れません。また、たとえ標準的なユーザー・インタフェイスのカスタマイズや修正がしたいだけである場合でも、 WiX が背後で何をしているかを知ることは必要です。このことを達成するために、もう一度、最初から始めましょう。</p>
+
+<div class='section'>
+
+<h2 id="CH-8.1">8.1 一つだけのダイアログ</h2>
+
+<!-- <p style="text-align: center"><img src="images/customstart.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="SampleCustomUI1 InstallDlg スクリーンショット"></p> -->
+<p style="text-align: center"><img src="images/customstart.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="SampleCustomUI1 InstallDlg のスクリーンショット"></p>
+
+<p id="dialog">最初は、一つだけの簡単なインタフェイスから始めましょう。すなわち、タイトルとインストールを開始するボタンしかないダイアログです。</p>
+
+<p>ダイアログは全て一意の識別子を持たなければなりません。ダイアログのサイズは、私たちが使うウィザードの標準サイズに合せます。<strong>Title</strong> の意味はそのものずばりですが、ここでも角括弧の表記法を使ってプロパティを参照することが出来ることに注意して下さい。こうしておくと、新しい製品のインストーラ・パッケージを作成するときに、UI の部分をまるごと編集し直す必要が無くなるので、非常に便利です。<em>ProductName</em> は、ソース・ファイルの一番最初の <strong>Product</strong> タグで定義した製品名を指し示すように、自動的に定義されます。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="InstallDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+</pre>
+
+<p id="static">ダイアログに追加する全てのものはコントロールになります。<strong>Type</strong> 属性がコントロールの種類を示します(コントロールの種類は、<em>Billboard, Bitmap, CheckBox, ComboBox, DirectoryCombo, DirectoryList, Edit, GroupBox, Icon, Line, ListBox, ListView, MaskedEdit, PathEdit, ProgressBar, PushButton, RadioButtonGroup, ScrollableText, SelectionTree, Text, VolumeCostList</em> または <em>VolumeSelectCombo</em> です)。単純なテキスト(通常の Windows 用語では、スタティック・テキストと呼ばれるもの。何もせず、クリックしても反応せず、ただそこにあるだけのテキスト)として、<em>Text</em> のタイプを使用します。そして、位置とサイズを指定します。</p>
+
+<p>タイトル・テキストの要素は、一般的な場合のために、<strong>Transparent</strong> と指定されています。これらのテキストは上部のバナー・ビットマップの上に重ねられます。今のところは白い背景に黒で文字が描画されていますので、文字の背景を透明にしても何も違いは生じませんが、タイトル・テキストの下にまで延びるフルサイズのバナー画像と色の付いたテキストを提供すれば、素敵な視覚効果を生むことが出来るでしょう。<strong>NoPrefix</strong> は、アンパサンド(<kbd>&amp;</kbd>)が文字通りに表示されるのか、それとも、Windows の GUI の通例に従って、ショートカットを指定するものとして使われるのか、ということを制御しているだけです。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15"
+           Transparent="yes" NoPrefix="yes"&gt;
+    &lt;<strong>Text</strong>&gt;{\DlgTitleFont}インストール準備完了&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>コントロールのテキストを指定するためには二つの方法があります。コントロールの中で <strong>Text</strong> という子のタグを使うか、または <strong>Text</strong> 属性を使うかです。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15"
+           Transparent="yes" NoPrefix="yes"
+           Text="{\DlgTitleFont}インストール準備完了"/&gt;
+</pre>
+
+<p><strong>TextStyle</strong> タグを使ってフォントのスタイルを参照することが出来ます。また、インストーラはデフォルトのフォントを決めるために <em>DefaultUIFont</em> という標準のプロパティを必要としますので、このプロパティをソースに含めてフォントを関連付けなければなりません。</p>
+
+<pre>
+      &lt;<strong>Property</strong> Id="DefaultUIFont"&gt;DlgFont8&lt;/<strong>Property</strong>&gt;
+      &lt;<strong>TextStyle</strong> Id="DlgFont8" FaceName="Tahoma" Size="8" /&gt;
+      &lt;<strong>TextStyle</strong> Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" /&gt;
+</pre>
+
+<p id="OK">唯一のアクティブなコントロールはプッシュ・ボタン(タイプは <em>PushButton</em>)になります。ここでも、位置とサイズを指定します。一つだけのボタンなので、デフォルトのボタンにもします(エンター・キーの押下に反応します)。ユーザーが操作した時に何かをするアクティブなユーザー・インタフェイス要素は、操作された時に何をするかを定義する <strong>Publish</strong> タグを内部に入れ子にして持っていなければなりません。選択できる標準的なイベントは数多くあって、長いリストになります(<em>EndDialog</em> はその中の一つです)。ということで、アクションは <em>Return</em> という値を持った <em>EndDialog</em> にします。これは、ダイアログを通常の方法で終了し、何もエラーを発生させない、という意味です。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Install" Type="PushButton"
+           X="304" Y="243" Width="56" Height="17"
+           Default="yes" Text="インストール"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>ということで、ダイアログが出来ましたが、これを通常のイベント進行の中にスケジュールしなければなりません。<strong>UI</strong> の終了タグの直前の部分に移動して、下記のような変更を加えます。管理者インストールについては、今回は考慮しませんので、<strong>AdminUISequence</strong> はクリアします。</p>
+
+<p><strong>InstallUISequence</strong> については既に言及しましたが、ここで、<strong>InstallExecuteSequence</strong> との相互作用について述べるときが来ました。</p>
+
+<p id="sequence">標準的なアクションの進行は、真ん中の <em>InstallValidate</em> アクションで二つに分かれます。このアクションは、利用可能なディスク・スペースを検証したり、インストールによって上書きされるファイルが現在使用中である場合にユーザーに通知したりする役割を持っているものです。<em>InstallValidate</em> とそれ以前のアクションは(さまざまなダイアログ・ボックスを含めて)<strong>InstallUISequence</strong> のリストに含まれ、一方、このアクションに続くものは <strong>InstallExecuteSequence</strong> に含まれます。ただし、この規則には、例外があります。基本 UI モードまたは UI 無しのモードでのインストールにおいては、<strong>InstallUISequence</strong> は参照されませんが、<strong>InstallExecuteSentence</strong> はこの場合でも単独で動作出来なければなりません。そのために、<strong>InstallExecuteSequence</strong> は他のテーブルからいくつかのアクションを複製して持っています。現在のサンプルを Orca でチェックしてみると、<strong>InstallUISequence</strong> には下記のアクションが含まれています。</p>
+<ol>
+<li>ValidateProductID</li>
+<li>CostInitialize</li>
+<li>FileCost</li>
+<li>CostFinalize</li>
+<li>ExecuteAction</li>
+</ol>
+
+<p>これらのアクションは、最後の一つを除いて、既に知っているものです。インストールの際には、両方のテーブルが最初に参照されて、アクションがシーケンス番号の順に実行されます(複製されたアクションは両方のテーブルで同じ番号を持っていますので、曖昧さは何も生じません)。<em>ExecuteAction</em> は、実際のインストールを開始するのに必要な全ての情報収集が完了した時点にスケジュールされています。そして、インストールの実行は <strong>InstallExecuteSequence</strong> へと移行して、実際のインストールの過程を受け持つアクションを実行します。</p>
+
+<p>結果として、私たちの一つだけのダイアログ・ボックスは、準備過程の最後のアクションである <em>CostFinalize</em> の後、それでも <em>ExecuteAction</em> よりは前、という順位にスケジュールしなければならないことになります。</p>
+
+<pre>
+    &lt;<strong>InstallUISequence</strong>&gt;
+      &lt;<strong>Show</strong> Dialog="InstallDlg" After="CostFinalize" /&gt;
+    &lt;/<strong>InstallUISequence</strong>&gt;
+  &lt;/<strong>UI</strong>&gt;
+</pre>
+
+<p>このサンプルをビルドして走らせてみて下さい(カスタム UI のサンプルは <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplecustomui.zip&amp;type=application/zip">単一のダウンロード・パッケージ</a>にまとめられています)。ダイアログが表示され、「インストール」ボタンを押すと、いつもの三つのファイルがインストールされます。進捗ダイアログは無く、サイレント・インストールが行われるだけです。また、インストールのキャンセルは出来ず、開始したら、完了しなくてはなりません。</p>
+
+<p class="transnote">&dagger; 訳註：カスタム UI のサンプルの日本語版は <a href="download/Sample-8-1-CustomUI.zip">Sample-8-1-CustomUI.zip</a> です。</p>
+
+<p>WiX 内蔵の検証プログラムが、標準的なユーザー・インタフェイスの機能がいくつか欠けていることに関して、ICE 20 の警告を発することに注目して下さい。カスタム UI のレッスンの始めの方のバージョンは、完全な標準的インタフェイスからは程遠いものですから、コマンド・ライン・スイッチを使ってそういう警告を抑止しても構わないでしょう。</p>
+
+<pre class="command">
+candle.exe SampleCustomUI1.wxs
+light.exe -sice:ICE20 SampleCustomUI1.wixobj
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.2">8.2 チューニング・アップ</h2>
+
+<p><em>SampleCustomUI2</em> は、引き続いて一つだけのダイアログですが、ほんの少しチューン・アップします。</p>
+
+<!-- <p style="text-align: center"><img src="images/customwelcome.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="SampleCustomUI2 InstallDlg スクリーンショット"></p> -->
+<p style="text-align: center"><img src="images/customwelcome.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="SampleCustomUI2 InstallDlg のスクリーンショット"></p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="InstallDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+</pre>
+
+<p>これは、ほんの小さな変更ですが、ボタンのテキストを直接指定せずに、プロパティを使います。これによって、後の段階で地域化することが容易になります。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Install" Type="PushButton"
+           X="304" Y="243" Width="56" Height="17"
+           Default="yes" Text="[ButtonText_Install]"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="bitmap">ダイアログの上部に簡単なバナー・ビットマップを配置します。バイナリの添付データを参照するのにプロパティを使うことを覚えておいて下さい。<em>Text</em> 属性として指定されていますが、これはテキストではなく、パッケージに保存されているビットマップの <strong>Id</strong> です。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="BannerBitmap" Type="Bitmap"
+           X="0" Y="0" Width="370" Height="44"
+           TabSkip="no" Text="[BannerBitmap]" /&gt;
+</pre>
+
+<p>テキストを二行追加します。一つは、バナー・ビットマップの上に置く、背景が透明なもの、もう一つは、実際のダイアログ・ワーク・エリアの上に置くものです。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Description" Type="Text"
+           X="25" Y="23" Width="280" Height="15"
+           Transparent="yes" NoPrefix="yes"&gt;
+    &lt;<strong>Text</strong>&gt;[Wizard] がインストールを開始する準備が完了しました。&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="Text" Type="Text"
+           X="25" Y="70" Width="320" Height="20"&gt;
+    &lt;<strong>Text</strong>&gt;[\[]インストール[\]] をクリックして、インストールを開始して下さい。&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="horzline">ダイアログ・ワーク・エリアの下端を示す水平線を置きます &mdash; 見た目だけのものに過ぎません。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" /&gt;
+</pre>
+
+<p>最後に、タイトルを置き、バナー・ビットマップのすぐ下にエンボス・ラインを置きます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Title" Type="Text"
+           X="15" Y="6" Width="200" Height="15"
+           Transparent="yes" NoPrefix="yes"&gt;
+    &lt;<strong>Text</strong>&gt;{\DlgTitleFont}インストール準備完了&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" /&gt;
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>バナー・ビットマップを参照したことを忘れずに、それをパッケージに含めましょう。</p>
+
+<pre>
+&lt;<strong>Binary</strong> Id="bannrbmp" SourceFile="Binary\Banner.bmp" /&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.3">8.3 相互作用</h2>
+
+<p>ダイアログを作成することは、どちらかと言えば単純です(ページに配置できるコントロールのタイプはもっと沢山ありますが)。本当に面白いのは、ダイアログ同士を相互作用させることです。<em>SampleCustomUI3</em> では、第二のダイアログを追加して、ユーザーがインストールのプロセスをキャンセルすることが出来るようにします。</p>
+
+<!-- <p style="text-align: center"><img src="images/customcancel.gif" width="352" height="145" style="padding: 5px 0px 5px 0px" alt="CancelDlg スクリーンショット"></p> -->
+<p style="text-align: center"><img src="images/customcancel.png" width="362" height="150" style="padding: 5px 0px 5px 0px" alt="CancelDlg のスクリーンショット"></p>
+
+<p id="Cancel">この目的を達するためには、ダイアログそのものが必要です。ダイアログは二つのプッシュ・ボタンを持ちますが、用語の違いに気を付けて下さい。このようなダイアログ・ボックスは二つの出力を持ち得ます。すなわち、ダイアログが言う通りにするのを<em>キャンセルする</em>か、<em>オーケーする</em>かです。このダイアログでの質問は違う言い方になります。キャンセルするダイアログをキャンセルするという事は、インストールを続けることに賛成するということです。従って、第一の、デフォルトのボタン(<em>いいえ</em> というテキストを持ったボタン)を、キャンセル・ボタンと呼びます。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="CancelDlg" Width="260" Height="85"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+  &lt;<strong>Control</strong> Id="No" Type="PushButton"
+           X="132" Y="57" Width="56" Height="17"
+           <span class="red">Default="yes" Cancel="yes"</span> Text="[ButtonText_No]"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" <span class="red">Value="Return"</span>&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>ユーザーがこのボタンをクリックすると、<em>Return</em> の値を持った <em>EndDialog</em> イベントが発生します。その名前が示すように、このイベントは単純にダイアログを終了して、元の操作を再開します。<em>Publish</em> タグは、条件式として、1 という数値を持っています。1 は常に<em>真</em>と評価されます（0 は<em>偽</em>と評価されます)ので、イベントは無条件に発行されます。</p>
+
+<p>第二の、<em>Yes</em> というテキストを持ったボタンは、同じ <em>EndDialog</em> イベントを発生させますが、<em>Exit</em> という別の値を伴います。この値は、インストールの操作全体を中止するために使われます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Yes" Type="PushButton"
+           X="72" Y="57" Width="56" Height="17" Text="[ButtonText_Yes]"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" <span class="red">Value="Exit"</span>&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="icon">残りは簡単です。テキストとアイコンです。<strong>Binary</strong> タグを追加してパッケージにアイコンを入れることを忘れないで下さい。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Text" Type="Text"
+           X="48" Y="15" Width="194" Height="30"&gt;
+    &lt;<strong>Text</strong>&gt;[ProductName] のインストールを中止してよろしいですか？&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="Icon" Type="Icon"
+           X="15" Y="15" Width="24" Height="24" ToolTip="情報アイコン"
+           FixedSize="yes" IconSize="32" Text="[InfoIcon]" /&gt;
+&lt;/<strong>Dialog</strong>&gt;
+
+&lt;<strong>Binary</strong> Id="info" SourceFile="Binary\Info.ico" /&gt;
+</pre>
+
+<p><em>InstallDlg</em> ダイアログにも、いくらか修正が必要です。<em>Install</em> ボタンを左へ移動して、<em>Cancel</em> ボタンを置く場所を作りました。この <em>Cancel</em> ボタンが、起動するダイアログの名前を指定して、<em>SpawnDialog</em> イベントを発生させます。前のレッスンで既に述べたように、<em>SpawnDialog</em> は新しい子ダイアログを開始しますが、現在のダイアログは削除せず、ユーザーがその第二のダイアログを終了すると動作を続行します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Cancel" Type="PushButton"
+           X="304" Y="243" Width="56" Height="17"
+           Cancel="yes" Text="[ButtonText_Cancel]"&gt;
+    &lt;<strong>Publish</strong> <span class="red">Event="SpawnDialog" Value="CancelDlg"</span>&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.4">8.4 カスタマイズがいっぱい</h2>
+
+<p>さて、今度は、もっと野心的なことをやりましょう。ユーザーにセットアップのカスタマイズを許して、どの機能をインストールするかを決定したり、ファイルをインストールする場所をインストーラに指示したり出来るようにします。</p>
+
+<!-- <p style="text-align: center"><img src="images/customfeatures.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="CustomizeDlg screenshot"></p> -->
+<p style="text-align: center"><img src="images/customfeatures.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="CustomizeDlg のスクリーン・ショット"></p>
+
+<p>まず最初に、サンプルの複雑さを緩和するために、全てのテキスト項目を <kbd>UI_Texts.wxs</kbd> という独立したフラグメント・ファイルに送り込んでしまいます。実際のテキストは WiX のソースから取ってきたもので、私たちの UI 実験で最終的に必要になるかもしれない項目を全部記載したものです。これを参照として呼び出すだけにします。ビルド・プロセスは以下のようになります。</p>
+
+<p class="transnote">&dagger; 訳註：サンプルの日本語版(<a href="download/Sample-8-1-CustomUI.zip">Sample-8-1-CustomUI.zip</a>)では、UI_Texts.wxs は目立つところしか日本語に翻訳していません。UI_Texts.wxs は、内容としては、WixUI_ja-jp.wxl と同じものです。</p>
+
+<pre class="command">
+candle.exe SampleCustomUI4.wxs UI_Texts.wxs
+light.exe -out SampleCustomUI4.msi SampleCustomUI4.wixobj UI_Texts.wixobj
+</pre>
+
+<p id="featuretree">必要なコントロールを提供する新しいダイアログを作りましょう &mdash; まず最初に、機能のツリー・ビューです。これは非常に簡単です。と言うのは、<em>SelectionTree</em> タイプのコントロールは単なるツリー・ビュー・コントロールではなくて、インストーラによって有効な機能とその選択状態にリンクされるものだからです。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="CustomizeDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes" TrackDiskSpace="yes"&gt;
+  &lt;<strong>Control</strong> Id="Tree" Type="SelectionTree"
+           X="25" Y="85" Width="175" Height="95"
+           Property="_BrowseProperty" Sunken="yes" TabSkip="no"
+           Text="選択ツリー" /&gt;
+</pre>
+
+<p id="Browse">ダイアログはいくつかのプッシュ・ボタンを持ちます。<em>Browse</em> ボタンは、<strong>Feature</strong> タグで <strong>ConfigurableDirectory</strong> 属性を使っていると、インストーラによって自動的に有効化されます。選択ツリーとの関係で使用されるコントロール・イベントがいくつかあります。<em>SelectionBrowse</em> イベントは、ユーザーがインストール先のパスを修正出来るように、指定された参照ダイアログを開きます。この参照ダイアログについては、すぐ後で述べます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Browse" Type="PushButton"
+           X="304" Y="200" Width="56" Height="17" Text="[ButtonText_Browse]"&gt;
+    &lt;<strong>Publish</strong> Event="SelectionBrowse" Value="BrowseDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p><em>Reset</em> ボタンは、<em>Reset</em> という作成済みのイベントを使用します。このイベントは、ダイアログの全てのコントロールを作成時の状態に戻します。つまり、ユーザーによって為された機能のカスタマイズをすべてアンドゥーします。</p>
+
+<p id="subscribe">このボタンはイベント・メッセージを送信するだけでなく、イベントを<em>サブスクライブする（subscribe, 予約する、引き受ける)</em>ことによって、同じようなメッセージの受信者にもなっています。<em>SelectionNoItems</em> イベントは、選択ツリーがノードを持っていないときに、このイベントを予約しているボタンを無効化します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Reset" Type="PushButton"
+           X="42" Y="243" Width="56" Height="17" Text="[ButtonText_Reset]"&gt;
+    &lt;<strong>Publish</strong> Event="Reset" Value="0"&gt;1&lt;/<strong>Publish</strong>&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionNoItems" Attribute="Enabled" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="groupbox">このダイアログには、既に私たちがよく知っているボタンや単純なコントロールが他にもあります。ここではもう詳しく説明することはしませんので、ソース・ファイルを参照して下さい。しかし、ダイアログの右側にあるボックスについては、詳しく見ていきます。<em>Text</em> コントロールが、ユーザーが選択ツリーで現在選んでいる項目についての情報を表示するのに使われます。このコントロールは初期値のテキスト(&quot;現在選ばれている項目の複数行の説明。&quot;)を持っていますが、このテキストは表示されず、実際に選択されている項目の情報によって置き換えられます。この事は、このコントロールが <em>SelectionDescription</em> イベントを予約していることによって生じます。選択状態に変化があるや否や、インストーラは、このイベントを予約している全てのコントロールに対して、選択された項目の説明を知らます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Box" Type="GroupBox" X="210" Y="81" Width="140" Height="98" /&gt;
+
+  &lt;<strong>Control</strong> Id="ItemDescription" Type="Text" X="215" Y="90" Width="131" Height="30"&gt;
+    &lt;<strong>Text</strong>&gt;現在選ばれている項目の複数行の説明。&lt;/<strong>Text</strong>&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionDescription" Attribute="Text" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>同じ事が他のコントロールにも発生します。<em>ItemSize</em> は現在選択されている項目のサイズを受け取ることを予約していますし、<em>Location</em> はユーザーによって選択されたパスを教えてもらうように予約しています。<em>Location</em> と <em>LocationLabel</em> は、設定すべきパスがあるかどうか、ということもチェックしています。設定すべきパスが無い場合は、ラベルもパスも表示を抑止されます。選択ツリーでメインのノードからサブ・ノードへ移動するとパスの選択の表示が消えるのは、このことによっています。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="ItemSize" Type="Text" X="215" Y="130" Width="131" Height="45"&gt;
+    &lt;<strong>Text</strong>&gt;現在選ばれている項目のサイズ。&lt;/<strong>Text</strong>&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionSize" Attribute="Text" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="Location" Type="Text" X="75" Y="200" Width="215" Height="20"&gt;
+    &lt;<strong>Text</strong>&gt;現在選ばれている項目のパス&lt;/<strong>Text</strong>&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionPath" Attribute="Text" /&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionPathOn" Attribute="Visible" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="LocationLabel" Type="Text" X="25" Y="200" Width="50" Height="10"
+           Text="場所:"&gt;
+    &lt;<strong>Subscribe</strong> Event="SelectionPathOn" Attribute="Visible" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>私たちはユーザーが <em>Browse</em>ボタンをクリックしたときに <em>BrowseDlg</em> ダイアログを呼ぶべきことをインストーラに指示しましたので、このダイアログも提供しなければなりません。</p>
+
+<!-- <p style="text-align: center"><img src="images/custombrowse.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="BrowseDlg screenshot"></p> -->
+<p style="text-align: center"><img src="images/custombrowse.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="BrowseDlg のスクリーン・ショット"></p>
+
+<p>前に戻って、以前の<strong>Dialog</strong> タグを調べると、<strong>Property</strong> への参照があることに気付くでしょう。ここでも、パス・エディット・コントロールでプロパティへの参照を定義します &mdash; このプロパティへの参照が、パスを要求する親ダイアログと、パスを提供するこのダイアログの間のリンクを作成します。<strong>Indirect</strong> をセットして、パスの受け渡しに使用するプロパティが直接に言及されているプロパティ(<em>_BrowseProperty</em>)ではなく、このプロパティが指し示す別のプロパティであることを、インストーラに対して指示しています。</p>
+
+<pre id="editbox">
+&lt;<strong>Dialog</strong> Id="BrowseDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+  &lt;<strong>Control</strong> Id="PathEdit" Type="PathEdit"
+           X="84" Y="202" Width="261" Height="18"
+           <span class="red">Property="_BrowseProperty"</span> Indirect="yes" /&gt;
+</pre>
+
+<p class="transnote">&dagger; 訳註：<em>Indirect=&quot;yes&quot;</em> の場合、コントロールが表示および更新すべきパスは、指定されているプロパティそのものが保持するのではなく、そのプロパティによって間接参照されているプロパティが保持することになります。どのプロパティが間接参照されることになるかは、動的に変化します。</p>
+<p class="transnote">このサンプルの場合は、親ダイアログから <em>SelectionBrowse</em> イベントによって <kbd>BrowseDlg</kbd> ダイアログを呼び出す際に、親ダイアログの <em>SelectionTree</em> に関連づけられたプロパティ(<em>_BrowseProperty</em>)に、変更対象のパスを保持するプロパティ(例えば <em>INSTALLDIR</em>)がセットされます。パスを保持するプロパティは、<em>SelectionTree</em> の選択状態に応じて、違うものになり得ます。サンプルでは、変更可能なパスは一つしかありませんが、いつもそうだとは限りません。</p>
+<p class="transnote">すなわち、パスを保持するプロパティを間接参照するのは、<em>SelectionBrowse</em> イベントの仕様がそのようにすることを要求するからです。なお、<em>SelectionBrowse</em> イベントは <kbd>Browse</kbd> ボタンによって発行されますが、実際には、<em>SelectionTree</em> に属するイベントであると言って良いものです。</p>
+
+<p>ユーザーが新しく選んだパスに満足して OK を押すと、<em>SetTargetPath</em> イベントによってプロパティの値が設定されます。インストーラは選択されたパスの妥当性もチェックします。ユーザーが結局パスを設定しないことに決めた場合は、<em>Reset</em> イベントを使って全てを初期設定の状態に戻し、ダイアログがパスを実際には設定しないようにします。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="OK" Type="PushButton"
+           X="304" Y="243" Width="56" Height="17" Default="yes"
+           Text="[ButtonText_OK]"&gt;
+    &lt;<strong>Publish</strong> Event="SetTargetPath" Value="[_BrowseProperty]"&gt;1&lt;/<strong>Publish</strong>&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="Cancel" Type="PushButton"
+           X="240" Y="243" Width="56" Height="17" Cancel="yes"
+           Text="[ButtonText_Cancel]"&gt;
+    &lt;<strong>Publish</strong> Event="Reset" Value="0"&gt;1&lt;/<strong>Publish</strong>&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p class="transnote">&dagger; 訳註：ここでも、<em>SetTargetPath</em> イベントに対する引数として、プロパティが間接参照で渡されています。</p>
+
+<p id="dircombo"><em>DirectoryCombo</em> コントロールは、参照するプロパティに保存されているパスを、階層構造を持ったツリーのビューで表示します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="ComboLabel" Type="Text"
+          X="25" Y="58" Width="44" Height="10" TabSkip="no"
+          Text="場所(&amp;L)" /&gt;
+
+  &lt;<strong>Control</strong> Id="DirectoryCombo" Type="DirectoryCombo"
+          X="70" Y="55" Width="220" Height="80"
+          Property="_BrowseProperty" Indirect="yes" Fixed="yes" Remote="yes"&gt;
+    &lt;<strong>Subscribe</strong> Event="IgnoreChange" Attribute="IgnoreChange" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>アイコンを持った二つのボタンは、ディレクトリ選択コントロールと関連づけられて、押された時に適切なイベントを発行します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Up" Type="PushButton"
+           X="298" Y="55" Width="19" Height="19"
+           ToolTip="一つ上のフォルダへ"
+           Icon="yes" FixedSize="yes" IconSize="16" Text="Up"&gt;
+    &lt;<strong>Publish</strong> Event="DirectoryListUp" Value="0"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="NewFolder" Type="PushButton"
+           X="325" Y="55" Width="19" Height="19"
+           ToolTip="新しいフォルダを作成する"
+           Icon="yes" FixedSize="yes" IconSize="16" Text="New"&gt;
+    &lt;<strong>Publish</strong> Event="DirectoryListNew" Value="0"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="dirlist">そして最後に、真ん中に大きな <em>DirectoryList</em> を置きます。このコントロールは、同じプロパティを参照しているという事実によって、他のディレクトリを制御する要素とリンクされています。これらすべてのコントロールが自動的に期待している通りの相互作用をします。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="DirectoryList" Type="DirectoryList"
+           X="25" Y="83" Width="320" Height="110"
+           Property="_BrowseProperty" Sunken="yes" Indirect="yes" TabSkip="no" /&gt;
+</pre>
+
+<p>ダイアログの残りの要素は、もはや特別に興味深いものではありませんので、必要に応じてソースを参照して下さい。</p>
+
+<p id="Back"><em>SampleCustomUI4</em> をビルド出来るようにするために残っている仕事は二～三の小さな修正だけです。<em>InstallDlg</em> ダイアログに <em>Back</em> ボタンを追加して、ユーザーがカスタマイズ・ダイアログに戻ることが出来るように修正します。</p>
+
+<pre>
+&lt;<strong>Control</strong> Id="Back" Type="PushButton"
+         X="180" Y="243" Width="56" Height="17"
+         Text="[ButtonText_Back]"&gt;
+  &lt;<strong>Publish</strong> Event="NewDialog" Value="CustomizeDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+&lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p><kbd>CustomizeDlg</kbd> ダイアログのスケジューリングを変更して、カスタマイズを実行すべき段階でそれを表示するようにしなければなりません。それにはいくつかの選択肢がありますが、ここでは <em>MigrateFeatureStates</em> イベントの後にスケジュールします。このイベントはアップグレードとインストールの場合にだけ発生し、製品の削除またはメンテナンスの際には発生しません。このイベントが既にインストールされている製品(もし有れば)の機能の選択状態を読み込みます。従って、適切な機能の選択状態をもってカスタマイズ・ダイアログを表示するためには、現在のサンプルよりももっと複雑なインストーラ・パッケージの場合でも、この位置が最適の選択肢です。</p>
+
+<pre>
+&lt;<strong>InstallUISequence</strong>&gt;
+  &lt;<strong>Show</strong> Dialog="CustomizeDlg" After="MigrateFeatureStates"&gt;NOT Installed&lt;/<strong>Show</strong>&gt;
+&lt;/<strong>InstallUISequence</strong>&gt;
+</pre>
+
+<p>そして最後に、ブラウズ・ダイアログで必要になる二つの新しいアイコンを忘れずに入れておきます。</p>
+
+<pre>
+&lt;<strong>Binary</strong> Id="Up" SourceFile="Binary\Up.ico" /&gt;
+&lt;<strong>Binary</strong> Id="New" SourceFile="Binary\New.ico" /&gt;
+</pre>
+
+<h3>カスタマイズをカスタマイズする</h3>
+
+<p>インストールされる機能を自動的に選択したり、別の条件によって選択したりする必要がある場合、もしくは、ユーザーが機能を選択するための全く新しいインタフェイス(例えば、<em>SelectionTree</em> の代りにチェックボックスを使うなど)を作成したい場合は、下記のイベントを適切なコントロール(例えば「<em>次へ</em>」ボタン)にリンクさせて、所定の機能のインストールを有効化または無効化することが出来ます。</p>
+
+<pre>
+&lt;<strong>Publish</strong> Event="AddLocal" Value="FeatureId"&gt;...condition...&lt;/<strong>Publish</strong>&gt;
+&lt;<strong>Publish</strong> Event="Remove" Value="FeatureId"&gt;...condition...&lt;/<strong>Publish</strong>&gt;
+</pre>
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.5">8.5 これが進捗ですか？</h2>
+
+<p>成長している私たちのユーザー・インタフェイスにまだ欠けているものがあります。インストール・プロセスがどのように進捗しているかを示すページです。</p>
+
+<!-- <p style="text-align: center"><img src="images/customprogress.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="ProgressDlg screenshot"></p> -->
+<p style="text-align: center"><img src="images/customprogress.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="ProgressDlg のスクリーン・ショット"></p>
+
+<p>私たちはこのダイアログを<em>モードレス</em>であると定義します。というのは、制御をインストーラに戻す必要があるからです。そうやって、インストーラからダイアログに対して処理すべき進捗メッセージを送るようにします。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="ProgressDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" Modeless="yes"&gt;
+</pre>
+
+<p><em>Back</em> ボタンと <em>Next</em> ボタンはデフォルトで無効化されます &mdash; 有効にしておく理由はありません。どっちみち、ユーザーはこれらのボタンを使うことが出来ません。必要であれば、<em>Cancel</em> ボタンを使ってインストールを中止することが出来ます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Cancel" Type="PushButton"
+           X="304" Y="243" Width="56" Height="17" Default="yes" Cancel="yes"
+           Text="[ButtonText_Cancel]"&gt;
+    &lt;<strong>Publish</strong> Event="SpawnDialog" Value="CancelDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+  &lt;<strong>Control</strong> Id="BannerBitmap" Type="Bitmap"
+           X="0" Y="0" Width="370" Height="44"
+           TabSkip="no" Text="[BannerBitmap]" /&gt;
+  &lt;<strong>Control</strong> Id="Back" Type="PushButton"
+           X="180" Y="243" Width="56" Height="17" Disabled="yes"
+           Text="[ButtonText_Back]" /&gt;
+  &lt;<strong>Control</strong> Id="Next" Type="PushButton"
+           X="236" Y="243" Width="56" Height="17" Disabled="yes"
+           Text="[ButtonText_Next]" /&gt;
+</pre>
+
+<p>プログレス・バーのすぐ上にあるテキストは <em>ActionText</em> イベントを予約していますので、インストーラは現在実行しているインストールのアクション名をテキストに対して継続的に発行します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="ActionText" Type="Text"
+           X="70" Y="100" Width="265" Height="10"&gt;
+    &lt;<strong>Subscribe</strong> Event="ActionText" Attribute="Text" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>主要なステップの説明だけでは満足できず、個別のファイルが配置されるときにその詳細な情報を見たいという場合は、<em>ActionData</em> イベントを代りに使うことも出来ます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="ActionData" Type="Text"
+           X="70" Y="100" Width="265" Height="30"&gt;
+    &lt;<strong>Subscribe</strong> Event="ActionData" Attribute="Text" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p id="progress">興味を引かないいくつかのコントロールに加えて、最後にこのダイアログの主役である <em>ProgressBar</em> タイプのコントロールを追加します。<em>SelectionTree</em> と同じように、インストーラによって提供されるこのコントロールは単なる標準のプログレス・バーではなくて、インストールの過程と直接にリンクされたものです。<em>SetProgress</em> イベントを <em>Progress</em> 属性で予約することによって、表示する進捗メッセージをインストーラから受け取り続けます。<strong>ProgressBlocks&nbsp;=&nbsp;yes</strong> はブロック化された新しいタイプのプログレス・バーを指定しています。これを <em>no</em> の設定にすると、Windows 95 時代からの古いスタイルの連続的なバーに立ち帰ります。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="ProgressBar" Type="ProgressBar"
+           X="35" Y="115" Width="300" Height="10"
+           ProgressBlocks="yes" Text="Progress done"&gt;
+    &lt;<strong>Subscribe</strong> Event="SetProgress" Attribute="Progress" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+
+  &lt;<strong>Control</strong> Id="StatusLabel" Type="Text"
+           X="35" Y="100" Width="35" Height="10"
+           Text="Status:" /&gt;
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>進捗ページをインストーラ・パッケージの残りの部分と結合するために必要なことは、<em>InstallDlg</em> ダイアログを修正してこのダイアログを呼ぶようにすることだけです。残りの作業は魔法のごとく自動的に行われます。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="InstallDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+  &lt;<strong>Control</strong> Id="Install" Type="PushButton"
+           X="236" Y="243" Width="56" Height="17" Default="yes"
+           Text="[ButtonText_Install]"&gt;
+    &lt;<strong>Publish</strong> Event="NewDialog" Value="ProgressDlg" /&gt;
+  &lt;/<strong>Control</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.6">8.6 よく出来ました</h2>
+
+<p>足りないものが一つだけあります。インストールの後にアプリケーションを起動する方法です。ここでは、チェックボックスの使い方と、チェックボックスの状態に従って決定を行う方法も示します。</p>
+
+<!-- <p style="text-align: center"><img src="images/customdone.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="ExitDlg screenshot"></p> -->
+<p style="text-align: center"><img src="images/customdone.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="ExitDlg のスクリーン・ショット"></p>
+
+<p>新しく追加されたダイアログはこのような外観です。</p>
+
+<pre>
+&lt;<strong>Dialog</strong> Id="ExitDlg" Width="370" Height="270"
+        Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+</pre>
+
+<p><em>Finish</em> ボタンは二つの仕事を実行します。第一に、ダイアログ自身を終了します(そして、それによって、インストーラ・パッケージ自身を終了します)。第二に、ユーザーがそうすることを選んだ場合に、アプリケーションを起動します。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Finish" Type="PushButton"
+           X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes"
+           Text="[ButtonText_Finish]"&gt;
+    &lt;<strong>Publish</strong> Event="EndDialog" Value="Return"&gt;1&lt;/<strong>Publish</strong>&gt;
+    &lt;<strong>Publish</strong> Event='DoAction' Value='LaunchFile'&gt;
+      (NOT Installed) AND (LAUNCHPRODUCT = 1)
+    &lt;/<strong>Publish</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+  ...
+</pre>
+
+<p id="checkbox">ダイアログ・ボックスの中のチェックボックス・コントロールは、初期設定値(<em>CheckBoxValue</em>)と、チェックボックスの状態を読むために使われる関連づけられたプロパティ(<em>LAUNCHPRODUCT</em>)の両方を持ちます。</p>
+
+<pre>
+  &lt;<strong>Control</strong> Id="Launch" Type="CheckBox"
+           X="135" Y="120" Width="150" Height="17"
+           Property='LAUNCHPRODUCT' CheckBoxValue='1'&gt;
+    &lt;<strong>Text</strong>&gt;[ProductName] を起動する&lt;/<strong>Text</strong>&gt;
+  &lt;/<strong>Control</strong>&gt;
+  ...
+&lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p><em>Finish</em> ボタンによって発行されるアクションは既によく知っているカスタム・アクションです。アプリケーションが走り続けてもインストーラが閉じることが出来るように、<strong>Return</strong> 属性を忘れないようにして下さい。</p>
+
+<pre>
+&lt;<strong>CustomAction</strong> Id='LaunchFile' FileKey='HogeEXE' ExeCommand='' Return="asyncNoWait" /&gt;
+</pre>
+
+<p>この終了ダイアログは、インストールが成功して完了した場合に表示されるようにスケジュールされます(詳細は次のセクションを見て下さい)。</p>
+
+<pre>
+&lt;<strong>InstallUISequence</strong>&gt;
+  ...
+  &lt;<strong>Show</strong> Dialog="ExitDlg" OnExit="success" /&gt;
+&lt;/<strong>InstallUISequence</strong>&gt;
+</pre>
+
+<p>チェックボックスとプロパティがリンクされるのはイベントが発生する時、すなわちユーザーがチェックを入れたり外したりする時だけです。初期状態では、ユーザーとの相互作用がまだ無いため、プロパティが <strong>Control</strong> タグで設定したデフォルト値を受け取る機縁となるものはありません。従って、必ず私たち自身がプロパティを初期化しなければなりません。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="LAUNCHPRODUCT"&gt;1&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p><em>SampleCustomUI6</em> をビルドする前に、ダミーの <kbd>.exe</kbd> ファイルを何か実際に起動するものに必ず置き換えて下さい。</p>
+
+<p class="transnote">&dagger; 訳註：サンプルの日本語版(<a href="download/Sample-8-1-CustomUI.zip">Sample-8-1-CustomUI.zip</a>)には起動するプログラムが同梱されています(実は最初のレッスンの日本語版サンプルから、ずっと、そうしています)。</p>
+
+<p>そして、よくある不満について。そう、チェックボックスは透明の背景を持つことが出来ません。ちょうど上に示した例のように、背景にビットマップがあると不格好な表示になります。唯一の回避策は、チェックボックスの幅をボックス自体の実際の幅まで縮小して、その隣に追加のスタティック・テキスト(これは背景を透明に出来ます)を置くことです。</p>
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.7">8.7 法律用語</h2>
+
+<p id="license">いくつか細かい所が残っています。例えば使用許諾契約書のページです。</p>
+
+<!-- <p style="text-align: center"><img src="images/customlicense.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="LicenseAgreementDlg screenshot"></p> -->
+<p style="text-align: center"><img src="images/customlicense.png" width="509" height="397" style="padding: 5px 0px 5px 0px" alt="LicenseAgreementDlg のスクリーン・ショット"></p>
+
+<pre>
+    &lt;<strong>UI</strong>&gt;
+      ...
+      &lt;<strong>Dialog</strong> Id="LicenseAgreementDlg" Width="370" Height="270"
+              Title="[ProductName] 使用許諾契約書" NoMinimize="yes"&gt;
+</pre>
+
+<p id="radiobutton">ラジオ・ボタン・グループについては、ソースの後の方で独立した記述をします。リンクは <strong>Property</strong> 属性によって確立されます。</p>
+
+<pre>
+        &lt;<strong>Control</strong> Id="Buttons" Type="RadioButtonGroup"
+                 X="20" Y="187" Width="330" Height="40"
+                 Property="IAgree" /&gt;
+
+        &lt;<strong>Control</strong> Id="Back" Type="PushButton"
+                 X="180" Y="243" Width="56" Height="17"
+                 Text="[ButtonText_Back]"&gt;
+          &lt;<strong>Publish</strong> Event="NewDialog" Value="WelcomeDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+
+        &lt;<strong>Control</strong> Id="Next" Type="PushButton"
+                 X="236" Y="243" Width="56" Height="17" Default="yes"
+                 Text="[ButtonText_Next]"&gt;
+</pre>
+
+<p>今回、次に表示するダイアログの選び方は、ほんの少し手が込んでいます。インストールによっては、ユーザー名、会社名、および、登録キーの入力をユーザーに求めたくないことがあります。それに応じて UI を修正する(ページの進行の中で単純にそのページを呼ばないようにする)ことも可能ですが、ここではもっとエレガントな解法を用います。<em>ShowUserRegistrationDlg</em> というプロパティをどこかで定義しておきます。このプロパティを 1 に設定すれば、ユーザー登録ページが表示されます。0 に設定すれば、ユーザー登録ページはスキップされます。このことは、それぞれの場合に対応する二つの <em>NewDialog</em> イベントを用意することを意味します。</p>
+
+<pre>
+          &lt;<strong>Publish</strong> Event="NewDialog" Value="UserRegistrationDlg"&gt;
+            &lt;![CDATA[IAgree = "Yes" AND ShowUserRegistrationDlg = 1]]&gt;
+          &lt;/<strong>Publish</strong>&gt;
+
+          &lt;<strong>Publish</strong> Event="NewDialog" Value="SetupTypeDlg"&gt;
+            &lt;![CDATA[IAgree = "Yes" AND ShowUserRegistrationDlg &lt;&gt; 1]]&gt;
+          &lt;/<strong>Publish</strong>&gt;
+</pre>
+
+<p id="waitdialog"><em>SpawnDialog</em> イベントと <em>SpawnWaitDialog</em> イベントは前のページを置き換えずに、新しい子ダイアログ・ボックスを開始します。前者はユーザーのアクションによって終了されるのを待ちますが、後者は条件式が<em>偽</em>である間だけ表示されます。私たちの場合では、インストーラが必要なディスク容量を計算している間だけ表示される「お待ち下さい」ダイアログが後者の例です。サンプルのような小さなインストーラ・パッケージでは、計算には全く時間がかかりませんので、このダイアログが動いているのを見る機会はまず有りません。それでも、念のために、ダイアログを用意しておきましょう。<em>CostingComplete</em> は、必要なディスク容量の計算が完了した時に 1 に設定される定義済みのプロパティです。</p>
+
+<pre>
+          &lt;<strong>Publish</strong> Event="SpawnWaitDialog" Value="WaitForCostingDlg"&gt;
+            CostingComplete = 1
+          &lt;/<strong>Publish</strong>&gt;
+</pre>
+
+<p id="disable">そして、最後に、おなじみの嫌がらせです。「次へ」ボタンはユーザーが使用許諾契約への同意を示すまでは無効化された状態に留まります。私たちは既に <strong>Condition</strong> タグを上位のレベルで使ったり(インストールのプロセス全体を走らせるべきかどうかを決める起動条件)、<strong>Feature</strong> タグの中で使ったりしました(さまざまな機能のインストールを条件によって無効化する)。ここで第三の使い方、<strong>Control</strong> タグの中での使い方を説明します。<strong>Action</strong> 属性を使うと、<strong>Condition</strong> タグの内側の条件が<em>真</em>と評価される場合に、コントロールを <em>disable</em>, <em>enable</em>, <em>hide</em> または <em>show</em> する(あるいは <em>default</em> の状態に戻す)ことが出来ます。</p>
+
+<pre>
+          &lt;<strong>Condition</strong> Action="disable"&gt;
+            &lt;![CDATA[IAgree &lt;&gt; "Yes"]]&gt;
+          &lt;/<strong>Condition</strong>&gt;
+
+          &lt;<strong>Condition</strong> Action="enable"&gt;
+            IAgree = "Yes"
+          &lt;/<strong>Condition</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>小さな事ですが、注意深い読者は気付いているでしょう。条件式のいくつかに対して、私たちは格好悪い <kbd>&lt;![CDATA[...]]&gt;</kbd> ラッパーを使いました。コンパイラのパーサーが XML タグの間に出現する &lt; や &gt; のような特殊な文字によって混乱することが無いようにするためです。最も安全な方法は条件式を全てラップすることでしょう(WiX のデコンパイラ、<em>Dark</em> はまさしくそうします)。けれども &mdash; 少なくとも私の愚見では &mdash; それではソースがあまりにも読みにくくなります。それが嫌なら、本当に必要な所だけにラッパーを使うために、どの式が曖昧でどの式がそうでないかについて自分で配慮しなければなりません(何か理解できない所があれば、コンパイラがエラー・メッセージを出してくれます)。どちらを選ぶかは、あなた次第です ...</p>
+
+<p>次の部分は既によく知っているところです。</p>
+
+<pre>
+        &lt;<strong>Control</strong> Id="Cancel" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17" Cancel="yes"
+                 Text="[ButtonText_Cancel]"&gt;
+          &lt;<strong>Publish</strong> Event="SpawnDialog" Value="CancelDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+
+        &lt;<strong>Control</strong> Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44" TabSkip="no"
+                 Text="[BannerBitmap]" /&gt;
+</pre>
+
+<p id="rtf">次に使用許諾契約書のテキストが来ます。スクロール可能なコンテンツを持った凹んだテキストのコントロールを開きます。実際のテキストは内部の <strong>Text</strong> タグに入ります。ここでは RTF 形式のテキスト・ファイルを指定することが出来ます。ですから、使用許諾契約書をワード・プロセッサで書いて RTF としてエクスポートするというのが、最も良い考えです(この目的のためには、ワードパッドがおそらく最善のワード・プロセッサです。高機能なものを使うと、RTF ファイルがひどく冗長なものになります。高機能なワード・プロセッサを使うとしても、最終版をワードパッドで保存し直すことを考慮して下さい)。</p>
+
+<pre>
+        &lt;<strong>Control</strong> Id="AgreementText" Type="ScrollableText"
+                 X="20" Y="60" Width="330" Height="120" Sunken="yes" TabSkip="no"&gt;
+          &lt;<strong>Text</strong> SourceFile="Binary\License.rtf" /&gt;
+        &lt;/<strong>Control</strong>&gt;
+</pre>
+
+<p>契約書のテキストは、ソース・ファイルのこの箇所に直接に書き込むことも出来ます。しかし、既に述べた方法の方が、はるかに保守が容易であると思われます。</p>
+
+<pre>
+          &lt;<strong>Text</strong>&gt;{\rtf1\ansi\ansicpg1252\deff0\deftab720
+            {\fonttbl{\f0\froman\fprq2 Times New Roman;}}
+            {\colortbl\red0\green0\blue0;}
+            \deflang1033\horzdoc{\*\fchars }{\*\lchars }
+            \pard\plain\f0\fs20
+            This End User License Agreement is a legal agreement between you
+            (either an individual or a single entity) and ...\par
+            }
+</pre>
+
+<p>残されている部分は本当に簡単で、詳細な説明には値しません。あっちやこっちに、タイトル行と水平線を付けて、ダイアログの残りの部分を作ります。</p>
+
+<pre>
+        &lt;<strong>Control</strong> Id="Description" Type="Text"
+                X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes"&gt;
+          &lt;<strong>Text</strong>&gt;以下の使用許諾契約書を注意深く読んで下さい&lt;/<strong>Text</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="BottomLine" Type="Line"
+                X="0" Y="234" Width="370" Height="0" /&gt;
+        &lt;<strong>Control</strong> Id="Title" Type="Text"
+                X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes"&gt;
+          &lt;<strong>Text</strong>&gt;{\DlgTitleFont}エンド・ユーザー使用許諾契約書&lt;/<strong>Text</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="BannerLine" Type="Line"
+                X="0" Y="44" Width="374" Height="0" /&gt;
+      &lt;/<strong>Dialog</strong>&gt;
+</pre>
+
+<p>返済すべき借りがまだ有ります。ダイアログの最初のコントロールで、ラジオ・ボタン・グループの記述に言及しましたが、それが保留されたまま残っています。ですので、以下にそれを示します。<strong>Text</strong> 属性の中のプロパティ置換に注目して下さい。このようにすると、テキストのフォント、サイズ、および色を指定する事が出来ます。</p>
+
+<!--<a NAME="RadioButton"></a>-->
+<pre>
+      &lt;<strong>RadioButtonGroup</strong> Property="IAgree"&gt;
+        &lt;<strong>RadioButton</strong> Text="{\DlgFont8}使用許諾契約書の条項に同意します(&amp;A)"
+                     <span class="red">Value="Yes"</span> X="5" Y="0" Width="250" Height="15" /&gt;
+        &lt;<strong>RadioButton</strong> Text="{\DlgFont8}使用許諾契約書の条項に同意しません(&amp;D)"
+                     <span class="red">Value="No"</span> X="5" Y="20" Width="250" Height="15" /&gt;
+      &lt;/<strong>RadioButtonGroup</strong>&gt;
+</pre>
+
+<p id="font">しかしこれらのフォントの定義はどこにあるのか、と質問されますか？ オーケー、次に示します。これは、さまざまなテキスト・スタイルを集中管理的に定義する方法で、ユーザー・インタフェイスのどこからでもこれらのテキスト・スタイルを簡単に参照できます。色については、<strong>Red</strong>, <strong>Green</strong> および <strong>Blue</strong> の属性を使うことが出来ます(それぞれ 0 から 255 の間の値を指定します)。追加の装飾として、<strong>Bold</strong>, <strong>Italic</strong>, <strong>Underline</strong> および <strong>Strike</strong> を指定する事が出来ます。</p>
+
+<pre>
+      &lt;<strong>TextStyle</strong> Id="DlgFont8" FaceName="Tahoma" Size="8" /&gt;
+      &lt;<strong>TextStyle</strong> Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" /&gt;
+      &lt;<strong>TextStyle</strong> Id="VerdanaBold13" FaceName="Verdana" Size="13" Bold="yes" /&gt;
+</pre>
+
+<p>ソース・ファイルの最後には、プロパティの定義が来ます &mdash; 基本的には、私たちが使う変数とその初期値です。プロパティの中には、インタフェイス要素のテキストの略記として使われているものもあります。地域化するときは、これらも修正する必要があります。アンパサンドと角括弧の文字に注意して下さい。値全体をCDATA ラッパーで包むか、または、こういう扱いにくい文字に XML 実体参照を使うかしなければなりません(<em>ButtonText_Next</em> と <em>ButtonText_Back</em> を比較して下さい)。</p>
+
+<pre>
+    &lt;<strong>Property</strong> Id="ALLUSERS"&gt;2&lt;/<strong>Property</strong>&gt;
+    &lt;<strong>Property</strong> Id="ROOTDRIVE"&gt;&lt;![CDATA[C:\]]&gt;&lt;/<strong>Property</strong>&gt;
+    &lt;<strong>Property</strong> Id="Setup"&gt;セットアップ&lt;/<strong>Property</strong>&gt;
+    &lt;<strong>Property</strong> Id="ButtonText_Next"&gt;次へ(&amp;amp;N) &amp;gt;&lt;/<strong>Property</strong>&gt;
+    &lt;<strong>Property</strong> Id="ButtonText_Back"&gt;&lt;![CDATA[&lt; 戻る(&amp;B)]]&gt;&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p>インストーラ・パッケージには、製品と一緒にインストールしたくないけれど、ユーザー・インタフェイスには必要になるファイルが付いています。つまり、ビットマップとアイコンです。これらについて、ソース・ファイルの末尾で記述します。これまで、ビットマップとアイコンは <strong>Id</strong> 識別子を使って参照してきましたが、ここで実際のファイル名を定義します。これらのファイルは、独立したキャビネットを要求した場合でも、<kbd>.cab</kbd> ファイルではなく <kbd>.msi</kbd> ファイルに格納されます。</p>
+
+<pre>
+    &lt;<strong>Binary</strong> Id="Up" SourceFile="Binary\Up.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="New" SourceFile="Binary\New.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="custicon" SourceFile="Binary\Custom.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="repairic" SourceFile="Binary\Repair.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="exclamic" SourceFile="Binary\Exclam.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="removico" SourceFile="Binary\Remove.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="completi" SourceFile="Binary\Complete.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="insticon" SourceFile="Binary\Typical.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="info" SourceFile="Binary\Info.ico" /&gt;
+    &lt;<strong>Binary</strong> Id="bannrbmp" SourceFile="Binary\Banner.bmp" /&gt;
+    &lt;<strong>Binary</strong> Id="dlgbmp" SourceFile="Binary\Dialog.bmp" /&gt;
+    &lt;<strong>Icon</strong> Id="Hoge10.exe" SourceFile="HogeAppl10.exe" /&gt;
+  &lt;/<strong>Product</strong>&gt;
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p>ビットマップやアイコンを変更したいときは、Binary ディレクトリの中だけで変更して下さい。表紙のビットマップ(ここでは <kbd>Dialog.bmp</kbd> という名前です)は、503 &times; 314 ピクセルの BMP ファイルで、上部のバナー・ビットマップは 500 &times; 63 ピクセルです。しかし、ユーザーのシステム・フォントと表示解像度の設定によってインタフェイス全体の拡大縮小が要求される場合には、Windows Installer がこれらのビットマップを拡大または縮小する可能性があることに注意して下さい。拡大縮小に伴う醜くて不自然な結果を避けるために、適切なビットマップを使わなければなりません。均一に見えることを想定した画像を横切る細線のストライプ模様は避けて下さい。ビットマップにテキストを組み入れてはいけません(ロゴの文字は OK ですが、読んで貰うことを意図した小さなテキストは駄目です)。そして、何よりも、ディザ処理した領域とチェッカー模様の背景は禁物です。これらは拡大縮小されるとひどく不自然に見えます。画像エディタを使って、いろんな倍率で拡大縮小の実験をしてみれば、何を言っているのか分るでしょう。ただし、バイキュービック・サンプリングなどの洗練されたアルゴリズムは必ず無効にしてください。Windows は単純な拡大と縮小しか使用しません。</p>
+
+<p class="transnote">&dagger; 訳註：500 &times; 63 ピクセル、および、503 &times; 314 ピクセルというビットマップのサイズは、WiX 2 時代のライブラリが内蔵していたビットマップのサイズに依拠するものです。現在の WiX 3 のライブラリが内蔵しているビットマップのピクセル・サイズは、それぞれ、493 &times; 58 ピクセル、493 &times; 312 ピクセルです。</p>
+<p class="transnote">ただし、これらのビットマップのサイズは、本文の記述からも分るように、絶対にそうでなければならない、というものではありません。それぞれの時代において、その時の標準的な Windows のシステム・フォントと表示解像度のもとでは、そのようなピクセル・サイズのビットマップなら拡大縮小されることなく等倍で表示される、ということです。</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.8">8.8 順番外</h2>
+
+<p id="errordialog">ウィザード・ページの通常の進行には入らず、エラーなど、順番から外れた条件が発生したことを知らせるダイアログがいくつかあります。それらのダイアログは、<strong>OnExit</strong> 属性を使って <strong>Show</strong> タグでスケジュールすることが出来ます。<strong>OnExit</strong> 属性の値は、<em>success</em>, <em>cancel</em>, <em>error</em> または <em>suspend</em> です。</p>
+
+<pre>
+&lt;<strong>InstallUISequence</strong>&gt;
+  &lt;<strong>Show</strong> Dialog="FatalError" OnExit="error" /&gt;
+  &lt;<strong>Show</strong> Dialog="UserExit" OnExit="cancel" /&gt;
+  &lt;<strong>Show</strong> Dialog="ExitDialog" OnExit="success" /&gt;
+  ...
+&lt;/<strong>InstallUISequence</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-8.9">8.9 アナタハ 英語ヲ 話シマスカ？</h2>
+
+<p style="text-align: center"><img src="images/localized.gif" width="499" height="392" style="padding: 5px 0px 5px 0px" alt="Localized screenshot"></p>
+
+<p>インストーラ・パッケージは、ダイアログのテキストや、情報メッセージ、エラー・メッセージなど、ユーザーに対して表示する大量のテキストを持っています。私たちはそれらを独立したフラグメントに移動しました。インストーラを地域化(ローカライズ)することは、このフラグメント・ファイルの並列コピーを作成して、他の言語に翻訳するだけでも可能です。しかし、WiX は地域化に対しては、もっと良い手法を提供しており、それに従えば、地域化すべき全ての文字列を体系的に取りまとめる事が出来て、文字列の置き換えも後のリンクの段階で行うことが出来ます。ソース中の全てのテキスト・データ(ファイル名も含む)に対して、プリプロセッサ・スタイルの参照を使うことが出来ます。</p>
+
+<pre>
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi'&gt;
+
+  &lt;<strong>Product</strong> Name='ほげ 1.0' Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
+           Language=<span class="red">'!(loc.LANG)'</span> Codepage='932' Version='1.0.0'
+           Manufacturer='ぴよソフト'&gt;
+
+    &lt;<strong>Package</strong> Id='*' Keywords=<span class="red">'!(loc.Keywords)'</span>
+             Description=<span class="red">'!(loc.Description)'</span> Comments=<span class="red">'!(loc.Comments)'</span>
+             InstallerVersion='100' Languages='1041' Compressed='yes'
+             SummaryCodepage='932' /&gt;
+</pre>
+
+<p>これらの変数の実際の意味は、<kbd>.wxl</kbd> という拡張子を持った地域化ファイルの中にリスト・アップされます。</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;<strong>WixLocalization</strong> Culture="ja-jp"
+                 xmlns="http://schemas.microsoft.com/wix/2006/localization"&gt;
+  &lt;<strong>String</strong> Id="LANG" Overridable="yes"&gt;1041&lt;/<strong>String</strong>&gt;
+  &lt;<strong>String</strong> Id="Keywords" Overridable="yes"&gt;インストーラ&lt;/<strong>String</strong>&gt;
+  &lt;<strong>String</strong> Id="Description" Overridable="yes"&gt;ぴよソフト's ほげ 1.0 インストーラ&lt;/<strong>String</strong>&gt;
+  &lt;<strong>String</strong> Id="Comments" Overridable="yes"&gt;ほげはぴよソフトの登録商標です。&lt;/<strong>String</strong>&gt;
+&lt;/<strong>WixLocalization</strong>&gt;
+</pre>
+
+<p>特定の言語ファイルとともにパッケージをコンパイルするために必要なことは、言語ファイルの名前を WiX のリンカに渡してやることだけです。</p>
+
+<pre class="command">
+candle.exe Sample.wxs
+light.exe Sample.wixobj -loc Language.wxl
+</pre>
+
+</div>
+
+<p>これで私たちのユーザー・インタフェイスのツアーは終りです。インストーラによって提供されているコントロールはほとんど調べました。追加の詳細な情報や使用出来る属性については、WiX および MSDN の文書を参照して下さい。ここで身に着けた知識があれば、ツールセットのインタフェイス・ライブラリ全体を分析することが出来ます(オープン・ソースであることを思い出して下さい)。ここで説明しなかったページも結構たくさんありますが、構造と相互作用はまったく同じです。</p>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson07.html'>&laquo; 前へ</a>
+ | <a href='lesson09.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson8.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

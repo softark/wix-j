@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson06.html">
+<link rel="next" href="lesson08.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 7 SQL</title>
+</head>
+
+<body>
+
+<div class='header'>
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 7 <strong>SQL</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson06.html'>&laquo; 前へ</a>
+ | <a href='lesson08.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson7.php">&lowast; 原文</a>
+</div>
+
+<div class='main'>
+
+<br>
+
+<div class='section'>
+
+<h2 id="CH-7.1">7.1 データベースを作成する</H2>
+
+<p>SQL データベースを作成するためには、最初に適切な資格を持ったユーザーが必要です。そのユーザーの名前とパスワードはプロパティに保存されますので、何らかの通常の UI 要素やカスタム・アクションを使って、設定することが出来ます。これは、<a href='lesson06.html#CH-6.8'>新しいユーザー・アカウントを作成する</a>ために使ったのと同じ <strong>User</strong> タグであることに注意して下さい。ただし、そのときは、<strong>Component</strong> タグの中で使われていました。どのコンポーネントにも属さないときは、<strong>User</strong> タグはユーザーを作成せず、他の操作が必要とする資格を定義するだけです。ここで使うタグも、SQL 関連の機能も、拡張モジュールの中にありますので、ソース・ファイルの開始タグの中で、それらの拡張モジュールに言及しなければなりません。</p>
+
+<pre>
+&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi'
+     <span class="red">xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'
+     xmlns:sql='http://schemas.microsoft.com/wix/SqlExtension'</span>&gt;
+</pre>
+
+<p>更に、それらのタグは独自のネームスペースに属していますので、使用するときには修飾を加えなければなりません。</p>
+
+<pre>
+&lt;<strong>util:User</strong> Id='SQLUser' Name='[SQLUSER]' Password='[SQLPASSWORD]' /&gt;
+</pre>
+
+<p>データベースの作成そのものは、いつものように、コンポーネントの中に入ります。<strong>SqlDatabase</strong> は前の <strong>User</strong> の宣言を参照し、データベース名(サーバーとインスタンス)を定義します。<em>Server</em> を指定しない場合は、ターゲット・マシンで走っている SQL サーバーにデータベースをインストールすることになります。その他の属性は、さまざまに異なる状況で、どのように進むべきかを指定します。<em>ConfirmOverwrite</em> は、データベースが既に存在する場合にどうするかを決定し、<em>CreateOnInstall, CreateOnUninstall, DropOnInstall, DropOnUninstall</em> の属性はインストールおよびアンインストールの際に要求される振る舞いを指図します。</p>
+
+<p>入れ子にされた <strong>SqlScript</strong> タグは、作成されたばかりの空のデータベースに対して何をするべきかを決定します。私たちは、ここで、独立したファイルに入っている SQL スクリプトを、妥当なものなら何でも、実行することが出来ます。<em>BinaryKey</em> 属性が <kbd>.sql</kbd> ファイルへのリンクを提供します。その他の属性は、エラーが発生したときの振る舞いを指定したり(<em>ContinueOnError</em>)、スクリプトを実行する時を指定したりします(<em>ExecuteOnInstall, ExecuteOnUninstall, RollbackOnInstall, RollbackOnUninstall</em>)。実行されるスクリプトが複数有る場合は、<em>Sequence</em> 属性を使って、実行の順序を指定する事が出来ます。</p>
+
+<pre>
+&lt;<strong>Component</strong> Id='SqlComponent' Guid='YOURGUID-D8C7-4102-BA84-9702188FA316'&gt;
+  &lt;<strong>sql:SqlDatabase</strong> Id='SqlDatabase' Database='Foobar' User='SQLUser'
+                   Server='[SQLSERVER]' CreateOnInstall='yes' DropOnUninstall='yes'
+                   ContinueOnError='yes'&gt;
+    &lt;<strong>sql:SqlScript</strong> Id='CreateTable' BinaryKey='CreateTable' ExecuteOnInstall='yes' /&gt;
+  &lt;/<strong>sql:SqlDatabase</strong>&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p>残っているのは、<kbd>.sql</kbd> ファイルを含めることだけです。</p>
+
+<pre>
+&lt;<strong>Binary</strong> Id='CreateTable' SourceFile='CreateTable.sql' /&gt;
+</pre>
+
+<p>参照する <kbd>.sql</kbd> ファイルは、データベース・テーブルを作成するためのよくある SQL コマンドを記載したものです。</p>
+
+<pre>
+CREATE TABLE Test (Value1 CHAR(50), Value2 INTEGER)
+CREATE INDEX TestIndex ON Test (Value1)
+</pre>
+
+<p>インストーラ・パッケージをビルドする時は、適切な WiX モジュールとリンクしなければなりません。</p>
+
+<pre class="command">
+candle.exe -ext WixUtilExtension -ext WixSqlExtension SampleSQL.wxs
+light.exe -ext WixUtilExtension -ext WixSqlExtension SampleSQL.wixobj
+</pre>
+
+<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplesql.zip&amp;type=application/zip">SampleSQL</a> をダウンロードすることが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：SampleSQL の日本語版は <a href="download/Sample-7-1-SQL.zip">Sample-7-1-SQL.zip</a> です。</p>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson06.html'>&laquo; 前へ</a>
+ | <a href='lesson08.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson7.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

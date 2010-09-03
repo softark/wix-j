@@ -1,0 +1,841 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson05.html">
+<link rel="next" href="lesson07.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 6 COM、式の構文、その他いろいろ</title>
+</head>
+
+<body>
+
+<div class='header'>
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 6 <strong>COM、式の構文、その他いろいろ</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson05.html'>&laquo; 前へ</a>
+ | <a href='lesson07.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson6.php">&lowast; 原文</a>
+</div>
+
+<div class='main'>
+
+<br>
+
+<div class='section'>
+
+<h2 id="CH-6.1">6.1 違う色のコンポーネント</h2>
+
+<p><strong>WiX</strong> に含まれている <em>Heat</em> は、様々なソース(フォルダ、ファイル、パフォーマンス・カウンター、ウェブ・サイト)からデータを収集するのに使うツールです。項目数があまりに多くて、対応する WiX のソース・ファイルを手作業で書くことが出来ないという場合に役立ちます。このツールは、主として、一度だけ走らせてデータを収集し、後は通常の方法でソース・ファイルを保守する、という使い方を意図しています。ビルド環境に組み込んで、入力データ・セットに変更があるたびに何度も繰り返して走らせる、というものではありません。それでもなお、この第二の方法で使いたいという場合は、入力データ・セットの変更が望ましくない副作用(たいていは、コンポーネントの規則に対する違反)を惹起しないように、十分に注意を払う必要があります。なるほど、そういう目的の達成を支援する機能が <em>Heat</em> にあるのは本当ですが、そういう機能を使う時は注意が必要です。</p>
+
+<p><em>Heat</em> の第一のモードは、ファイルがいっぱい入った一つまたは複数のフォルダを調べて、必要な WiX ソースを作成するのを支援するものです。</p>
+
+<pre class="command">
+heat dir <span class="path">folder</span> -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p>上記のコマンドは、指定されたフォルダを再帰的に調べて、<kbd>-cg</kbd> スイッチで指定された名前の <strong>ComponentGroup</strong> を持つ <strong>Fragment</strong> を作成します。コンポーネント・グループには、見付かったファイルの数だけのコンポーネントが入り、各コンポーネントには、規則に従って、ファイルが一つずつ入ります。そして、コンポーネント、ディレクトリ、ファイルの全てに対して、一意になるように生成された識別子が割り当てられます。これらの識別子は、同じ入力セットで再生成される場合は、同じままで変化しません。GUID は、<kbd>-gg</kbd> スイッチによって明示的に生成するように指示しない限り、生成されません(プレースホルダのテキストだけが作られます)。</p>
+
+<p><em>Heat</em> は、コンポーネント・グループだけでなく、再帰的に訪れたフォルダの一つずつに対して、ディレクトリの参照(<strong>DirectoryRef</strong> タグ)を含んだフラグメントも同時に生成します。調べる対象になったルート・ディレクトリは、特に名前を指定しない限り、<em>TARGETDIR</em> という識別子を与えられます。</p>
+
+<pre class="command">
+heat dir <span class="path">path</span> -dr MyDirName -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p><strong>自動的に生成される識別子がこの名前をシードとして使うことに注意して下さい。この名前を変更すると、すべての識別子が変ります。不適切な時に変更すると、コンポーネントの規則に違反する悲惨な結果になる可能性があります。</strong></p>
+
+<p>もう一つ別のスイッチ、<kbd>-srd</kbd> を使うと、指定されたルート・フォルダに対して、識別子の生成が抑制されます。ルート・フォルダに属するファイルは、その <strong>Directory</strong> を <em>TARGETDIR</em> または <kbd>-dr</kbd> スイッチで指定された名前で参照します。そして、ルート・フォルダに対する独立した <strong>DirectoryRef</strong> フラグメントは生成されません。</p>
+
+<pre class="command">
+heat dir <span class="path">path</span> -srd -dr MyDirName -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p>このツールの第二のモードは、単一のファイルを扱います。そのファイルに関連するレジストリ、あるいは、COM やそれに類する項目がある場合に、それらの全部が <em>Heat</em> によって抽出されるのです(ここでの主題は <kbd>Shell32.dll</kbd> システム・ライブラリのための相互運用アセンブリです)。</p>
+
+<pre class="command">
+heat file <span class="path">file</span> -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p>上記のコマンドの結果、全ての詳細が正しく抽出されて、下記と同様なソース・ファイルが作られます。</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;<strong>Wix</strong> xmlns="http://schemas.microsoft.com/wix/2006/wi"&gt;
+  &lt;<strong>Fragment</strong>&gt;
+      &lt;<strong>ComponentGroup</strong> Id="SampleGroup"&gt;
+        &lt;<strong>Component</strong> Id="cmpA8B0842041500B0ACE61F7EFD0FBD893"
+                   Directory="dir0F6F75DF46D1BACE2233EC573E6D4AA9"
+                   Guid="PUT-GUID-HERE"&gt;
+          &lt;<strong>File</strong> Id="filDDAAB2C11E1E5AE4668D99216C3B5523" KeyPath="yes"
+                Source="SourceDir\SampleHeat\Interop.Shell32.dll" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32\1.0.0.0"
+                         Name="Class"
+                         Value="Shell32.ShellDispatchInprocClass"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32\1.0.0.0"
+                         Name="Assembly"
+                         Value="Interop.Shell32, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32\1.0.0.0"
+                         Name="RuntimeVersion"
+                         Value="v2.0.50727"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32\1.0.0.0"
+                         Name="CodeBase"
+                         Value="file:///[#filDDAAB2C11E1E5AE4668D99216C3B5523]"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32"
+                         Name="Class"
+                         Value="Shell32.ShellDispatchInprocClass"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32"
+                         Name="Assembly"
+                         Value="Interop.Shell32, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32"
+                         Name="RuntimeVersion"
+                         Value="v2.0.50727"
+                         Type="string" Action="write" /&gt;
+          &lt;<strong>RegistryValue</strong> Root="HKCR"
+                         Key="CLSID\{0A89A860-D7B1-11CE-8350-444553540000}\InprocServer32"
+                         Name="CodeBase"
+                         Value="file:///[#filDDAAB2C11E1E5AE4668D99216C3B5523]"
+                         Type="string" Action="write" /&gt;
+          ...
+        &lt;/<strong>Component</strong>&gt;
+      &lt;/<strong>ComponentGroup</strong>&gt;
+  &lt;/<strong>Fragment</strong>&gt;
+  &lt;<strong>Fragment</strong>&gt;
+      &lt;<strong>DirectoryRef</strong> Id="TARGETDIR"&gt;
+          &lt;<strong>Directory</strong> Id="dir0F6F75DF46D1BACE2233EC573E6D4AA9" Name="SampleHeat" /&gt;
+      &lt;/<strong>DirectoryRef</strong>&gt;
+  &lt;/<strong>Fragment</strong>&gt;
+  &lt;<strong>Fragment</strong>&gt;
+      &lt;<strong>DirectoryRef</strong> Id="dir0F6F75DF46D1BACE2233EC573E6D4AA9" /&gt;
+  &lt;/<strong>Fragment</strong>&gt;
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p id="selfreg">ここで、いくらか言葉を追加しなければなりません。レジストリなどの変更を全てインストーラ・パッケージに書くべきか、それとも、インストールされたコンポーネント(例えば DLL）が自分自身を登録する(最初に起動される時にレジストリ・エントリを追加したり、その他のセットアップ作業を実行する)ようにすべきか、という問題について悩む人がかなりいるようです。答えは簡単です。<span class="red"><strong>決して自己登録を使ってはいけません</strong></span>。Windows Installer は、製品のバージョンや更新を追跡記録したり、製品を完全かつ確実に削除したりすることが出来るように、レジストリへの登録やファイルの変更をすべて追跡して記録することが出来なければなりません。重要なデータをインストーラの管轄外に置くことは、このメカニズムを台無しにして、ユーザーに問題を与えるだけの事です。自己登録は <a href="http://msdn.microsoft.com/library/en-us/msi/setup/selfreg_table.asp">Microsoft も使わないことを非常に強く推奨</a>していますので、どんなことがあっても避けるべきです。</p>
+
+<p>第三のモードは、Visual Studio のプロジェクト・ファイル(またはそれと互換性のあるファイル)を調べて、指定されたタイプの全てのファイルに対する参照を作成します。ファイルのタイプは、<em>Binaries, Symbols, Documents, Satellites, Sources</em> あるいは <em>Content</em> です。例えば、<em>Binaries</em> を指定すると、プロジェクトによってビルドして配置される全てのバイナリ・ファイルが収集され、全て対応するコンポーネントとディレクトリに入れられます。その結果を最終的な WiX のソースに取り込むことは、簡単な参照を使うだけで出来ます。</p>
+
+<pre class="command">
+heat project <span class="path">projectfile</span> -pog:Binaries -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p>これまでの例では、後で完全なセットアップ・パッケージに組み込むための断片を生成するために <em>Heat</em> を使いました。しかし、私たちはこのツールに対して、フラグメントではなく <em>モジュール</em> または独立した <em>製品</em> を生成するように指示することも出来ます。比較的小さなパッケージであれば、実際には <em>Heat</em> が WiX ソース・ファイルの大半を書いてくれて、いくつかの項目（GUID やテキストによる説明)だけを手作業で追加しなければならない、ということになるかも知れません。</p>
+
+<pre class="command">
+heat ... -template:module -cg SampleGroup -out SampleGroup.wxs
+heat ... -template:product -cg SampleGroup -out SampleGroup.wxs
+</pre>
+
+<p id="typelib">タイプ・ライブラリは WiX で直接にサポートされています。タイプ・ライブラリの全ての内部情報を収集するために、<em>Heat</em> やその他のツールを使う必要はありません。</p>
+
+<pre>
+&lt;<strong>File</strong> Id="file.dll" Name="file.dll" KeyPath="yes"&gt;
+  &lt;<strong>TypeLib</strong> Id="YOURGUID-0BFE-4B1A-9205-9AB900C7D0DA" Language="0" /&gt;
+&lt;/<strong>File</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.2">6.2 式の構文</h2>
+
+<p id="expression">私たちは既に条件式を使った事があります。中でも、<strong>Condition</strong> タグと <strong>Publish</strong> タグで、条件式を使いました。<kbd>NOT</kbd>, <kbd>AND</kbd>, <kbd>OR</kbd> のような論理演算子も、<kbd>&lt;</kbd>, <kbd>&gt;</kbd>, <kbd>=</kbd> のような比較演算子も知っています。以下に優先順位に従って、すべての演算子を記載します。</p>
+
+<table class="table" summary="論理演算子">
+<thead>
+<tr><th colspan="2">論理演算子</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">NOT</td> <td align="left">前置単項演算子。次に来る項の論理値を反転させる。</td></tr>
+<tr><td class="code">AND</td> <td align="left">論理積(両方が <em>真</em> なら、<em>真</em>)</td></tr>
+<tr><td class="code">OR</td> <td align="left">論理和(どちらかまたは両方が <em>真</em> なら、<em>真</em>)</td></tr>
+<tr><td class="code">XOR</td> <td align="left">排他的論理和(どちらか一方だけが <em>真</em> なら、<em>真</em>)</td></tr>
+<tr><td class="code">EQV</td> <td align="left">等値(どちらも <em>真</em> か、どちらも <em>偽</em> なら、<em>真</em>)</td></tr>
+<tr><td class="code">IMP</td> <td align="left">含意(<em>左</em> が <em>偽</em> か、<em>右</em> が <em>真</em> なら、<em>真</em>)</td></tr>
+</tbody>
+</table>
+
+<table class="table" summary="比較演算子">
+<thead>
+<tr><th colspan="2">比較演算子</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">=</td> <td align="left">等しい</td></tr>
+<tr><td class="code">&lt;&gt;</td> <td align="left">等しくない</td></tr>
+<tr><td class="code">&gt;</td> <td align="left">より大きい</td></tr>
+<tr><td class="code">&gt;=</td> <td align="left">より大きいか、または、等しい</td></tr>
+<tr><td class="code">&lt;</td> <td align="left">より小さい</td></tr>
+<tr><td class="code">&lt;=</td> <td align="left">より小さいか、または、等しい</td></tr>
+<tr><td class="code">&tilde;=</td> <td align="left">等しい(大文字と小文字を区別しない)</td></tr>
+<tr><td class="code">&tilde;&lt;&gt;</td> <td align="left">等しくない(大文字と小文字を区別しない)</td></tr>
+<tr><td class="code">&tilde;&gt;</td> <td align="left">より大きい(大文字と小文字を区別しない)</td></tr>
+<tr><td class="code">&tilde;&gt;=</td> <td align="left">より大きいか、または、等しい(大文字と小文字を区別しない)</td></tr>
+<tr><td class="code">&tilde;&lt;</td> <td align="left">より小さい(大文字と小文字を区別しない)</td></tr>
+<tr><td class="code">&tilde;&lt;=</td> <td align="left">より小さいか、または、等しい(大文字と小文字を区別しない)</td></tr>
+</tbody>
+</table>
+
+<table class="table" summary="部分文字列演算子">
+<thead>
+<tr><th colspan="2">部分文字列演算子(文字列間のみ)</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">&gt;&lt;</td> <td align="left"><em>左</em> は <em>右</em> を含んでいる</td></tr>
+<tr><td class="code">&lt;&lt;</td> <td align="left"><em>左</em> は <em>右</em> から始まっている</td></tr>
+<tr><td class="code">&gt;&gt;</td> <td align="left"><em>左</em> は <em>右</em> で終っている</td></tr>
+</tbody>
+</table>
+
+<table class="table" summary="ビット演算子">
+<thead>
+<tr><th colspan="2">ビット演算子(整数間のみ)</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">&gt;&lt;</td> <td align="left">ビット単位の AND</td></tr>
+<tr><td class="code">&lt;&lt;</td> <td align="left"><em>左</em> の上位16ビットが <em>右</em> に等しい</td></tr>
+<tr><td class="code">&gt;&gt;</td> <td align="left"><em>左</em> の下位16ビットが <em>右</em> に等しい</td></tr>
+</tbody>
+</table>
+
+<p>これらの式においては、プロパティ名を使うことが出来ます(プロパティ名は大文字と小文字を区別することを思い出して下さい)。存在しないプロパティ名は空の文字列として扱われます。プロパティの論理値は、プロパティが設定されているか否か、という事を示します &mdash; つまり、単にプロパティを使うだけでは、その論理値をチェックすることは<em>出来ない</em>、という事です。</p>
+
+<dl>
+
+<dt>PROPERTY</dt>
+<dd>プロパティが設定されていて<strong>何らか</strong>の値を持っていれば、たとえその値が<em>偽</em>であっても、<em>真</em>と評価されます。</dd>
+
+<dt>NOT PROPERTY</dt>
+<dd>プロパティが全く設定されていない場合に<em>真</em>と評価されます。</dd>
+
+<dt>PROPERTY = TRUE</dt>
+<dt>PROPERTY = FALSE</dt>
+<dd>これらの式が、論理値を持つプロパティの値をチェックする正しい方法です。</dd>
+
+</dl>
+
+<p>いくつかの特殊な文字を名前の前に付けると、特別な意味になります。</p>
+
+<table class="table" summary="前置記号">
+<thead>
+<tr><th colspan="2">&nbsp;</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">%</td> <td align="left">環境変数(名前は大文字と小文字を区別しません)</td></tr>
+<tr><td class="code">$</td> <td align="left">コンポーネントのアクション後の状態</td></tr>
+<tr><td class="code">?</td> <td align="left">コンポーネントの現在のインストール状態</td></tr>
+<tr><td class="code">&amp;</td> <td align="left">機能のアクション後の状態</td></tr>
+<tr><td class="code">!</td> <td align="left">機能の現在のインストール状態</td></tr>
+</tbody>
+</table>
+
+<p>後の四つは次の整数値を取り得ます。</p>
+
+<table class="table" summary="状態を示す整数値">
+<thead>
+<tr><th colspan="2">&nbsp;</th></tr>
+</thead>
+<tbody>
+<tr><td class="code" style="width: 15%">-1</td> <td align="left">どんなアクションも実行されない</td></tr>
+<tr><td class="code">1</td> <td align="left">アドバタイズされている (機能についてのみ該当)</td></tr>
+<tr><td class="code">2</td> <td align="left">インストールされていない</td></tr>
+<tr><td class="code">3</td> <td align="left">ローカル・コンピュータ上にインストールされている</td></tr>
+<tr><td class="code">4</td> <td align="left">ソースから実行される</td></tr>
+</tbody>
+</table>
+
+<p>より明確にするために、いくつか例を挙げましょう。</p>
+
+<dl>
+
+<dt>(&amp;FeatureName = 3) AND NOT (!FeatureName = 3)</dt>
+<dd>製品がローカルにインストールされる場合にだけアクションを実行します。再インストールの場合はアクションを実行しません。<br>
+<em>&amp;FeatureName&nbsp;=&nbsp;3</em> という項は、アクションがその機能をローカルにインストールするものであることを意味します。<br>
+<em>NOT (!FeatureName&nbsp;=&nbsp;3)</em> という項は、その機能がローカルにインストールされていないことを意味します。</dd>
+
+<dt>(&amp;FeatureName = 2) AND (!FeatureName = 3)</dt>
+<dd>その機能がアンインストールされる場合にだけアクションを実行します。<br>
+この条件式は、機能がローカルにインストールされている状態から存在しない状態へと遷移する場合だけを捕まえます。</dd>
+
+<dt>(?ComponentName = 3) AND ($ComponentName = 2 OR $ComponentName = 4)</dt>
+<dd>コンポーネントがローカルにインストールされていて、そうでない状態へと遷移する場合にだけ、アクションを実行します。<br>
+<em>?ComponentName&nbsp;=&nbsp;3</em> という項は、コンポーネントがローカルにインストールされていることを意味します。<br>
+<em>$ComponentName&nbsp;=&nbsp;2</em> という項は、コンポーネントのアクション後の状態が「存在しない」であることを意味します。<br>
+<em>$ComponentName&nbsp;=&nbsp;4</em> という項は、コンポーネントのアクション後の状態が「ソースから実行される」であることを意味します。コンポーネントに対しては、「アドバタイズされている」という状態は当てはまらないことに注意して下さい。</dd>
+
+<dt>?ComponentName = $ComponentName</dt>
+<dd>コンポーネントが(現在と同じ状態で)再インストールされる場合にだけアクションを実行します。</dd>
+
+</dl>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.3">6.3 書式指定文字列</h2>
+
+<p id="format">コントロールのテキストに表示されるテキストは書式指定をすることが出来ます。角括弧に入れたプロパティ名は既に使用しましたが、そのあたりにはもう少し複雑な規則もあります。まず、<kbd>[Property]</kbd> においてプロパティ名が有効でない場合は、全体の部分文字列が変更されずに残されます。</p>
+
+<p>この規則は角括弧が入れ子になっている場合はいくらか違うものになります。<kbd>[[Property]]</kbd> という書式は、最初に <em>Property</em> を検索して、その値を別のプロパティ名として使い、その第二のプロパティを検索します。二つのプロパティ名のうちのどちらかでも見付からなかった場合には、全体の部分文字列は空文字であると見なされます。</p>
+
+<p>特別な意味を持った文字(たとえば角括弧)を通常の文字として示すためには、バックスラッシュをエスケープ文字として使って、角括弧に入れます。</p>
+
+<p class="transnote">&dagger; 訳註：例えば、<em><kbd>"["</kbd></em> は <em><kbd>"[\[]"</kbd></em>、<em><kbd>"]"</kbd></em> は <em><kbd>"[\]]"</kbd></em>。</p>
+
+<p><kbd>[~]</kbd> という部分文字列は、ヌル文字に置き換えられます。これによって、<kbd>REG_MULTI_SZ</kbd> のレジストリ文字列をコンパイルすることが可能になります。</p>
+
+<p><kbd>[#filekey]</kbd> という表記法は、指定された <strong>Id</strong> を持つファイルのフル・パスを返します。ただし、これは、 <em>CostInitialize, FileCost</em> または <em>CostFinalize</em> が走った後に限ってのことです。パスは、ファイルが含まれるコンポーネントがローカルにインストールされるか、ソースから実行されるかによって、左右されます。</p>
+
+<p><kbd>[$componentkey]</kbd> という表記法は、指定されたコンポーネントのインストール先ディレクトリを返します。ただし、これも、 <em>CostInitialize, FileCost</em> または <em>CostFinalize</em> が走った後に限ってのことです。パスは、コンポーネントがローカルにインストールされるか、ソースから実行されるかによって、左右されます。</p>
+
+<p><kbd>[!filekey]</kbd> という表記法は、通常は <kbd>[#filekey]</kbd> と等価な表記法ですが、<strong>Registry</strong> または <strong>IniFile</strong> のタグの <strong>Value</strong> 属性の値として使われた場合には、ファイルの短い形式(8.3形式)のフル・パスを返します。</p>
+
+<p>ツールセットのいろいろな部分(コンパイラやリンカ)は固有のプリプロセッサを持っていて、外部的に(つまり、コマンド・ラインで)定義した文字列をソースに注入して使うことが出来るようになっています。コンパイラ <em>Candle</em> は <kbd>$(var.Foo)</kbd> という構文を使います。ソース・ファイル自身の中で値を設定するためには、下記のように記述します。</p>
+
+<pre>
+&lt;?define Foo=bar?&gt;
+</pre>
+
+<p>コマンド・ライン・スイッチで設定する場合は、次のようにします。</p>
+
+<pre class="command">
+candle -dFoo=bar
+</pre>
+
+<p><em>Light</em>、すなわちリンカも同様な仕組みを持っていますが、構文がほんの少し異なっていて、<kbd>!(wix.Foo)</kbd> となります &mdash; コマンド・ラインは同じです。</p>
+
+<pre class="command">
+light -dFoo=bar
+</pre>
+
+<p>地域化される文字列は、<kbd>!(loc.Foo)</kbd> という表記法を使います。リンカは、これらの文字列が <kbd>.wxl</kbd> 地域化ファイルの中で、下記の構文で定義されているものとします。</p>
+
+<pre>
+&lt;<strong>String</strong> Id="Foo" Overridable="yes"&gt;bar&lt;/<strong>String</strong>&gt;
+</pre>
+
+<p>地域化ファイルもコマンド・ラインで指定します。</p>
+
+<pre class="command">
+light -loc <span class="path">path</span> path
+</pre>
+
+<p>地域化文字列とその他の文字列の主な違いは、地域化文字列はオーバーライド可能な性格を持っていることです。ライブラリや拡張モジュールが地域化文字列の既定値を持つことが出来る一方で、それを後のリンクの過程でオーバーライドすることが出来ます。</p>
+
+<p>これらの値を Windows Installer の通常のプロパティに割り当てるためには、どの場合も、<strong>Property</strong> タグを使って下さい。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="Foo1" Value="$(var.Foo)" /&gt;
+&lt;<strong>Property</strong> Id="Foo2" Value="!(wix.Foo)" /&gt;
+&lt;<strong>Property</strong> Id="Foo3" Value="$(env.Foo)" /&gt;
+</pre>
+
+<p>環境変数は、コンパイラでもリンカでも、<kbd>$(env.Foo)</kbd> という構文でアクセスすることが出来ます。</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.4">6.4 DDE 接続</h2>
+
+<p id="DDE">DDE (Dynamic Data Exchange) を使うシェル接続は、下記のようにしてセットアップ出来ます。</p>
+
+<pre>
+&lt;<strong>ProgId</strong> Id='Program.xyz' Description='Program handling .xyz' Advertise='yes'&gt;
+  &lt;<strong>Extension</strong> Id='xyz' ContentType='text/sql'&gt;
+    &lt;<strong>Verb</strong> Id='open' Sequence='1' Command='Open' Argument='&quot;%1&quot;'/&gt;
+  &lt;/<strong>Extension</strong>&gt;
+  &lt;<strong>Extension</strong> Id='xyz0' ContentType='text/sql'&gt;
+    &lt;<strong>Verb</strong> Id='open' Sequence='1' Command='Open' Argument='&quot;%1&quot;'/&gt;
+  &lt;/<strong>Extension</strong>&gt;
+&lt;/<strong>ProgId</strong>&gt;
+
+&lt;<strong>Component</strong> Id='regSetup' Guid='YOURGUID-6D8A-4AE2-9D9F-3E074F13A029'&gt;
+  &lt;<strong>Registry</strong> Root='HKLM' Key='SOFTWARE\Classes\Program.xyz\shell\open\ddeexec'
+            Type='string' Value='[\[]open(&quot;%1&quot;)[\]]' KeyPath='yes'/&gt;
+  &lt;<strong>Registry</strong> Root='HKLM' Key='SOFTWARE\Classes\Program.xyz\shell\open\ddeexec\application'
+            Type='string' Value='Program.xyz' /&gt;
+  &lt;<strong>Registry</strong> Root='HKLM' Key='SOFTWARE\Classes\Program.xyz\shell\open\ddeexec\topic'
+            Type='string' Value='System' /&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.5">6.5 ディレクトリの作成</h2>
+
+<p id="mkdir">場合によっては、ファイルをインストールせずに、ディレクトリだけを新しく作らなければならないことがあります。以下がその方法です。</p>
+
+<pre>
+&lt;<strong>Directory</strong> Id="TARGETDIR" Name="SourceDir"&gt;
+  &lt;<strong>Directory</strong> Id="ProgramFilesFolder" Name="PFiles"&gt;
+    &lt;<strong>Directory</strong> Id="test" Name="test"&gt;
+      &lt;<strong>Component</strong> Id="test" Guid="YOURGUID-4884-4A01-AA04-84B92D222428"
+                 SharedDllRefCount="no" KeyPath="no" NeverOverwrite="no"
+                 Permanent="no" Transitive="no" Win64="no" Location="either"&gt;
+        &lt;<strong>CreateFolder</strong>/&gt;
+      &lt;/<strong>Component</strong>&gt;
+    &lt;/<strong>Directory</strong>&gt;
+  &lt;/<strong>Directory</strong>&gt;
+&lt;/<strong>Directory</strong>&gt;
+
+&lt;<strong>Feature</strong> Id="test" Title="testfolder" Level="1"&gt;
+  &lt;<strong>ComponentRef</strong> Id="test"/&gt;
+&lt;/<strong>Feature</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.6">6.6 複数メディアのインストール</h2>
+
+<p id="media">複数メディアのインストール(例えば、一枚の CD にファイルが収まらない場合)については、既にレッスン 1 で言及しました。その場合、個々の物理メディアを示すために、ソース・ファイルに複数の <strong>Media</strong> タグを記述することが必要になります。これまでのインストーラとは違って、ファイル・アーカイブを <kbd>.msi</kbd> ファイルに埋め込むことは、もちろん出来ません。また、ユーザーの便宜のために、人間が読むことが出来る(必要なら、地域化可能な)プロンプトを指定し、さらに、ボリューム・ラベルを指定しなければなりません。このボリューム・ラベルは、物理メディアの実際のボリューム・ラベルと一致しなければなりません。インストーラはボリューム・ラベルを見て、要求されているメディアをユーザーが挿入したかどうかを判断します。</p>
+
+<pre>
+&lt;<strong>Media</strong> Id='1' Cabinet='Sample1.cab' EmbedCab='no'
+       DiskPrompt="CD-ROM #1" VolumeLabel="HOGE_DISK1" /&gt;
+
+&lt;<strong>Media</strong> Id='2' Cabinet='Sample2.cab' EmbedCab='no'
+       DiskPrompt="CD-ROM #2" VolumeLabel="HOGE_DISK2" /&gt;
+</pre>
+
+<p>ユーザーに正しいメディアを挿入するように促す実際のメッセージを作るために、Windows Installer は <strong>DiskPrompt</strong> プロパティをも必要とします。<strong>DiskPrompt</strong> プロパティには、下記のように、書式指定文字列を使う必要があります。<em>[1]</em> は対応する <strong>Media</strong> タグの <em>DiskPrompt</em> 属性の内容で置き換えられます。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='DiskPrompt' Value="ぴよソフトのほげ 1.0 インストーラ [1]" /&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.7">6.7 プログラムの追加と削除の項目</h2>
+
+<p id="addremove"><em>コントロール・パネル &gt; プログラムの追加と削除</em> の中で、プログラムは、<em>「サポート情報を参照するには、ここをクリックして下さい」</em>という項目の下に、電話番号やインターネットの連絡先など、いろんな項目を保持することが出来ます。それらを指定するためには、下記のプロパティをソース・ファイルに追加して下さい。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPCOMMENTS'&gt;コメント&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPCONTACT'&gt;問い合わせ先&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPHELPLINK'&gt;ヘルプ・リンク&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPURLINFOABOUT'&gt;製品情報のURL&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPURLUPDATEINFO'&gt;製品の更新情報のURL&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPHELPTELEPHONE'&gt;ヘルプ電話番号&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPREADME'&gt;説明ファイルのパス&lt;/<strong>Property</strong>&gt;
+&lt;<strong>Property</strong> Id='ARPSIZE'&gt;アプリケーションのサイズ(KB単位)&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p><em>ARPSIZE</em> は一見すると余分なものに思われます。しかし、テストをしてみると分ることですが、Windows Installer は非常に小さなパッケージに対しては、完全に嘘の値(4 GB以上)をレポートします。その場合、パッケージ・サイズを手動で設定しておくことで、この鬱陶しいけれども無害な障害を回避することが出来ます。</p>
+
+<p class="transnote">&dagger; 訳註：Windows Vista では、「サポート情報を参照するには、ここをクリックして下さい」がありません。これらの項目は「詳細表示の設定」で選択されているものだけがを表示されます。詳細表示の設定を変更するためには、まず、<em>整理 &gt; レイアウト &gt; メニューバー</em>によってメニューバーを表示して、次にメニューバーで、<em>表示 &gt; 詳細表示の設定</em>を選びます。</p>
+
+<p>アプリケーション項目の左に表示されるアイコンを指定するためには、(<strong>Shortcut</strong> タグで見たように)アイコンの <strong>Id</strong> 属性への参照を使います(識別子に同じ拡張子を追加することも忘れないでください)。また、現在の所は、<em>プログラムの追加と削除</em>にバグがあって、ユーザーごとのインストール(すなわち <em>ALLUSERS</em> プロパティが 2 に設定されたインストール)の後では、アイコンが表示されないということも覚えておいて下さい。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPPRODUCTICON'&gt;appicon.ico&lt;/<strong>Property</strong>&gt;
+...
+&lt;<strong>Icon</strong> Id="appicon.ico" SourceFile="Application.ico" /&gt;
+</pre>
+
+<p>その他、アプリケーションがプログラムの追加と削除においてどのような振る舞いをするかを制御するためのプロパティが二～三あります。<em>変更</em>ボタンの表示を抑止する(あるいは、Windows 2000 より前では、インストーラに製品のメンテナンスをさせず、削除だけが出来るようにする)ためには、以下のようにします。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPNOMODIFY'&gt;1&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p><em>削除</em>ボタンを無効化する(あるいは、Windows 2000 より前では、そのアプリケーションをリストから完全に削除する)ためには、以下のようにします。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPNOREMOVE'&gt;1&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p>Windows 2000 や XP で、このリストからアプリケーションを完全に削除するためには、上記の代りに、以下のようにしなければなりません。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPSYSTEMCOMPONENT'&gt;1&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p><em>修復</em>機能を抑止するためには、以下のようにします。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id='ARPNOREPAIR'&gt;1&lt;/<strong>Property</strong>&gt;
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.8">6.8 新顔のユーザー</h2>
+
+<p id="user">WiX ツールセットの追加のライブラリには、新しいユーザー・アカウントを追加する、というような追加の仕事をインストーラが出来るようにするものもあります。</p>
+
+<pre>
+&lt;<strong>Component</strong>&gt;
+  &lt;<strong>user:User</strong> Id='NewUser' Name='username' Password='password' /&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p>インストーラ・パッケージをリンクするときに、適切な WiX 拡張モジュールをリンクしなければなりません。</p>
+
+<pre class="command">
+light.exe -ext WixUtilExtension -out Sample.msi Sample.wixobj
+</pre>
+
+<p id="share">このライブラリは、フォルダの共有を作成する手段も提供しています。次のコードの断片を <strong>Component</strong> の中に置くだけで、そのコンポーネントがインストールされるフォルダに共有を設定することが出来ます。</p>
+
+<pre>
+&lt;<strong>user:User</strong> Id='Everyone' Name='Everyone' CreateUser='no'
+           FailIfExists='no' RemoveOnUninstall='no' /&gt;
+&lt;<strong>user:FileShare</strong> Id='MainExecutableShare' Description='ほげ 1.0 の共有フォルダ'
+                Name='ほげ共有フォルダ'&gt;
+  &lt;<strong>user:Permission</strong> GenericRead='yes' ReadPermission='yes' Read='yes' GenericExecute='yes'
+                   User='Everyone' /&gt;
+&lt;/<strong>user:FileShare</strong>&gt;
+</pre>
+
+<p><strong>FileShare</strong> の属性は自ずから明らかでしょう。共有に伴うアクセス許可を指定するためには <strong>Permission</strong> 要素を使う必要がありますが、そのためには <strong>User</strong> が指定されていなければなりません。ここでは、新しいユーザーを作ることは求めていませんし(<em>CreateUser</em>を見て下さい)、製品を削除する時にユーザーを削除することも求めていません(<em>RemoveOnUninstall</em>を見て下さい)。実際のアクセス許可としては、<em>Delete, Execute, Read, Write, GenericExecute, GenericRead, GenericWrite, TakeOwnership, ReadAttributes, WriteAttributes</em> などの属性の中から選ぶことが出来ます。使用可能な全ての属性を知るためには、ヘルプ・ファイルを参照して下さい。</p>
+
+<p><a href="lesson05.html#mkdir"><strong>CreateFolder</strong></a> 要素の中でも <strong>Permission</strong> タグを使うことが出来ることに注意して下さい。いくつかの追加の属性(<em>CreateChild, CreateFile, DeleteChild, Traverse</em>)は、その場合のために予約されているものです。</p>
+
+<p class="transnote">&dagger; 訳註：上記の例をソース・ファイルに記述するためには、最初に、Wix の開始タグの中で、WixUtilExtension 拡張モジュールに言及する必要があります。&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi' <em>xmlns:user='http://schemas.microsoft.com/wix/UtilExtension'</em>&gt;</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.9">6.9 環境に優しく</h2>
+
+<p>環境変数をインストールするためには、コンポーネントの中で <strong>Environment</strong> タグを使います。</p>
+
+<pre id="environment">
+&lt;<strong>Environment</strong> Id='UpdatePath' Name='PATH' Action='create' System='yes'
+             Part='last' Value='[INSTALLDIR]' /&gt;
+</pre>
+
+<p><strong>Action</strong> 属性によって、コンポーネントがインストールされる時に何をすべきかを指定します。指定できる値は、<em>create, set</em> および <em>remove</em> です。<strong>Part</strong> 属性が新しい値の割り当て方を左右します。<em>all</em> は新しい値で元の値を置き換え、<em>first</em> は新しい値を元の値の前に追加し、<em>last</em> は新しい値を元の値の後ろに追加します。<strong>Permanent='yes'</strong> にすると、その環境変数は製品が削除されても残りますが、そうでなければ、一緒に削除されます。<strong>System</strong> は、環境変数がシステムの環境空間に追加されるか、ユーザーの環境空間に追加されるかを指定します。環境変数の名前には、必ず、すべて大文字を使って下さい。</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.10">6.10 XML</h2>
+
+<p>今日では、古い <kbd>.ini</kbd> 形式でなく、XML ベースの設定ファイルを使用するプログラムがますます増えています。WiX は、インストールやアンインストールの際にそういう設定ファイルを修正するための、作成済みカスタム・アクションを持っています。ここで、アプリケーションと一緒に <kbd>Settings.xml</kbd> というファイルをインストールすると仮定しましょう。最初は、ファイルの中身は一番外側のタグだけです。</p>
+
+<pre>
+&lt;settings&gt;
+&lt;/settings&gt;
+</pre>
+
+<p>インストーラに新しいノードをいくつか追加させることにします。そして、ノードの一つには属性値を持たせます。</p>
+
+<pre>
+&lt;settings&gt;
+  &lt;add key=&quot;a_key&quot; value=&quot;a_value&quot;&gt;key_item
+    &lt;inside&gt;inside_item&lt;/inside&gt;
+  &lt;/add&gt;
+&lt;/settings&gt;
+</pre>
+
+<p>これを実現するためには、<strong>XmlFile</strong> タグを使うことが出来ます。<strong>Id</strong> や <strong>File</strong> のような通常の属性とは別の、<strong>Action, Name</strong> および <strong>Value</strong> 属性が XML ファイルの中で何をするかを決定し、<strong>ElementPath</strong> 属性がどこでそれをするかを決定します。この最後の属性は、標準的な <a href="http://www.w3.org/TR/xpath">XPath 仕様言語</a> を使って、実際の操作が適用される XML ノードを記述します。</p>
+
+<table class="table" style="width: 100%" summary="XML">
+<thead>
+<tr>
+<th style="width: 15%" abbr="A">Action</th>
+<th style="width: 15%" abbr="N">Name</th>
+<th style="width: 15%" abbr="V">Value</th>
+<th style="width: 55%" abbr="O">操作</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>createElement</td>
+<td>name</td>
+<td>&mdash;</td>
+<td align="left">ElementPath で指定されたノードの中に、新しいノードが作成される</td>
+</tr>
+
+<tr>
+<td>setValue</td>
+<td>&mdash;</td>
+<td>value</td>
+<td align="left">ElementPath で指定されたノードの中のテキスト値がセットされる</td>
+</tr>
+
+<tr>
+<td>setValue</td>
+<td>name</td>
+<td>value</td>
+<td align="left">ElementPath で指定されたノードに <em>name</em> という名前で <em>value</em> という値を持った属性が与えられる</td>
+</tr>
+
+<tr>
+<td>deleteValue</td>
+<td>&mdash;</td>
+<td>&mdash;</td>
+<td align="left">ElementPath で指定されたノードの中のテキスト値が削除される</td>
+</tr>
+
+<tr>
+<td>deleteValue</td>
+<td>name</td>
+<td>&mdash;</td>
+<td align="left">ElementPath で指定されたノードから、<em>name</em> という名前の属性が削除される</td>
+</tr>
+</tbody>
+</table>
+
+<p>という訳で、計画した修正を実行するために、下記の項目を記述します(自分自身で操作の順序を指定しなければならないことに注意して下さい。このことは、アンインストールの時に、正しい逆順で変更が削除されることを保証するために、重要なことです)。</p>
+
+<pre id="xml">
+&lt;<strong>Component</strong> Id='Settings' Guid='YOURGUID-574D-4A9A-A266-5B5EC2C022A4'&gt;
+  &lt;<strong>File</strong> Id='XmlSettings' Name='settings.xml' DiskId='1' Source='settings.xml' Vital='yes' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings1' File='[INSTALLDIR]settings.xml'
+                Action='createElement' Name='add' ElementPath='//settings'
+                Sequence='1' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings2' File='[INSTALLDIR]settings.xml'
+                Action='setValue' Name='key' Value='a_key' ElementPath='//settings/add'
+                Sequence='2' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings3' File='[INSTALLDIR]settings.xml'
+                Action='setValue' Name='value' Value='a_value' ElementPath='//settings/add'
+                Sequence='3' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings4' File='[INSTALLDIR]settings.xml'
+                Action='setValue' Value='key_item' ElementPath='//settings/add'
+                Sequence='4' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings5' File='[INSTALLDIR]settings.xml'
+                Action='createElement' Name='inside' ElementPath='//settings/add'
+                Sequence='5' /&gt;
+  &lt;<strong>util:XmlFile</strong> Id='XmlSettings6' File='[INSTALLDIR]settings.xml'
+                Action='setValue' Value='inside_item' ElementPath='//settings/add/inside'
+                Sequence='6' /&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p>XML ファイルの中に同じ名前を持った複数のノードが有る場合は、どのノードを参照しているのかを特定するために、よくある <kbd>'node[@attr="value"]'</kbd> という XPath の形式を使うことが出来ます。<em>ElementPath</em> は書式指定文字列を受け入れますので、角括弧を使う時は、プロパティとして評価されないように、バックスラッシュでエスケープしなければいけません(<kbd>[\[]</kbd> および <kbd>[\]]</kbd>)。</p>
+
+<p>この機能は標準のユーティリティー・モジュールに入っていますので、それをリンクしなければなりません。</p>
+
+<pre class="command">
+light.exe -ext WixUtilExtension -out Sample.msi Sample.wixobj
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.11">6.11 COM+ アプリケーション</h2>
+
+<p id="complus">WiX ツールセットにあるカスタム・アクション・ライブラリを使うと、インストーラが COM+ パッケージを作ったり、それにコンポーネントを追加したり、ロールの作成と設定をしたりすることが出来るようになります。</p>
+
+<p><strong>注記：</strong> Visual Studio で COM+ カスタム・アクションに対するインテリセンス機能が欲しい場合は、ダウンロードしたソースの <kbd>"src\ca\pubca\pcaext\Xsd\pubca.xsd"</kbd> というファイルを Visual Studio 2005 なら <kbd>"\Program Files\Microsoft Visual Studio 8\Xml\Schemas"</kbd> に、また、Visual Studio 2003 なら <kbd>"\Program Files\Microsoft Visual Studio .NET 2003\Common7\Packages\schemas\xml"</kbd> にコピーする必要があります。</p>
+
+<p>インストーラ・パッケージをビルドするときは、適切な WiX ライブラリを含めてコンパイルおよびリンクしなければなりません。そのための <em>Candle</em> と <em>Light</em> のコマンド・ラインは以下のようになります。</p>
+
+<pre class="command">
+candle <span class="red">-ext WixComPlusExtension</span> Sample.wxs
+light <span class="red">-ext WixComPlusExtension</span> Sample.wixobj
+</pre>
+
+<p>また、WiX のソースで、下記のように COM+ スキーマを参照する必要があります。</p>
+
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;<strong>Wix</strong> xmlns=&quot;http://schemas.microsoft.com/wix/2006/wi&quot;
+     <span class="red">xmlns:complus=&quot;http://schemas.microsoft.com/wix/ComPlusExtension&quot;</span>&gt;
+</pre>
+
+<p>COM+ パッケージ(<em>My COM+ Application</em>)を作成して、そのパッケージに標準的な COM DLL（<kbd>MyCOM.dll</kbd>)を追加するためには、下記のように記述します。</p>
+
+<pre>
+&lt;<strong>Component</strong> Id="MyCOM_dll" DiskId="1" Guid="YOURGUID-242F-4B82-BDC7-588E59E9F393"&gt;
+  &lt;<strong>File</strong> Id="MyCOM_dll" Name="MyCOM.dll" Source="MyCOM.dll" KeyPath="yes"
+        Vital="yes" /&gt;
+  &lt;<span class="red"><strong>complus:ComPlusApplication</strong></span> Id="MyCOM" Name="My COM+ Application"&gt;
+    &lt;<span class="red"><strong>complus:ComPlusAssembly</strong></span> Id="MyComPlusAssembly" Type="native" DllPath="[#MyCOM_dll]"&gt;
+      &lt;<span class="red"><strong>complus:ComPlusComponent</strong></span> Id="MyCOM" CLSID="YOURCLSID-CA74-4DC7-BAEF-25AF03BC5F67" /&gt;
+    &lt;/<span class="red"><strong>complus:ComPlusAssembly</strong></span>&gt;
+  &lt;/<span class="red"><strong>complus:ComPlusApplication</strong></span>&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p>COM+ パッケージ(<em>My COM+ Application</em>)を作成して、グローバル・アセンブリ・キャッシュ(<kbd>GAC</kbd>)に無い .NET アセンブリをそのパッケージにパッケージに追加する場合は、以下のように記述します。</p>
+
+<pre>
+&lt;<strong>Component</strong> Id="MydotNet_dll" DiskId="1" Guid="YOURGUID-242F-4B82-BDC7-588E59E9F393"&gt;
+  &lt;<strong>File</strong> Id="MydotNet_dll" Name="MydotNet.dll" Source="MydotNet.dll" KeyPath="yes"
+        Assembly="no" /&gt;
+  &lt;<span class="red"><strong>complus:ComPlusApplication </strong></span> Id="MydotNet" Name="My COM+ Application"&gt;
+    &lt;<span class="red"><strong>complus:ComPlusAssembly</strong></span> Id="MyComPlusAssembly" DllPath="[#MydotNet_dll]"
+                             TlbPath="[#MydotNet_tlb]" Type=".net" RegisterInCommit="yes"&gt;
+      &lt;<span class="red"><strong>complus:ComPlusComponent</strong></span> Id="CheckInterface"
+                                CLSID="YOURCLSID-241E-4472-8C71-61A22BAF9914"/&gt;
+    &lt;/<span class="red"><strong>complus:ComPlusAssembly</strong></span>&gt;
+  &lt;/<span class="red"><strong>complus:ComPlusApplication</strong></span>&gt;
+&lt;/<strong>Component</strong>&gt;
+
+&lt;<strong>Component</strong> Id="MydotNet_tlb" DiskId="1" Guid="YOURGUID-242F-4B82-BDC7-588E59E9F394"&gt;
+  &lt;<strong>File</strong> Id="MydotNet_tlb" Name="MydotNet.tlb" Source="MydotNet.tlb" KeyPath="yes" /&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p>COM+ パッケージ(<em>My COM+ Application</em>)を作成して、グローバル・アセンブリ・キャッシュ(<kbd>GAC</kbd>)に有る .NET アセンブリをそのパッケージに追加する場合は、以下のように記述します。</p>
+
+<pre>
+&lt;<strong>Component</strong> Id="MydotNet_dll" DiskId="1" Guid="YOURGUID-242F-4B82-BDC7-588E59E9F393"&gt;
+  &lt;<strong>File</strong> Id="MydotNet_dll" Name="MydotNet.dll" Source="MydotNet.dll" KeyPath="yes"
+        Assembly=".net" /&gt;
+  &lt;<span class="red"><strong>complus:ComPlusApplication</strong></span> Id="MydotNet" Name="My COM+ Application"&gt;
+    &lt;<span class="red"><strong>complus:ComPlusAssembly</strong></span> Id="MyComPlusAssembly" TlbPath="[#MydotNet_tlb]"
+                             Type=".net" DllPathFromGAC="yes" RegisterInCommit="yes"&gt;
+      &lt;<span class="red"><strong>complus:ComPlusComponent</strong></span> Id="CheckInterface"
+                                CLSID="YOURCLSID-241E-4472-8C71-61A22BAF9914"/&gt;
+    &lt;/<span class="red"><strong>complus:ComPlusAssembly</strong></span>&gt;
+  &lt;/<span class="red"><strong>complus:ComPlusApplication</strong></span>&gt;
+&lt;/<strong>Component</strong>&gt;
+
+&lt;<strong>Component</strong> Id="MydotNet_tlb" DiskId="1" Guid="YOURGUID-242F-4B82-BDC7-588E59E9F394"&gt;
+  &lt;<strong>File</strong> Id="MydotNet_tlb" Name="MydotNet.tlb" Source="MydotNet.tlb" KeyPath="yes" /&gt;
+&lt;/<strong>Component</strong>&gt;
+</pre>
+
+<p class="contributor">Neil Sleightholm</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-6.12">6.12 バージョンごとに</h2>
+
+<p><strong>Package</strong> タグの <em>InstallerVersion</em> 属性は、インストーラ・パッケージが必要としているインストーラのバージョンを記述します。チュートリアルでは、最小公分母を示したかったために、100 という値(バージョン 1.0 の意味)を使って来ました。実際のバージョンを、対応する Windows のバージョンと対比して、下の表で示します。</p>
+
+<p class="transnote">&dagger; 訳註：<em>InstallerVersion</em> 属性は、Major Version × 100 + Minor Version という値で指定します。例えば、バージョン 3.1 なら、301 です。</p>
+
+<table class="table" style="width: 100%" summary="バージョン">
+<thead>
+<tr>
+<th style="width: 15%" abbr="V">Version</th>
+<th style="width: 15%" abbr="W">Windows</th>
+<th style="width: 55%" abbr="F">機能</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1.x</td>
+<td>XP より前</td>
+<td align="left">基本的な MSI サポート、32-bit のみ</td>
+</tr>
+
+<tr>
+<td>2.0</td>
+<td>XP, 2000 Server SP3</td>
+<td align="left">64-bit サポート</td>
+</tr>
+
+<tr>
+<td>3.0</td>
+<td>XP SP2</td>
+<td align="left">パッチ機能の改善</td>
+</tr>
+
+<tr>
+<td>3.1</td>
+<td>XP SP3, 2003 Server SP2</td>
+<td align="left">ユーザー・インタフェイスの改善</td>
+</tr>
+
+<tr>
+<td>4.0</td>
+<td>Vista, Server 2008</td>
+<td align="left">UAC、再起動マネージャ、MSI 連鎖</td>
+</tr>
+
+<tr>
+<td>4.5</td>
+<td>Vista, Server 2008 SP2</td>
+<td align="left">パッチ機能の改善</td>
+</tr>
+
+<tr>
+<td>5.0</td>
+<td>Windows 7, 2008 Server R2</td>
+<td align="left">アクセス許可の設定、サービス制御の改善、UIの改善、ユーザーごとのインストールと全ユーザーのためのインストールの統合</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>一般的な規則としては、新しいバージョンが本当に要求されるのでない限り、バージョン 3.1 以下を指定することをお奨めします。バージョン 3.1 の Windows Installer は、Windows 2000 でもサポートされています。</p>
+
+<p>さらに詳細な<a href="http://msdn.microsoft.com/en-us/library/aa372796(VS.85).aspx">変更履歴</a>と<a href="http://msdn.microsoft.com/en-us/library/aa371185(VS.85).aspx">説明</a>が Microsoft のサイトにあります。これらの文書には、どのパッケージが Windows Update によっては自動的に更新されないけれども再配布可能なダウンロードとして入手できるか、ということも述べられています。</p>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson05.html'>&laquo; 前へ</a>
+ | <a href='lesson07.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson6.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>

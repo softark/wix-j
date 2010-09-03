@@ -1,0 +1,699 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta name="GENERATOR" content="By hand">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳)">
+<meta name="Author" content="Gábor DEÁK JAHN">
+<link rel="stylesheet" href="style.css" media="all" type="text/css">
+<link rev="made" href="http://www.softark.net/">
+<link rel="index" href="./index.html">
+<link rel="prev" href="lesson01.html">
+<link rel="next" href="lesson03.html">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+<title>WiX チュートリアル (日本語訳) &mdash; Lesson 2 ユーザー・インタフェイス</title>
+</head>
+
+<body>
+
+<div class='header'>
+
+<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+<h1>Lesson 2 <strong>ユーザー・インタフェイス</strong></h1>
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+| <a href='lesson01.html'>&laquo; 前へ</a>
+| <a href='lesson03.html'>次へ &raquo;</a>
+| <a href="http://www.tramontana.co.hu/wix/lesson2.php">&lowast; 原文</a>
+</div>
+
+<div class='main'>
+
+<p>前回のレッスンでは、インストールしたいファイルをどのように記述するかを学びました。そして、ある製品が既にインストール済みであるかどうかをインストーラが自動的に判断するロジックについて、いくつかの簡単な実装方法を見ました。しかし、それら全ては、よくあるユーザー・インタフェイスを伴わずに実行され、ユーザーにインストールについて何も言う機会を与えないものでした。ということで、ユーザー・インタフェイスがこの回で取り扱う主題になります。</p>
+
+<p>Windows Installer は(既に見た簡単な進捗ダイアログと、ポップ・アップしてユーザーにいろんなエラーを通知するメッセージ・ボックスを除いて)内蔵されたユーザー・インタフェイスを持っていません。インストーラ・パッケージは自分自身のユーザー・インタフェイスを定義してコンパイルし、自分の <kbd>.msi</kbd> ファイルに入れて持って回らなければなりません。このため、ファイルのサイズは多少大きくなります(典型的なユーザー・インタフェイスを持った <kbd>.msi</kbd> ファイルは、内部に持つアイコンや他のグラフィカルな要素のサイズにも左右されますが、最小でも 300 KB をちょっと下回る程度のサイズになってしまいます)。しかし、サイズと引き替えに、考えられる限りのどんな要求に対してでも、カスタマイズして対応することが可能になっています。</p>
+
+<p>完全なユーザー・インタフェイスを自力で開発することを始めるのは、あまり面白いことではないでしょう。幸いなことに、そんなことをする必要はありません。WiX ツールセットには、標準のユーザー・インタフェイス・ライブラリである WixUI が付属しています。このユーザー・インタフェイスは MSI SDK の作成済みインタフェイスに基づいたものです（MSI SDK は、Microsoft のビジュアル・プログラミング環境に付属していますが、<a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">単体として自由にダウンロード</a>することも可能です)。このライブラリが標準的なインストーラ・パッケージの完全なユーザー・インタフェイスを提供してくれます。その中には、使用許諾契約、顧客情報、標準/カスタム/完全のセットアップ・タイプ、インストール先フォルダの変更、必要なディスク容量の計算、変更/修復/削除およびロールバックなど、標準的なウィザード・ページが全て含まれています。唯一の違いは &mdash; 個性を演出するために &mdash; 基調色が青でなく赤になっていることです。しかし、それをカスタマイズしたい場合は、二～三のビットマップとアイコンを修正するだけで済みます。</p>
+
+<div class='section'>
+
+<h2 id="CH-2.1">2.1 最初のステップ</h2>
+
+<p>前のサンプルを素敵なユーザー・インタフェイスで拡張しましょう。しかし、詳細に踏み込む前に、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixui.zip&amp;type=application/zip">SampleWixUI</a> をダウンロードし、コンパイルして走らせて、どんなことが出来るか、だいたいの感じをつかんで下さい。次のコマンドでビルドして下さい(リンカのコマンドの新しい引数については、後で説明します)。</p>
+
+<p class="transnote">&dagger; 訳註：SampleWixUI の日本語版は <a href="download/Sample-2-1-WixUI.zip">Sample-2-1-WixUI.zip</a> です。</p>
+
+<pre class="command">
+candle.exe SampleWixUI.wxs
+light.exe <span class="red">-ext WixUIExtension</span> SampleWixUI.wixobj
+</pre>
+
+<p>カスタム・インストールを選んで、インストール先のフォルダを変更してみて下さい。インストールが完了したら、インストーラ・パッケージをもう一度実行してみて下さい。すると、今度はプログラムの変更または削除が出来ます(同じことは<em>「プログラムの追加と削除」</em>で<em>[変更]</em>を選んだ時にも出来ます)。</p>
+
+<p>どうやってこれだけの機能を獲得できたのかを見ていきましょう。最初の部分は前と同じです &mdash; 結局のところ、インストールしようとしているのは同じ製品、同じファイル、同じコンポーネント、同じ機能です。</p>
+
+<pre>
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi'&gt;
+
+  &lt;<strong>Product</strong> Name='ほげ 1.0'
+           Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
+           UpgradeCode='YOURGUID-7349-453F-94F6-BCB5110BA4FD'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'&gt;
+
+    &lt;<strong>Package</strong> Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' /&gt;
+
+      ...
+
+      &lt;<strong>Directory</strong> Id="DesktopFolder" Name="Desktop" /&gt;
+    &lt;/<strong>Directory</strong>&gt;
+</pre>
+
+<p>ここまでは、目新しいものは何もありません。次に来るセグメントの構造も見慣れたものですが、二～三、新しい属性が追加されています。</p>
+
+<pre>
+    &lt;<strong>Feature</strong> Id='Complete' <span class="red">Title</span>='ほげ 1.0'
+             <span class="red">Description</span>='完全パッケージ。' <span class="red">Display</span>='expand'
+             Level='1' <span class="red">ConfigurableDirectory</span>='INSTALLDIR'&gt;
+      &lt;<strong>Feature</strong> Id='MainProgram' <span class="red">Title</span>='プログラム'
+               <span class="red">Description</span>='メインの実行ファイル。' Level='1'&gt;
+        &lt;<strong>ComponentRef</strong> Id='MainExecutable' /&gt;
+        &lt;<strong>ComponentRef</strong> Id='HelperLibrary' /&gt;
+        &lt;<strong>ComponentRef</strong> Id='ProgramMenuDir' /&gt;
+      &lt;/<strong>Feature</strong>&gt;
+
+      &lt;<strong>Feature</strong> Id='Documentation' <span class="red">Title</span>='説明書'
+               <span class="red">Description</span>='取扱説明書。' <span class="red">Level='1000'</span>&gt;
+        &lt;<strong>ComponentRef</strong> Id='Manual' /&gt;
+      &lt;/<strong>Feature</strong>&gt;
+    &lt;/<strong>Feature</strong>&gt;
+</pre>
+
+<p id="feature">今回はユーザー・インタフェイスを持っている訳ですから、ユーザーに対して、どういう機能の選択肢があるかを知らせるために、何かを表示しなくてはなりません。そのために、人間が読むことが出来る何らかの記述が必要になります。コンパイルされたインストーラ・パッケージをもう一度開始してカスタム・セットアップまで進めば、各種の UI テキストがどこにどんな形で現れるかを見ることが出来ます。</p>
+
+<p><strong>Title</strong> 属性の内容が、ダイアログの左側のツリービューの項目に使われています。そして、ツリーの中の項目をクリックすると、右側の四角形の中に <strong>Description</strong> のテキストが現れます。<strong>Display</strong> 属性(選択可能な値は <em>collapse</em>, <em>expand</em> および <em>hidden</em> です)は、指定されたツリーの部分が初期状態では折り畳まれて表示される(<kbd>collapse</kbd>)か、展開されて表示される(<kbd>expand</kbd>)か、それとも全く表示されない(<kbd>hidden</kbd>)かを決定します。</p>
+
+<p><strong>Level</strong> 属性を使うと、どの機能がインストールされるかを決めることが可能になります。普通のシナリオでは、ユーザーに、<em>Typical</em>, <em>Complete</em> および <em>Custom</em> という三つの選択肢を提供します。後の二つは単純です(<em>Complete</em> は全てをインストールし、<em>Custom</em> はユーザーが全てを細部まで指定できるようにします)が、<em>Typical</em> については、どの機能がそれに属するかを私たちが決めなければなりません。あるいは、必要なら、選択肢の数を増やすことも可能です。インストーラは、実行時に、1 以上 32,767 以下の任意の値を取る <em>INSTALLLEVEL</em> という作成済みのプロパティを使用します。そして各機能は、そのレベルが 0 ではなく、かつ、<em>INSTALLLEVEL</em> の現在の値を越えない場合にインストールされます。</p>
+
+<p>WiX のユーザー・インタフェイスでは、この <em>INSTALLLEVEL</em> を <em>Typical</em> が選ばれると 3 に設定し、<em>Complete</em> が選ばれると 1,000 に設定します(この第二の数値はかなり恣意的なものです。使用可能な数値なら何でも良かったのです)。このため、<em>Typical</em> に含めたくない機能は、このレベルでマークしなければなりません。Typical(標準)インストールの場合は <em>INSTALLLEVEL</em> が 3 になりますので、1 以上 3 以下のレベルを持つ機能だけがインストールされ、それを越えるレベルのものは &mdash; <strong>Level=1000</strong> の機能も含めて &mdash; 放っておかれます。</p>
+
+<p id="targetpath">そして最後に、一番重要な部分が、<strong>ConfigurableDirectory</strong> です。この属性の値として <em>INSTALLDIR</em> を参照していますが、これは、数行前の一番内側の <strong>Directory</strong> タグで、インストール先として指定したディレクトリです。こうすることによって、私たちが元来意図していたインストール先をユーザーが変更出来るようにしている訳です。この属性を使用しないようにすれば、ユーザーは前と同じようにいろいろな機能を有効にしたり無効にしたりする事は出来ますが、インストール先ディレクトリは変更することが出来なくなります。</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-2.2">2.2 カスタムの設定</h2>
+
+<p>カスタムのツリービューの各項目には、コンテキスト・メニューが結び付けられていて、ユーザーはどの機能をどのようにインストールするかを決めることが出来ます。メニュー項目の既定値は以下の通りです。</p>
+
+<ul>
+<li>この機能はローカルのハード・ドライブにインストールされます。</li>
+<li>この機能とすべてのサブ機能はローカルのハード・ドライブにインストールされます。</li>
+<li>この機能はネットワークから実行するようにインストールされます。*</li>
+<li>この機能とすべてのサブ機能はネットワークから実行するようにインストールされます。*</li>
+<li>この機能は必要になったときにインストールされます。</li>
+<li>この機能はインストールされません。</li>
+</ul>
+
+<p><strong>Feature</strong> のいろんな属性を使うと、これらの項目のいくつかを削除したり修正したりして、その機能にとって意味のあるものだけを残すことが出来ます。基本的には、五つの選択肢が有り得ます。すなわち、(1) 機能をローカルのハード・ドライブにインストールする、(2) インストール・メディアから起動する、(3) ネットワークから起動する、(4) 要求に応じてインストールする(機能はユーザーが初めて使おうとした時にインストールされます。これは比較的新しいオペレーティング・システムでしかサポートされていません)、そして、(5) 全くインストールしない、の五つです。</p>
+
+<table summary="カスタム・インストールの機能の属性" class="table" width="100%">
+
+<thead>
+<tr>
+<th abbr="A" style="width: 30%">属性と値</th>
+<th abbr="D" style="width: 70%">説明</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td align="left">AllowAdvertise='no'</td>
+<td align="left"><em>「この機能は必要になったときにインストールされます」</em> がコンテキスト・メニューから削除されます。ユーザーはこの機能を必要に応じてインストールすることが出来ません。</td>
+</tr>
+
+<tr>
+<td align="left">AllowAdvertise='yes'</td>
+<td align="left"><em>「この機能は必要になったときにインストールされます」</em> がコンテキスト・メニューに出現します。ユーザーはこの機能を必要に応じてインストールすることが出来ます。</td>
+</tr>
+
+<tr>
+<td align="left">AllowAdvertise='system'</td>
+<td align="left">オペレーティング・システムがサポートしている場合にだけ、<em>「この機能は必要になったときにインストールされます」</em> がコンテキスト・メニューに出現して、ユーザーが必要に応じてこの機能をインストールすることが出来るようになります。</td>
+</tr>
+
+<tr>
+<td align="left">InstallDefault='local'</td>
+<td align="left"><em>「この機能(とすべてのサブ機能)はローカルのハード・ドライブにインストールされます」</em> がコンテキスト・メニューに出現します。</td>
+</tr>
+
+<tr>
+<td align="left">InstallDefault='source'</td>
+<td align="left"><em>「ローカルのハード・ドライブにインストールされます」</em>という元の項目の代りに、<em>「この機能(とすべてのサブ機能)は CD から実行するようにインストールされます」</em> がコンテキスト・メニューに出現します。</td>
+</tr>
+
+<tr>
+<td align="left">InstallDefault='followParent'</td>
+<td align="left">実際の状態(<em>local</em> か <em>source</em> か)は、親の機能の設定に従います。</td>
+</tr>
+
+<tr>
+<td align="left">Absent='allow'</td>
+<td align="left"><em>「この機能はインストールされません」</em> がコンテキスト・メニューに出現します。ユーザーはこの機能をインストールするかしないかを決めることが出来ます。</td>
+</tr>
+
+<tr>
+<td align="left">Absent='disallow'</td>
+<td align="left"><em>「この機能はインストールされません」</em> がコンテキスト・メニューから削除されます。この機能は常に必要とされ、ユーザーはこの機能のインストールを拒否することが出来ません。</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>* Windows Installer にバグがあるようです。機能の中にファイルが含まれていないと、上記で概観した属性を使って削除しようとしても、この項目がコンテキスト・メニューに出現してしまいます。そういう場合は、その機能に(中にファイルを含まない)空っぽのコンポーネントを追加して下さい。</p>
+</div>
+
+<div class='section'>
+
+<h2 id="CH-2.3">2.3 UI の魔法</h2>
+
+<p>ここからが本当のマジックです。WixUI は、どの程度まで高機能なユーザー・インタフェイスを求めるかに応じて、五つの異なるウィザードを提供してくれます。</p>
+
+<ul class="space">
+
+<li><strong>WixUI_Mondo</strong> は、「ようこそ」のページ、使用許諾契約、セットアップ・タイプ(標準、カスタム、完全)、機能のカスタマイズ、インストール先ディレクトリの参照とディスク容量の計算など、完全なインタフェイスを提供します。メンテナンス・モード用のダイアログも含まれています。製品の機能の中に既定ではインストールすべきでないものがある場合(言い換えると、標準インストールと完全インストールの間に、重要で意味のある違いがある場合)は、このタイプを使用すべきです。</li>
+
+<li><strong>WixUI_FeatureTree</strong> は、フル・セットと同じですが、ユーザーはセットアップ・タイプを選択することが出来ません。セットアップ・タイプは常にカスタムであるという前提に立って、ユーザーが使用許諾契約に同意した後は、直接に、機能のカスタマイズのダイアログに進みます。</li>
+
+<li><strong>WixUI_InstallDir</strong> は、ユーザーがインストール先ディレクトリを選ぶことが出来ますが、通例の機能をカスタマイズするページは提供されません。ディレクトリの選択が完了すると、自動的にインストールが始まります。*</li>
+
+<li><strong>WixUI_Minimal</strong> は、非常に簡単なユーザー・インタフェイスを特徴としていて、「ようこそ」のページと使用許諾契約のページを一緒にした単一のダイアログがあるだけです。このダイアログの後は、ユーザーに何もカスタマイズを許さず、インストールが自動的に進行します。アプリケーションがインストールすべきオプション機能を何も持っていない場合に使って下さい。</li>
+
+<li><strong>WixUI_Advanced</strong> は、単純なワン・クリックのインストールを提供するという点では、WixUI_Minimal にかなり良く似ていますが、ユーザーがそうしたいと望めば、機能やフォルダを選ぶことも出来ます。</li>
+
+</ul>
+
+<p>フル・セットのユーザー・インタフェイスを使用するために必要な事は、ソースに二行を追加して、WixUI インタフェイス・ライブラリをプロジェクトに含めることだけです。</p>
+
+<pre>
+    &lt;<strong>UIRef</strong> Id="WixUI_Mondo" /&gt;
+    &lt;<strong>UIRef</strong> Id="WixUI_ErrorProgressText" /&gt;
+</pre>
+
+<p>最初の参照によって適切なユーザー・インタフェイス・ライブラリが読み込まれます。しかし、このライブラリは、言語ファイルにあるローカライズされたエラーとアクションのテキスト(英語の場合は、修正されたテキスト)を自動的に使う訳ではありません。二番目の参照を追加しない場合、インストーラ・パッケージはわずかに小さくなって、Windows Installer の内部にある組み込みのメッセージを使うようになります。</p>
+
+<p>* <em>WixUI_InstallDir</em> のダイアログ・セットを使う場合は、ソースのどこかで、下記のように、追加のプロパティを提供しなければなりません。</p>
+
+<pre>
+&lt;<strong>Property</strong> Id="WIXUI_INSTALLDIR" Value="TOP_LEVEL_DIR" /&gt;
+</pre>
+
+<p>そして、最後に、これまでのサンプルと全く同じように、ソースの記述を終了します。</p>
+
+<pre>
+    &lt;<strong>Icon</strong> Id="Hoge10.exe" SourceFile="HogeAppl10.exe" /&gt;
+  &lt;/<strong>Product</strong>&gt;
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p>ユーザー・インタフェイスの変種のすべては、共通のコンパイル済みライブラリに入っています。私たちは、既に述べたようにコマンド・ライン・スイッチを使って、この拡張ライブラリに対してリンクするだけで良いのです。統合開発環境の中で作業をしている場合は、同じ効果を得るために、このライブラリに対する参照を追加する必要があります。</p>
+
+<pre class="command">
+candle.exe SampleWixUI.wxs
+light.exe -ext WixUIExtension SampleWixUI.wixobj
+</pre>
+
+<p>ユーザー・インタフェイスの外観のいくつかは、代替のファイルを指定するだけでカスタマイズすることが出来ます。既定のファイルはツールセットの中にありますが、代替のビットマップ、アイコン、ライセンス文書を自分で作ることが可能です。全部でなく、特定のファイルだけを置き換えることも出来ます。ファイルのパスは変数に保持されていますので、コマンド・ラインで指定することも、直接ソースに書くことも出来ます。</p>
+
+<pre>
+  &lt;<strong>WixVariable</strong> Id="WixUILicenseRtf" Value="path\License.rtf" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUIBannerBmp" Value="path\banner.bmp" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUIDialogBmp" Value="path\dialog.bmp" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUIExclamationIco" Value="path\exclamation.ico" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUIInfoIco" Value="path\information.ico" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUINewIco" Value="path\new.ico" /&gt;
+  &lt;<strong>WixVariable</strong> Id="WixUIUpIco" Value="path\up.ico" /&gt;
+</pre>
+
+<p>これらの意味と詳細は以下の通りです。</p>
+
+<table summary="カスタマイズ可能なUIのファイル" class="table" width="100%">
+
+<thead>
+<tr>
+<th abbr="I" style="width: 30%">カスタマイズするファイルのID</th>
+<th abbr="D" style="width: 70%">説明</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td align="left">WixUIBannerBmp</td>
+<td align="left">493 &times; 58 ピクセル。このビットマップは、最初のページを除く全てのページの上部に表示されます。</td>
+</tr>
+
+<tr>
+<td align="left">WixUIDialogBmp</td>
+<td align="left">493 &times; 312 ピクセル。このビットマップは、インストーラの最初のページに表示されます。</td>
+</tr>
+
+<tr>
+<td align="left">WixUIExclamationIco</td>
+<td align="left">感嘆符アイコン</td>
+</tr>
+
+<tr>
+<td align="left">WixUIInfoIco</td>
+<td align="left">情報サイン・アイコン</td>
+</tr>
+
+<tr>
+<td align="left">WixUINewIco</td>
+<td align="left">「新しいフォルダ」アイコン</td>
+</tr>
+
+<tr>
+<td align="left">WixUIUpIco</td>
+<td align="left">「一つ上のフォルダ」アイコン</td>
+</tr>
+
+<tr>
+<td align="left">WixUILicenseRtf</td>
+<td align="left">なるべくなら、ワードパッドのような単純なエディタを使って作成して下さい。どうしてもワードのような必要以上に複雑なアプリケーションを使いたい場合は、せめて最終版はワードパッドで保存し直すことを検討して下さい。その方が、RTF ファイルがシンプルで小さくなります。</td>
+</tr>
+
+</tbody>
+</table>
+
+<br/>
+<p class="transnote">&dagger; 訳註：原文では、WixUIBannerBmp のサイズは 500 &times; 63 ピクセル、WixUIDialogBmp のサイズは 500 &times; 314 ピクセルと記述されています。それらは、WiX 2 時代のライブラリが内蔵していたビットマップのサイズに基づくものです。上記の表には、WiX 3 のライブラリが内蔵しているビットマップのピクセル・サイズを記しました。</p>
+<p class="transnote">ただし、これらのビットマップのサイズは、絶対にそうでなければならない、というものではありません。<a href="lesson08.html#CH-8.7">8.7 法律用語</a> の末尾にあるビットマップについての記述および訳註を参照してください。</p>
+</div>
+
+<div class='section'>
+
+<h2 id="CH-2.4">2.4 アナタハ 英語ヲ 話シマスカ？</h2>
+
+<p id="loc">現在の所、WiX でサポートされているのは下記の言語です(他の言語の状態については、<a href="http://www.tramontana.co.hu/wix/loc/index.php">地域化(ローカライゼーション)プロジェクトのページ</a> を参照してください)。<strong>Product</strong> および <strong>Package</strong> の両方のタグで、言語とコードページの両方を正しく指定するように気をつけて下さい。言語の設定が正しくないと、インストーラの基本言語とは異なる、予期しない言語のエラー・メッセージがポップ・アップすることがあります。また、コードページが正しくないと、アクセント記号付き文字や非欧文文字がまったく表示されないことがあります。</p>
+
+<table summary="WixUI の言語サポート" class="table" width="100%">
+
+<thead>
+<tr>
+<th abbr="L" style="width: 18%">言語</th>
+<th abbr="S" style="width: 16%">状態</th>
+<th abbr="C" style="width: 20%">カルチャ(<a href="http://www.w3.org/WAI/ER/IG/ert/iso639.htm#2letter" style="text-decoration: underline">言語</a>-<a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.php" style="text-decoration: underline">国</a>)</th>
+<th abbr="F" style="width: 22%">地域化ファイル</th>
+<th abbr="A" style="width: 12%">言語</th>
+<th abbr="P" style="width: 12%">コードページ</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">中国語(繁体字)</td>
+<td>完了</td>
+<td>zh-tw</td>
+<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_zh-tw.wxl&amp;type=text/plain'>WixUI_zh-tw.wxl</a><BR></td>
+<td>1028</td>
+<td>950</td>
+</tr>
+
+<tr>
+<td align="left">チェコ語</td>
+<td>リリース済み</td>
+<td>cs-sz</td>
+<td align="left">&nbsp;</td>
+<td>1029</td>
+<td>1250</td>
+</tr>
+
+<tr>
+<td align="left">デンマーク語</td>
+<td>完了</td>
+<td>da-dk</td>
+<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_da-dk.wxl&amp;type=text/plain'>WixUI_da-dk.wxl</a></td>
+<td>1030</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">オランダ語</td>
+<td>リリース済み</td>
+<td>nl-nl</td>
+<td align="left">&nbsp;</td>
+<td>1043</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">英語</td>
+<td>リリース済み</td>
+<td>en-us</td>
+<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_en-us.wxl&amp;type=text/plain'>WixUI_en-us.wxl</a> *</td>
+<td>1033</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">フランス語</td>
+<td>リリース済み</td>
+<td>fr-fr</td>
+<td align="left">&nbsp;</td>
+<td>1036</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">ドイツ語</td>
+<td>リリース済み</td>
+<td>de-de</td>
+<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixext_de-de.wxl&amp;type=text/plain'>WixExt_de-de.wxl</a> *</td>
+<td>1031</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">ハンガリー語</td>
+<td>リリース済み</td>
+<td>hu-hu</td>
+<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_hu-hu.wxl&amp;type=text/plain'>WixUI_hu-hu.wxl</a> *</td>
+<td>1038</td>
+<td>1250</td>
+</tr>
+
+<tr>
+<td align="left">イタリア語</td>
+<td>リリース済み</td>
+<td>it-it</td>
+<td align="left">&nbsp;</td>
+<td>1040</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">日本語</td>
+<td>リリース済み</td>
+<td>ja-jp</td>
+<td align="left">&nbsp;</td>
+<td>1041</td>
+<td>932</td>
+</tr>
+
+<tr>
+<td align="left">ポーランド語</td>
+<td>リリース済み</td>
+<td>pl-pl</td>
+<td align="left">&nbsp;</td>
+<td>1045</td>
+<td>1250</td>
+</tr>
+
+<tr>
+<td align="left">ロシア語</td>
+<td>リリース済み</td>
+<td>ru-ru</td>
+<td align="left">&nbsp;</td>
+<td>1049</td>
+<td>1251</td>
+</tr>
+
+<tr>
+<td align="left">スペイン語</td>
+<td>リリース済み</td>
+<td>es-es</td>
+<td align="left">&nbsp;</td>
+<td>3082</td>
+<td>1252</td>
+</tr>
+
+<tr>
+<td align="left">ウクライナ語</td>
+<td>リリース済み</td>
+<td>uk-ua</td>
+<td align="left">&nbsp;</td>
+<td>1058</td>
+<td>1251</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>* いくつかの言語については、リリース・パッケージの地域化ファイルの代りとして、もっと洗練された自然な言い回しの理解しやすい翻訳を同時に提供しています。これらの翻訳は、Microsoft がインストールで使っている通常の表現とはいくつかの点で異なっていますが、私たちの個人的な見解では、リリース版よりも単純で分りやすい言葉を使っています。それらを調べてみて、インストール・パッケージにどちらを使うかを決めるのは、完全にあなたの自由です。</p>
+
+<p><em>リリース済み</em>の言語は、コンパイルされて WixUI 拡張ライブラリに入っています。これらを使う場合は、カルチャ名を指定するだけ済みます。統合環境を使っている場合は、プロジェクトのプロパティ・ダイアログに「カルチャ」欄がありますので、そこでカルチャ名を指定できます。カンマで区切って複数のカルチャ識別子を指定すると、その全部について、個別のインストーラが作成されます。</p>
+
+<pre class="command">
+candle.exe SampleWixUI.wxs
+light.exe -ext WixUIExtension -cultures:fr-fr SampleWixUI.wixobj
+</pre>
+
+<p><em>完了</em>状態の言語(リリースへの承認待ちののもの)や、代替の言語ファイル(上記のテーブルからダウンロードしたものや、あなた自身が作ったもの)は、コマンド・ラインで直接に指定することが出来ます。統合環境では、ソース・ファイルの中に <kbd>.wxl</kbd> ファイルを含めるだけで、適切なインストーラが自動的に作成されます。</p>
+
+<pre class="command">
+candle.exe SampleWixUI.wxs
+light.exe -ext WixUIExtension -loc path/WixUI_hu-hu.wxl
+          -out SampleWixUI.msi SampleWixUI.wixobj
+</pre>
+
+<p class="transnote">&dagger; 訳註：残念ながら、リリース版の日本語地域化ファイルの品質はあまり良くありません。不明瞭な表現や不自然な言い回しが多く、中には明らかに誤訳と思われるものあります。代替版(<a href="download/WixUI_Alt_ja-jp.zip">WixUI_Alt_ja-jp.zip</a>)を参考に供しますので、気に入ったら、使って下さい。</p>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-2.5">2.5 チェーンの新しい環</h2>
+
+<p>WixUI インタフェイス・ライブラリは、通常のセットアップ・シナリオのほとんどを扱うことが出来ますが、ときには修正や追加が必要になることもあります。そういう場合に対処するためには、<a href="http://sourceforge.net/projects/wix/">WiX ソース・コード</a> もダウンロードしなければなりません。と言うのは、いくつかのソース・ファイルを覗き見する必要があるからです。</p>
+
+<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixuiadddlg.zip&amp;type=application/zip">サンプル SampleWixUIAddDlg</a>では、<em>WixUI_Mondo</em> ライブラリを修正して、ユーザーに登録情報(名前、組織、シリアル番号)を入力してもらうダイアログを追加します。新しいダイアログは、「使用許諾契約」ダイアログと「セットアップ・タイプ」ダイアログの間に出現します。</p>
+
+<p class="transnote">&dagger; 訳註：SampleWixUIAddDlg の日本語版は <a href="download/Sample-2-5-WixUIAddDlg.zip">Sample-2-5-WixUIAddDlg.zip</a> です。</p>
+
+<p>これを実現するためには、この新しいダイアログを記述する <kbd>UserRegistrationDlg.wxs</kbd> という新しいファイルを提供しなければなりません。既存のダイアログから始めて、それを修正しても構いませんし、一から自分で書いても構いません。<a href='lesson08.html'>後のレッスン</a>で、ダイアログの作成方法と、WiX のさまざまなインタフェイス要素の使い方を説明しますが、ここでは、いくつかの注意点を述べるにとどめます。</p>
+
+<pre>
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;<strong>Wix</strong> xmlns='http://schemas.microsoft.com/wix/2006/wi'&gt;
+</pre>
+
+<p>新しいダイアログは独立した断片(fragment)として記述しなければなりません。</p>
+
+<pre>
+  &lt;<strong>Fragment</strong>&gt;
+    &lt;<strong>UI</strong>&gt;
+      &lt;<strong>Dialog</strong> Id="UserRegistrationDlg"
+              Width="370" Height="270"
+              Title="[ProductName] [Setup]" NoMinimize="yes"&gt;
+        &lt;<strong>Control</strong> Id="NameLabel" Type="Text"
+                 X="45" Y="73" Width="100" Height="15"
+                 TabSkip="no" Text="ユーザー名(&amp;amp;U):" /&gt;
+        &lt;<strong>Control</strong> Id="NameEdit" Type="Edit"
+                 X="45" Y="85" Width="220" Height="18"
+                 Property="USERNAME" Text="{80}" /&gt;
+        &lt;<strong>Control</strong> Id="OrganizationLabel" Type="Text"
+                 X="45" Y="110" Width="100" Height="15"
+                 TabSkip="no" Text="会社名(&amp;amp;O):" /&gt;
+        &lt;<strong>Control</strong> Id="OrganizationEdit" Type="Edit"
+                 X="45" Y="122" Width="220" Height="18"
+                 Property="COMPANYNAME" Text="{80}" /&gt;
+        &lt;<strong>Control</strong> Id="CDKeyLabel" Type="Text"
+                 X="45" Y="147" Width="50" Height="10"
+                 TabSkip="no"&gt;
+          &lt;<strong>Text</strong>&gt;CD キー(&amp;amp;K)&lt;/<strong>Text</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="CDKeyEdit" Type="MaskedEdit"
+                 X="45" Y="159" Width="250" Height="16"
+                 Property="PIDKEY" Text="[PIDTemplate]" /&gt;
+</pre>
+
+<p>このダイアログが、元の一連のダイアログの中に挿入されます。このダイアログに先行するダイアログと後続するダイアログを指定しなければなりません。先行するのは「使用許諾契約」、後続するのは「セットアップ・タイプ」です。<em>WixUI_Mondo</em> のソース・ファイル、ダウンロードしたソース・パッケージの <kbd>src\ext\UIExtension\wixlib\WixUI_Mondo.wxs</kbd> を見ると、これらのダイアログの実際の識別子を知ることが出来ます。名前は、<em>LicenseAgreementDlg</em> と <em>SetupTypeDlg</em> です。従って、この新しいダイアログから、これら前後のダイアログを参照するように、以下のように記述します。</p>
+
+<pre>
+        &lt;<strong>Control</strong> Id="Back" Type="PushButton"
+                 X="180" Y="243" Width="56" Height="17"
+                 Text="戻る(&amp;amp;B)"&gt;
+          &lt;<strong>Publish</strong> Event="NewDialog"
+                   Value="<span class="red">LicenseAgreementDlg</span>"&gt;1&lt;/<strong>Publish</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="Next" Type="PushButton"
+                 X="236" Y="243" Width="56" Height="17"
+                 Default="yes" Text="次へ(&amp;amp;N)"&gt;
+          &lt;<strong>Publish</strong> Event="ValidateProductID"
+                   Value="0"&gt;1&lt;/<strong>Publish</strong>&gt;
+          &lt;<strong>Publish</strong> Event="SpawnWaitDialog"
+                   Value="WaitForCostingDlg"&gt;CostingComplete = 1&lt;/<strong>Publish</strong>&gt;
+          &lt;<strong>Publish</strong> Event="NewDialog"
+                   Value="<span class="red">SetupTypeDlg</span>"&gt;ProductID&lt;/<strong>Publish</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="Cancel" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17"
+                 Cancel="yes" Text="キャンセル"&gt;
+          &lt;<strong>Publish</strong> Event="SpawnDialog"
+                   Value="CancelDlg"&gt;1&lt;/<strong>Publish</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44"
+                 TabSkip="no" Text="WixUI_Bmp_Banner" /&gt;
+        &lt;<strong>Control</strong> Id="Description" Type="Text"
+                 X="25" Y="23" Width="280" Height="15"
+                 Transparent="yes" NoPrefix="yes"&gt;
+          &lt;<strong>Text</strong>&gt;あなたのユーザー情報を入力して下さい。&lt;/<strong>Text</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="BottomLine" Type="Line"
+                 X="0" Y="234" Width="370" Height="0" /&gt;
+        &lt;<strong>Control</strong> Id="Title" Type="Text"
+                 X="15" Y="6" Width="200" Height="15"
+                 Transparent="yes" NoPrefix="yes"&gt;
+          &lt;<strong>Text</strong>&gt;{\WixUI_Font_Title}ユーザー情報&lt;/<strong>Text</strong>&gt;
+        &lt;/<strong>Control</strong>&gt;
+        &lt;<strong>Control</strong> Id="BannerLine" Type="Line"
+                 X="0" Y="44" Width="370" Height="0" /&gt;
+      &lt;/<strong>Dialog</strong>&gt;
+    &lt;/<strong>UI</strong>&gt;
+  &lt;/<strong>Fragment</strong>&gt;
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p>新しいダイアログを元のユーザー・インタフェイスに組み込むことはかなり簡単です。前にやったように単純に <em>WixUI_Mondo</em> を参照する代りに、<strong>UI</strong> タグで私たち自身のインタフェイスを作成します。と言っても、<em>WixUI_Mondo</em> の大部分は依然として使いたい訳ですから、まず最初に <strong>UIRef</strong> を使って WixUI_Mondo を呼び出してから、修正部分を追加します。最初に、新しい <em>UserRegistrationDlg</em> ダイアログを参照します。</p>
+
+<p>次に、残っている二つのリンクを定義しなければなりません。元の WixUI_Mondo では、「使用許諾契約」ダイアログは「セットアップ・タイプ」ダイアログを後続するものとして指し示していました。その逆も同様です。今や新しいダイアログが両者の間に挿入されている訳ですから、元のダイアログの<em>「次へ」</em>および<em>「戻る」</em>のリンクをそれに合わせて修正しなければなりません。簡単な方法は、<kbd>WixUI_Mondo.wxs</kbd> から関連する <strong>Publish</strong> タグをコピーしてきて、他は何も変えずに、<strong>Value</strong> 属性を修正して新しいダイアログを指し示すようにする、という方法です。</p>
+
+<pre>
+    &lt;<strong>UI</strong> Id="MyWixUI_Mondo"&gt;
+      &lt;<strong>UIRef</strong> Id="WixUI_Mondo" /&gt;
+      &lt;<strong>UIRef</strong> Id="WixUI_ErrorProgressText" /&gt;
+
+      &lt;<strong>DialogRef</strong> Id="UserRegistrationDlg" /&gt;
+
+      &lt;<strong>Publish</strong> Dialog="LicenseAgreementDlg" Control="Next"
+              Event="NewDialog" Value="<span class="red">UserRegistrationDlg</span>"
+              Order="3"&gt;
+        LicenseAccepted = "1"
+      &lt;/<strong>Publish</strong>&gt;
+      &lt;<strong>Publish</strong> Dialog="SetupTypeDlg" Control="Back"
+              Event="NewDialog" Value="<span class="red">UserRegistrationDlg</span>"&gt;
+        1
+      &lt;/<strong>Publish</strong>&gt;
+    &lt;/<strong>UI</strong>&gt;
+</pre>
+
+<p>メインのソース・ファイルは、私たちが参照したプロパティを定義しなければなりません。マスク・エディット・コントロールは、<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/msi/setup/maskededit_control.asp">いろんな文字</a>を使って、どんな内容がどのようにコントロールに表示されるか、どんな種類の入力をコントロールが受け入れるか、そして、データを受け取るプロパティに割り当てられる最終的なデータがどのような書式で整形されるか、という事を決定します。</p>
+
+<pre>
+    &lt;<strong>Property</strong> Id="PIDTemplate"&gt;&lt;![CDATA[12345&lt;### ###&gt;@@@@@]]&gt;&lt;/<strong>Property</strong>&gt;
+</pre>
+
+<p>これで全てです。これで、修正されたインストーラを下記のコマンドによってビルドすることが出来ます。</p>
+
+<pre class="command">
+candle.exe SampleWixUIAddDlg.wxs UserRegistrationDlg.wxs
+light.exe -ext WixUIExtension -out SampleWixUIAddDlg.msi
+          SampleWixUIAddDlg.wixobj UserRegistrationDlg.wixobj
+</pre>
+
+</div>
+
+<div class='section'>
+
+<h2 id="CH-2.6">2.6 地域化を考える</h2>
+
+<p>私たち独自のダイアログを WixUI に追加したら、同じように地域化(ローカライズ)もしたいですね。そのためにかかる余分の手間は、それほど大きくはありません。メインのソース・ファイルは同じままです。修正しなければならないのは、<kbd>UserRegistrationDlg.wxs</kbd> の中の新しいダイアログだけです。固定されたテキストの代りに、地域化できる文字列参照を使います。</p>
+
+<pre>
+  &lt;<strong>Fragment</strong>&gt;
+    ...
+      &lt;<strong>Dialog</strong> Id="UserRegistrationDlg" Width="370" Height="270"
+              Title="!(loc.UserRegistrationDlg_Title)" NoMinimize="yes"&gt;
+        &lt;<strong>Control</strong> Id="NameLabel" Type="Text"
+                 X="45" Y="73" Width="100" Height="15"
+                 TabSkip="no" Text="!(loc.UserRegistrationDlg_UserName)" /&gt;
+        &lt;<strong>Control</strong> Id="OrganizationLabel" Type="Text"
+                 X="45" Y="110" Width="100" Height="15"
+                 TabSkip="no" Text="!(loc.UserRegistrationDlg_Organization)" /&gt;
+    ...
+  &lt;/<strong>Fragment</strong>&gt;
+&lt;/<strong>Wix</strong>&gt;
+</pre>
+
+<p>次に、これらの文字列の一覧を記載した地域化ファイルを適切なカルチャで作成します。ここでは、そのファイルを <kbd>UserRegistrationDlg.fr-fr.wxl</kbd> と呼ぶことにしましょう(ファイル名はあなた次第ですが、拡張子 <kbd>.wxl</kbd> は固定されています)。<strong>WixLocalization</strong> タグの中で、カルチャとコードページを指定しなければいけません。地域化したい他の言語についても、同様な複製を作って下さい。</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;<strong>WixLocalization</strong> Culture="fr-fr" Codepage="1252"
+                 xmlns="http://schemas.microsoft.com/wix/2006/localization"&gt;
+  &lt;<strong>String</strong> Id="UserRegistrationDlg_Title" Overridable="yes"&gt;<span class="red">???</span>&lt;/<strong>String</strong>&gt;
+  &lt;<strong>String</strong> Id="UserRegistrationDlg_UserName" Overridable="yes"&gt;<span class="red">???</span>&lt;/<strong>String</strong>&gt;
+  &lt;<strong>String</strong> Id="UserRegistrationDlg_Organization" Overridable="yes"&gt;<span class="red">???</span>&lt;/<strong>String</strong>&gt;
+  ...
+&lt;/<strong>WixLocalization</strong>&gt;
+</pre>
+
+<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixuiadddlgloc.zip&amp;type=application/zip">サンプル・ソース(SampleWixUIAddDlgLoc)</a>からインストーラをビルドするためには、地域化ファイルも参照する必要があります。統合環境では、地域化ファイルは、プロジェクトに含めるだけで、自動的に使用されるようになります。</p>
+
+<pre class="command">
+candle.exe SampleWixUIAddDlgLoc.wxs UserRegistrationDlg.wxs
+light.exe -ext WixUIExtension -cultures:fr-fr
+          -loc UserRegistrationDlg.fr-fr.wxl
+          -out SampleWixUIAddDlgLoc.msi
+          SampleWixUIAddDlgLoc.wixobj UserRegistrationDlg.wixobj
+</pre>
+
+<p class="transnote">&dagger; 訳註：SampleWixUIAddDlgLoc の日本語版を <a href="download/Sample-2-6-WixUIAddDlgLoc.zip">Sample-2-6-WixUIAddDlgLoc.zip</a> として用意しました。これまでメインのソースに埋め込んでいた日本語のテキストも地域化ファイルに分離しています。そのため、コマンド・ラインで指定しなければならない地域化ファイルの数が、上記のコマンド・ラインの例より増えています。</p>
+<p class="transnote">なお、日本語版のサンプルで示しているように、<em>GUID</em> も地域化ファイルの中で定義する事が出来ますが、その場合は GUID をブレース(波括弧 <em>{}</em>)で囲む必要があります。</p>
+
+</div>
+
+</div>
+
+<div class='navigation'>
+<a href='index.html#TOC'>&bull; 目次</a>
+ | <a href='lesson01.html'>&laquo; 前へ</a>
+ | <a href='lesson03.html'>次へ &raquo;</a>
+ | <a href="http://www.tramontana.co.hu/wix/lesson2.php">&lowast; 原文</a>
+</div>
+
+<script type="text/javascript">
+<!--
+xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
+yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
+-->
+</script>
+
+<address>
+Copyright &copy; 2004-2010,
+<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+<br>
+何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
+<br>
+注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
+送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
+そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+</address>
+
+<address>
+日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+<br>
+原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
+</address>
+
+</body>
+
+</html>
