@@ -1,0 +1,99 @@
+Comments on WiX tutorial
+2010-01-30 Nobuo Kihara
+
+1.1 The Software Package
+
+> before you ship anything
+
+A dead link.
+
+1.2 The Files Inside
+
+> Windows Installer with use this description to prompt for it
+
+"will" instead of "with"
+
+1.7 Beyond Files
+
+It's not up to date. Registry element is deprecated in WiX 3.
+
+2.3 UI Wizardry
+
+> WixUI has four different flavors
+
+"five" instead of "four".
+		
+2.6 "SampleWixUIAddDlgLoc" source code
+
+It compiles good, but will produce errors during the
+installation when you click on the "back" and "next" buttons
+in the UserRegistrationDlg.
+The following two lines should be added.
+
+<Property Id="WixUI_UserRegistrationDlgBack">LicenseAgreementDlg</Property>
+<Property Id="WixUI_UserRegistrationDlgNext">SetupTypeDlg</Property>
+
+4 Upgrades and Modularization
+
+The general descriptions of the three methods of updating
+or upgrading of the product could be revised in order to
+inform the readers explicitly that Major Upgrade would
+probably be the best solution for almost all circumstances
+when the product is not very large.
+
+Some description of .wixlibs would be appreciated, though
+it might not be a major concern.
+
+4.1 Checking for Oldies
+
+The "safety lock" will not work for Small Updates and
+Minor Upgrades. Because the product guid of the newer
+package is the same as the old one, it has to be opened
+with the command line switches of "REINSTALL=ALL 
+REINSTALLMODE=vomus", and it will force the installer
+to run in the maintenance mode where FindRelatedProducts
+custom action will return instantly without searching the
+related products. Consequently, neither "SELFFOUND" nor
+"NEWERFOUND" will be filled as expected.
+
+4.1 "SampleUpgrade" source coude
+
+The version of "New" remains 1.0.0, but it should be 1.0.1.
+
+4.2 Replacing Ourselves
+
+RemoveExistingProducts custom action should be mentioned.
+The scheduling of it is needed for Major Upgrade.
+
+5.3 Web Directory
+
+It's not up to date.
+WiX 3 has its IIS extention in WixIISExtension.dll,
+not in sca.wixlib. And Web- elements have been moved
+to a separated namespace.
+		
+6.2 Expression Syntax
+
+> advertised (only for components)
+
+It should be "advertised (only for features)".
+
+8.4 Customizations Galore
+
+> Setting Indirect tells the installer to actually modify
+> the property value with the path the user selects
+
+This is a little bit misleading. What tells the installer
+to modify the property value is not Indirect attribute but
+is Property attribute. What Indirect="yes" tells the installer
+is that the target is not "_BrowseProperty" property itself, 
+but some other property of which "_BrowseProperty" holds the
+name.
+
+10.1 Custom Actions and User Interface
+
+> Indirect="yes"
+
+It should be Indirect="no", otherwise the list box will not
+come up with the items that the CA has filled.
+

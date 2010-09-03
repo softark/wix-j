@@ -1,0 +1,25 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Module Id="File1" Language="0" Version="1.2.3">
+
+    <Package Id="YOURGUID-8DEE-4410-990A-1802896C4209" InstallerVersion="100"
+             Languages="1041" Manufacturer="ぴよソフト" SummaryCodepage="932"
+             AdminImage="no" />
+
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+        <Directory Id='ProgramFilesFolder' Name='PFiles'>
+          <Directory Id='Piyo' Name='Piyo'>
+            <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+              <Component Id="File1" Guid="YOURGUID-CF0E-40AB-ACC5-0E9A5F112628">
+                <File Id="File1.txt" Name="File1.txt"
+                      Source="File1.txt" KeyPath='yes' />
+              </Component>
+
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+  </Module>
+</Wix>

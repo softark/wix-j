@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Fragment Id='FragmentManual'>
+
+    <DirectoryRef Id='INSTALLDIR'>
+      <Component Id='Manual' Guid='YOURGUID-574D-4A9A-A266-5B5EC2C022A4'>
+        <File Id='Manual' Name='Manual.pdf' DiskId='1'
+              Source='Manual.pdf' KeyPath='yes'>
+          <Shortcut Id="startmenuManual" Directory="ProgramMenuDir"
+                    Name="取扱説明書" Advertise="yes" />
+        </File>
+      </Component>
+    </DirectoryRef>
+
+  </Fragment>
+</Wix>

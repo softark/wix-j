@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="ProductGUID" Overridable="yes">{YOURGUID-6713-42BE-A81D-F61BF85112E1}</String>
+  <String Id="ProductUpgradeCode" Overridable="yes">{YOURGUID-2B5D-45E2-B0AF-6C9AA165F644}</String>
+  <String Id="MainExecutableGUID" Overridable="yes">{YOURGUID-67BD-4FB2-8EB0-6E02DFC268CD}</String>
+  <String Id="HelperLibraryGUID" Overridable="yes">{YOURGUID-7EE6-4CEB-83F8-689012EB310E}</String>
+  <String Id="ManualGUID" Overridable="yes">{YOURGUID-5FDA-45C2-9056-31E1CFC018D8}</String>
+  <String Id="ProgramMenuDirGUID" Overridable="yes">{YOURGUID-9729-45D1-BD57-F10F66540524}</String>
+  <String Id="ProductName" Overridable="yes">Hoge 1.0 E</String>
+  <String Id="LanguageCode" Overridable="yes">1033</String>
+  <String Id="CodepageCode" Overridable="yes">1252</String>
+  <String Id="Culture" Overridable="yes">en-us</String>
+  <String Id="Manufacturer" Overridable="yes">Piyo Software</String>
+  <String Id="PackageKeywords" Overridable="yes">Installer</String>
+  <String Id="PackageDescription" Overridable="yes">Piyo Software's Hoge 1.0 E Installer</String>
+  <String Id="PackageComments" Overridable="yes">Hoge is a registered trademark of Piyo Software.</String>
+  <String Id="DiskPrompt_1" Overridable="yes">CD-ROM #1</String>
+  <String Id="DiskPromptFormat" Overridable="yes">Piyo Software's Hoge 1.0 E Installation [1]</String>
+  <String Id="ExeShortcutName" Overridable="yes">Hoge 1.0 E</String>
+  <String Id="ManualShortcutName" Overridable="yes">Operation Manual</String>
+  <String Id="ProgramMenuDirName" Overridable="yes">Hoge 1.0 E</String>
+  <String Id="FeatureCompleteTitle" Overridable="yes">Hoge 1.0 E</String>
+  <String Id="FeatureCompleteDescription" Overridable="yes">Complete package.</String>
+  <String Id="FeatureProgramTitle" Overridable="yes">Program</String>
+  <String Id="FeatureProgramDescription" Overridable="yes">Main executable.</String>
+  <String Id="FeatureDocTitle" Overridable="yes">Manual</String>
+  <String Id="FeatureDocDescription" Overridable="yes">Operation manual.</String>
+</WixLocalization>

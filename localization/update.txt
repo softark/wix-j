@@ -1,0 +1,44 @@
+1610
+The setup must update files or services that cannot be updated while the system is running. If you choose to continue, a reboot will be required to complete the setup.
+システムの稼働中には更新できないファイルまたはサービスを更新する必要があります。セットアップの続行を選択すると、更新処理を完了するために、システムの再起動が必要になります。
+
+1611
+The setup was unable to automatically close all requested applications. Please ensure that the applications holding files in use are closed before continuing with the installation.
+要求されたアプリケーションの全てを自動的に終了することが出来ませんでした。インストールを続行する前に、更新が必要なファイルを使用しているアプリケーションが終了されていることを確認して下さい。
+
+1651
+Admin user failed to apply patch for a per-user managed or a per-machine application which is in advertise state.
+管理者ユーザーがパッチの適用に失敗しました。アプリケーションは、ユーザーごとまたは全ユーザー向けに、管理されてアドバタイズされています。
+
+1939
+Service '[2]' ([3]) could not be configured. This could be a problem with the package or your permissions. Verify that you have sufficient privileges to configure system services.
+サービス '[2]' ([3]) を構成することが出来ませんでした。パッケージに問題があるか、あなたの権限に問題があると思われます。あなたがシステム サービスを構成するのに十分な特権を持っているかどうか確認して下さい。
+
+1940
+Service '[2]' ([3]) could not be configured. Configuring services is supported only on Windows Vista/Server 2008 and above.
+サービス '[2]' ([3]) を構成することが出来ませんでした。サービスの構成は、Windows Vista、Windows Server 2008、またはそれ以降でのみサポートされています。
+
+1941
+Both LockPermissions and MsiLockPermissionsEx tables were found in the package. Only one of them should be present. This is a problem with the package.
+パッケージに LockPermissions テーブルと MsiLockPermissionsEx テーブルの両方が見付かりました。どちらか一つだけでなければなりません。これはインストーラ パッケージの問題です。
+
+1942
+Multiple conditions ('[2]' and '[3]')have resolved to true while installing Object [4] (from table [5]). This may be a problem with the package.
+テーブル [5] の オブジェクト [4] をインストールする時に、複数の条件 ('[2]' と '[3]') が「真」になりました。これはインストーラ パッケージの問題である可能性があります。
+
+1943
+SDDL string '[2]' for object [3](in table [4]) could not be resolved into a valid Security Descriptor.
+See Securing Resources for information on using MsiLockPermissionsEx table.
+テーブル [4] のオブジェクト [3] に対する SDDL 文字列 '[2]' を妥当なセキュリティ ディスクリプタとして解決することが出来ませんでした。
+
+1944
+Could not set security for service '[3]'. Error: [2]. Verify that you have sufficient privileges to modify the security permissions for this service.
+サービス '[3]' に対してセキュリティを設定することが出来ませんでした。エラー : [2]。あなたがこのサービスのセキュリティ権限を変更するための十分な特権を持っているかどうか、確認して下さい。
+
+1945
+You do not have sufficient privileges to complete the re-advertisement of this product. Re-advertisement requires initiation by a local system account calling the MsiAdvertiseScript API
+あなたはこの製品の再アドバタイズを実行するための十分な特権を持っていません。再アドバタイズはローカル システム アカウントによって開始して、MsiAdvertiseScript API を呼び出す必要があります。
+
+1946
+Property '[2]' for shortcut '[3]' could not be set.{{ HRESULT [4].}}
+ショートカット '[3]' のプロパティ '[2]' を設定することが出来ませんでした。{{ HRESULT [4].}}

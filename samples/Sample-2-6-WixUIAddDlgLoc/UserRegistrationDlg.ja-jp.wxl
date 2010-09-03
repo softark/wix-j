@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ja-jp" Codepage="932" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="UserRegistrationDlg_Title" Overridable="yes">[ProductName] セットアップ</String>
+  <String Id="UserRegistrationDlg_UserName" Overridable="yes">ユーザー名(&amp;U):</String>
+  <String Id="UserRegistrationDlg_Organization" Overridable="yes">会社名(&amp;O):</String>
+  <String Id="UserRegistrationDlg_Key" Overridable="yes">CD キー(&amp;K):</String>
+  <String Id="UserRegistrationDlgNext" Overridable="yes">次へ(&amp;N)</String>
+  <String Id="UserRegistrationDlgBack" Overridable="yes">戻る(&amp;B)</String>
+  <String Id="UserRegistrationDlgCancel" Overridable="yes">キャンセル</String>
+  <String Id="UserRegistrationDlg_Description" Overridable="yes">あなたのユーザー情報を入力してください。</String>
+  <String Id="UserRegistrationDlgTitle" Overridable="yes">ユーザー情報</String>
+</WixLocalization>

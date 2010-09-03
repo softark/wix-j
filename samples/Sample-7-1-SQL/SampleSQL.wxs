@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'
+     xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'
+     xmlns:sql='http://schemas.microsoft.com/wix/SqlExtension'>
+
+  <Product Name='ほげ 1.0'
+           Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
+           UpgradeCode='YOURGUID-7349-453F-94F6-BCB5110BA4FD'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <util:User Id='SQLUser' Name='[SQLUSER]' Password='[SQLPASSWORD]' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='InstallDir' Name='Acme'>
+
+          <Component Id='SqlComponent' Guid='YOURGUID-D8C7-4102-BA84-9702188FA316' KeyPath='yes'>
+
+            <sql:SqlDatabase Id='SqlDatabase' Database='Foobar' User='SQLUser' Server='[SQLSERVER]'
+                             CreateOnInstall='yes' DropOnUninstall='yes' ContinueOnError='yes'>
+              <sql:SqlScript Id='CreateTable' BinaryKey='CreateTable' ExecuteOnInstall='yes' />
+            </sql:SqlDatabase>
+          </Component>
+
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Binary Id='CreateTable' SourceFile='CreateTable.sql' />
+
+    <Feature Id='SqlFeature' Title='SqlFeature' Level='1'>
+      <ComponentRef Id='SqlComponent' />
+    </Feature>
+
+    <Property Id='SQLUSER'>username</Property>
+    <Property Id='SQLPASSWORD'>password</Property>
+    <Property Id='SQLSERVER'>server</Property>
+
+  </Product>
+</Wix>
