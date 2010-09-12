@@ -1,0 +1,6 @@
+wix.dcm, wix2.dcm, wix3.dcm は、IBM デジカメの達人 のファイル
+
+WiX による UI のサンプルを複数のレイヤーに格納している
+index.html のタイトル画像を作成するためのワーク
+
+最終的には、wix3.dcm を使って、images/wix3.gif を作った
