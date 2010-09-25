@@ -94,6 +94,7 @@ div.navigation a {
 div.section {
   /*background-image: url(images/greenheader.png);
   background-repeat: repeat-x; */
+  display: inline-block;
   margin: 0pt 0pt 20pt 0pt;
   padding: 0pt 10pt 10pt 10pt;
   border-top: 1px solid #ACCF3A;
