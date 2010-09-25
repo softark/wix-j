@@ -94,7 +94,6 @@ div.navigation a {
 div.section {
   /*background-image: url(images/greenheader.png);
   background-repeat: repeat-x; */
-  display: inline-block;
   margin: 0pt 0pt 20pt 0pt;
   padding: 0pt 10pt 10pt 10pt;
   border-top: 1px solid #ACCF3A;
@@ -102,6 +101,9 @@ div.section {
   border-right: 2px solid #ACCF3A;
   border-bottom: 2px solid #ACCF3A;
   background-color: #F9F9F9;
+  }
+* html div.section {
+  display: inline-block;
   }
 div.section h2, div.section h2 a {
   margin-top: -1pt;
