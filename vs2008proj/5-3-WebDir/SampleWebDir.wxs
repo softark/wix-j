@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'
+     xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension">
+
+  <Product Name='ほげ 1.0'
+           Id='0B93F2A5-B9DE-4772-A778-449A95E3D512'
+           UpgradeCode='B1C8549C-1B96-4CA7-9C82-28081D745AC1'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='InstallDir' Name='Piyo'>
+
+          <Component Id='default.htmlComponent'
+                     Guid='3751D79D-55ED-4FE9-95A7-E5A40A33820A'>
+            <File Id='default.htmFile' Name='default.htm'
+                  KeyPath='yes' DiskId='1' Source='default.htm' />
+          </Component>
+
+        </Directory>
+      </Directory>
+
+      <Component Id='TestWebVirtualDirComponent' Guid='FFF1A25F-B42D-4B8A-AF85-014D4DDB228E'>        
+        <iis:WebVirtualDir Id='TestWebVirtualDir' Alias='Test' Directory='InstallDir' WebSite='DefaultWebSite'>
+          <iis:WebApplication Id='TestWebApplication' Name='Test' />
+        </iis:WebVirtualDir>
+      </Component>
+
+    </Directory>
+
+    <iis:WebSite Id='DefaultWebSite' Description='Default Web Site'>
+      <iis:WebAddress Id='AllUnassigned' Port='80' />
+    </iis:WebSite>
+
+    <Feature Id='TestFeature' Title='TestFeature' Level='1'>
+      <ComponentRef Id='TestWebVirtualDirComponent' />
+      <ComponentRef Id='default.htmlComponent' />
+    </Feature>
+
+  </Product>
+</Wix>

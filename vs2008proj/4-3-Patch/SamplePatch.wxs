@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Patch AllowRemoval="yes" Manufacturer="ぴよソフト"
+         MoreInfoURL="www.piyosoft.co.jp" DisplayName="ほげ 1.0.0 パッチ"
+         Description="小さな更新パッチ" Classification="Update"
+         Codepage="932"
+         >
+
+    <Media Id='5000' Cabinet='Sample.cab'>
+      <PatchBaseline Id='Sample'/>
+    </Media>
+
+    <PatchFamily Id='SamplePatchFamily' Version='1.0.0.0' Supersede='yes'>
+      <ComponentRef Id='MainExecutable'/>
+    </PatchFamily>
+
+  </Patch>
+</Wix>

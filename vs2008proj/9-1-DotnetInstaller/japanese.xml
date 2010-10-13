@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?> 
+<!--
+There are three types of variables:
+
+1-dotNetInstaller static variables (begin with #): like #APPPATH
+	(the variable #APPPATH is resolved when installing in the user computer)
+	You can use these variables in all the path attributes in the destination configuration.xml.
+2-dotNetInstaller dynamic variables (begin with %): like %s of som settings
+	(the variable %s is resolved when installing and sobstituited with the name of the component to install).
+	Some attributes require these variable in the value, for example : failed_exec_command_continue, installing_component_wait
+3-InstallerEditor variable (begin with ##): ##APPLICATION_NAME, ##COMPONENT_NAME
+	(these variables are resolved by the InstallerEditor when new item are added.)
+	You can use these variables in this template file.
+
+
+-->
+<editortemplate name="Japanese">
+	<schema version="1" />
+	
+	<!-- Available variables: ##APPLICATION_NAME -->	
+	<setupconfiguration
+		cancel_caption = "閉じる"
+		dialog_caption = "##APPLICATION_NAME インストーラー"
+		dialog_message = "##APPLICATION_NAME をインストールするには、&#xD;&#xA;以下のコンポーネントをインストールする必要があります："
+		failed_exec_command_continue = "%s のインストールに失敗しました。他のコンポーネントは続行しますか？"
+		skip_caption = "スキップ" 
+		install_caption = "インストール"
+		installation_completed = "##APPLICATION_NAME のインストールは正常に終了しました。"
+		installation_none = "##APPLICATION_NAME は既にインストールされています。"
+		installing_component_wait = "%s をインストールしています。しばらくお待ち下さい。&#xD;&#xA;この操作には時間がかかるかもしれません・・・"
+		reboot_required = "インストールを続けるには、コンピューターを再起動する必要があります。&#xD;&#xA;今すぐに再起動しますか？"
+		status_installed = " （インストール済み）"
+		status_notinstalled = ""
+		cab_dialog_message = "%s"
+		cab_cancelled_message = "" 
+		cab_dialog_caption = ""
+		cab_path = "#TEMPPATH\#GUID"
+		cab_path_autodelete = "True"
+		log_enabled = "False" 
+		log_file = "#TEMPPATH\dotNetInstallerLog.txt"
+		>
+	</setupconfiguration>
+	
+	<!-- Available variables: ##COMPONENT_NAME -->	
+	<component
+		description = "##COMPONENT_NAME"
+		installcompletemessage = ""
+		>
+	</component>
+
+	<!-- Available variables: ##COMPONENT_NAME -->	
+	<downloaddialog
+		buttoncancel_caption = "キャンセル"
+		buttonstart_caption = "開始"
+		dialog_caption = "##COMPONENT_NAME - ダウンロード コンポーネント"
+		dialog_message = "##COMPONENT_NAME をインストールする為に必要なコンポーネントを&#xD;&#xA;ダウンロードするには '開始'を押して下さい"
+		dialog_message_downloading = "ダウンロード中です。お待ち下さい・・・"
+		>
+	</downloaddialog>
+</editortemplate>

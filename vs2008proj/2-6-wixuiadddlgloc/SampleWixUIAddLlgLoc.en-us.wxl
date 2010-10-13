@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="ProductName" Overridable="yes">Hoge 1.0</String>
+  <String Id="LanguageCode" Overridable="yes">1033</String>
+  <String Id="CodepageCode" Overridable="yes">1252</String>
+  <String Id="Manufacturer" Overridable="yes">Piyo Software</String>
+  <String Id="PackageKeywords" Overridable="yes">Installer</String>
+  <String Id="PackageDescription" Overridable="yes">Piyo Software's Hoge 1.0 Installer</String>
+  <String Id="PackageComments" Overridable="yes">Hoge is a registered trademark of Piyo Software.</String>
+  <String Id="DiskPrompt_1" Overridable="yes">CD-ROM #1</String>
+  <String Id="DiskPromptFormat" Overridable="yes">Piyo Software's Hoge 1.0 Installation [1]</String>
+  <String Id="ExeShortcutName" Overridable="yes">Hoge 1.0</String>
+  <String Id="ManualShortcutName" Overridable="yes">Operation Manual</String>
+  <String Id="ProgramMenuDirName" Overridable="yes">Hoge 1.0</String>
+  <String Id="FeatureCompleteTitle" Overridable="yes">Hoge 1.0</String>
+  <String Id="FeatureCompleteDescription" Overridable="yes">Complete package.</String>
+  <String Id="FeatureProgramTitle" Overridable="yes">Program</String>
+  <String Id="FeatureProgramDescription" Overridable="yes">Main executable.</String>
+  <String Id="FeatureDocTitle" Overridable="yes">Manual</String>
+  <String Id="FeatureDocDescription" Overridable="yes">Operation manual.</String>
+</WixLocalization>
