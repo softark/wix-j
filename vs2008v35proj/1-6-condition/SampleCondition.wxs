@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <Product Name='ほげ 1.0'
+           Id='3AA207D7-05D8-4F86-BCE0-C8091952CFBA'
+           UpgradeCode='D0EFE7B8-8DB3-45CF-8AE3-450ABEA1A436'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id='PiyoHogeRegistry' Type='raw'
+                      Root='HKLM' Key='Software\Piyo\Hoge 1.0'
+                      Name='InstallDir' />
+    </Property>
+
+    <Property Id="FILEEXISTS">
+      <DirectorySearch Id="CheckFileDir" Path="[INSTALLDIR]" Depth="0">
+        <FileSearch Id="CheckFile" Name="Lookfor.txt" />
+      </DirectorySearch>
+    </Property>
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+     <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='MainExecutable'
+                       Guid='878F610C-EC72-4734-A3EC-550B879F324D'>
+              <File Id='HogeEXE'
+                    Name='HogeAppl10.exe' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeAppl100.exe' KeyPath='yes'>
+                <Shortcut Id="startmenuHoge10" Directory="ProgramMenuDir"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopHoge10" Directory="DesktopFolder"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+            <Component Id='HelperLibrary'
+                       Guid='3DCF8534-0F53-4FAE-B060-1356646E12E6'>
+              <File Id='HelperDLL' Name='HogeHelper.dll' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeHelper.dll' KeyPath='yes' />
+            </Component>
+
+            <Component Id='Manual'
+                       Guid='F6D98C6F-BF54-4054-8FBF-C418275075C3'>
+              <File Id='Manual' Name='Manual.pdf' DiskId='1'
+                    Source='$(var.SolutionDir)Common\Manual.pdf' KeyPath='yes'>
+                <Shortcut Id='startmenuManual' Directory='ProgramMenuDir'
+                          Name='取扱説明書' Advertise='yes' />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="ほげ 1.0">
+          <Component Id="ProgramMenuDir"
+                     Guid="1FA5A6FD-9D01-47B2-BF5A-16A611A3DCC2">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU'
+                           Key='Software\[Manufacturer]\[ProductName]'
+                           Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <Feature Id='MainProgram' Level='1'>
+        <ComponentRef Id='MainExecutable' />
+        <ComponentRef Id='HelperLibrary' />
+        <ComponentRef Id='ProgramMenuDir' />
+      </Feature>
+
+      <Feature Id='Documentation' Level='1'>
+        <ComponentRef Id='Manual' />
+        <Condition Level="0">NOT FILEEXISTS</Condition>
+      </Feature>
+    </Feature>
+
+    <Icon Id="Hoge10.exe" SourceFile="$(var.SolutionDir)Release\HogeAppl100.exe" />
+
+  </Product>
+</Wix>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Module Id="MergeProg" Language="1041" Codepage="932" Version="1.0.0">
+
+    <Package Id="40A6F4D5-897D-4D2E-9840-F3270010128E" InstallerVersion="100"
+             Languages="1041" Manufacturer="ぴよソフト" SummaryCodepage="932"
+             AdminImage="no" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='MainExecutable'
+                       Guid='8472C116-2747-46D2-BB0A-44FCEFFD2E4C'>
+              <File Id='HogeEXE'
+                    Name='HogeAppl10.exe' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeAppl100.exe' KeyPath='yes'>
+                <Shortcut Id="startmenuHoge10" Directory="ProgramMenuDir"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopHoge10" Directory="DesktopFolder"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="ほげ 1.0">
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Icon Id="Hoge10.exe" SourceFile="$(var.SolutionDir)Release\HogeAppl100.exe" />
+
+    <Dependency RequiredId="MergeDll.2BC23F1B_523F_4B97_B28F_CAA328F96A7F"
+                RequiredLanguage="0" RequiredVersion="1.0.0" />
+  </Module>
+</Wix>

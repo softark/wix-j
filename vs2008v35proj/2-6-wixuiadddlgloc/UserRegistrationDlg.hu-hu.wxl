@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="hu-hu" Codepage="1250" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="UserRegistrationDlg_Title" Overridable="yes">[ProductName] telepítése</String>
+  <String Id="UserRegistrationDlg_UserName" Overridable="yes">&amp;Felhasználó:</String>
+  <String Id="UserRegistrationDlg_Organization" Overridable="yes">&amp;Szervezet:</String>
+  <String Id="UserRegistrationDlg_Key" Overridable="yes">CD-&amp;kulcs:</String>
+  <String Id="UserRegistrationDlgNext" Overridable="yes">&amp;Tovább &gt;</String>
+  <String Id="UserRegistrationDlgBack" Overridable="yes">&lt; &amp;Vissza</String>
+  <String Id="UserRegistrationDlgCancel" Overridable="yes">&amp;Mégse</String>
+  <String Id="UserRegistrationDlg_Description" Overridable="yes">Kérjük, adja meg adatait.</String>
+  <String Id="UserRegistrationDlgTitle" Overridable="yes">Adatok</String>
+</WixLocalization>

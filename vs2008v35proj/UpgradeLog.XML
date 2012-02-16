@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="WixSamples">
+</Property><Property Name="ソリューション ファイル" Value="E:\user\wix-j\vs2008v35proj\WixSamples.sln">
+</Property><Property Name="Date" Value="2011年3月9日">
+</Property><Property Name="Time" Value="9:51">
+</Property></Properties><Event ErrorLevel="0" Project="1-3-First" Source="1-3-First\1-3-First.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="1-5-Registry" Source="1-5-Registry\1-5-Registry.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="1-6-Condition" Source="1-6-Condition\1-6-Condition.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="2-1-WixUI" Source="2-1-WixUI\2-1-WixUI.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="2-5-WixUIAddDlg" Source="2-5-WixUIAddDlg\2-5-WixUIAddDlg.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="2-6-WixUIAddDlgLoc" Source="2-6-WixUIAddDlgLoc\2-6-WixUIAddDlgLoc.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="3-3-CA" Source="3-3-CA\3-3-CA.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="3-4-AskKey" Source="3-4-AskKey\3-4-AskKey.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="3-3-CheckPID" Source="3-3-CheckPID\3-3-CheckPID.vcproj" Description="プロジェクトは正常にアップグレードされました。">
+</Event><Event ErrorLevel="3" Project="3-3-CheckPID" Source="3-3-CheckPID\3-3-CheckPID.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="3-5-CheckPIDNet" Source="3-5-CheckPIDNet\3-5-CheckPIDNet.csproj" Description="プロジェクト ファイルは変換する必要がありません。">
+</Event><Event ErrorLevel="3" Project="3-5-CheckPIDNet" Source="3-5-CheckPIDNet\3-5-CheckPIDNet.csproj" Description="変換の必要はありません">
+</Event><Event ErrorLevel="0" Project="3-5-AskKeyNet" Source="3-5-AskKeyNet\3-5-AskKeyNet.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-1-Upgrade-Old" Source="4-1-Upgrade-Old\4-1-Upgrade-Old.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-1-Upgrade-New" Source="4-1-Upgrade-New\4-1-Upgrade-New.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-2-MajorUpgrade" Source="4-2-MajorUpgrade\4-2-MajorUpgrade.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-2-MajorUpgrade2" Source="4-2-MajorUpgrade2\4-2-MajorUpgrade2.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="HogeHelper" Source="HogeHelper\HogeHelper.vcproj" Description="プロジェクトは正常にアップグレードされました。">
+</Event><Event ErrorLevel="3" Project="HogeHelper" Source="HogeHelper\HogeHelper.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="4-3-Patch-Error" Source="4-3-Patch-Error\4-3-Patch-Error.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-3-Patch-Fixed" Source="4-3-Patch-Fixed\4-3-Patch-Fixed.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-3-Patch" Source="4-3-Patch\4-3-Patch.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-4-Fragment" Source="4-4-Fragment\4-4-Fragment.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-5-Merge-1-Prog" Source="4-5-Merge-1-Prog\4-5-Merge-1-Prog.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-5-Merge-2-Dll" Source="4-5-Merge-2-Dll\4-5-Merge-2-Dll.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="4-5-Merge" Source="4-5-Merge\4-5-Merge.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="HogeAppl" Source="HogeAppl\HogeAppl.vcproj" Description="プロジェクトは正常にアップグレードされました。">
+</Event><Event ErrorLevel="3" Project="HogeAppl" Source="HogeAppl\HogeAppl.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="5-1-DotNET" Source="5-1-DotNET\5-1-DotNET.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="HogeApplNET" Source="HogeApplNET\HogeApplNET.csproj" Description="プロジェクト ファイルは変換する必要がありません。">
+</Event><Event ErrorLevel="3" Project="HogeApplNET" Source="HogeApplNET\HogeApplNET.csproj" Description="変換の必要はありません">
+</Event><Event ErrorLevel="0" Project="HogeHelperNET" Source="HogeHelperNET\HogeHelperNET.csproj" Description="プロジェクト ファイルは変換する必要がありません。">
+</Event><Event ErrorLevel="3" Project="HogeHelperNET" Source="HogeHelperNET\HogeHelperNET.csproj" Description="変換の必要はありません">
+</Event><Event ErrorLevel="0" Project="5-3-WebDir" Source="5-3-WebDir\5-3-WebDir.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI1" Source="8-1-CustomUI1\8-1-CustomUI1.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI2" Source="8-1-CustomUI2\8-1-CustomUI2.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI3" Source="8-1-CustomUI3\8-1-CustomUI3.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI4" Source="8-1-CustomUI4\8-1-CustomUI4.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI5" Source="8-1-CustomUI5\8-1-CustomUI5.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI6" Source="8-1-CustomUI6\8-1-CustomUI6.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="8-1-CustomUI7" Source="8-1-CustomUI7\8-1-CustomUI7.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="2-6-WixUIAddDlgLoc-en-us" Source="2-6-WixUIAddDlgLoc-en-us\2-6-WixUIAddDlgLoc-en-us.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="2-6-WixUIAddDlgLoc-hu-hu" Source="2-6-WixUIAddDlgLoc-hu-hu\2-6-WixUIAddDlgLoc-hu-hu.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="10-1-Listbox" Source="10-1-Listbox\10-1-Listbox.wixproj" Description="The path to the WiX targets file has been updated.">
+</Event><Event ErrorLevel="0" Project="10-1-FillListbox" Source="10-1-FillListbox\10-1-FillListbox.vcproj" Description="プロジェクトは正常にアップグレードされました。">
+</Event><Event ErrorLevel="3" Project="10-1-FillListbox" Source="10-1-FillListbox\10-1-FillListbox.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="WixSamples.sln" Description="ソリューション ファイルは変換の必要がありません。">
+</Event><Event ErrorLevel="3" Project="" Source="WixSamples.sln" Description="変換の必要はありません">
+</Event></UpgradeLog>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <Product Name='ほげ 1.0'
+           Id='BE85733E-8E4A-43C0-A72B-0161BE244AD7'
+           UpgradeCode='16F63B39-2E25-42FE-8158-6FD472950283'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <PropertyRef Id="NETFRAMEWORK20_SP_LEVEL"/>
+    <Condition Message='このセットアップを実行するには、.NET Framework 2.0 と Service Pack 1 以上がインストールされている必要があります。'>
+      <![CDATA[Installed OR (NETFRAMEWORK20_SP_LEVEL AND NETFRAMEWORK20_SP_LEVEL > "#1")]]>
+    </Condition>
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='MainExecutable'
+                       Guid='0F2C3DD3-3FE5-4F7F-A176-E4E85FFF62D7'>
+              <File Id='HogeEXE'
+                    Name='$(var.HogeApplNET.TargetFileName)' DiskId='1'
+                    Source='$(var.HogeApplNET.TargetPath)' KeyPath='yes'>
+                <Shortcut Id="startmenuHoge10" Directory="ProgramMenuDir"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="HogeApplNET.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopHoge10" Directory="DesktopFolder"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="HogeApplNET.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+            <Component Id='HelperLibrary'
+                       Guid='C2072B63-6229-4722-8B87-A229AF1A4321'>
+              <File Id='HelperDLL' Name='$(var.HogeHelperNET.TargetFileName)' DiskId='1'
+                    Source='$(var.HogeHelperNET.TargetPath)' KeyPath='yes' />
+            </Component>
+
+            <Component Id='Manual'
+                       Guid='CCB5C8DE-B5D2-4194-821D-310A54E034F8'>
+              <File Id='Manual' Name='Manual.pdf' DiskId='1'
+                    Source='$(var.SolutionDir)Common\Manual.pdf' KeyPath='yes'>
+                <Shortcut Id='startmenuManual' Directory='ProgramMenuDir'
+                          Name='取扱説明書' Advertise='yes' />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="ほげ 1.0">
+          <Component Id="ProgramMenuDir"
+                     Guid="773F0D9F-5DE7-4A16-AC3B-6F843B23584F">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU'
+                           Key='Software\[Manufacturer]\[ProductName]'
+                           Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='HelperLibrary' />
+      <ComponentRef Id='Manual' />
+      <ComponentRef Id='ProgramMenuDir' />
+    </Feature>
+
+    <Icon Id="HogeApplNET.exe" SourceFile="$(var.HogeApplNET.TargetPath)" />
+
+  </Product>
+</Wix>

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #OS junk files
 [Tt]humbs.db
 *.DS_Store
@@ -47,7 +46,6 @@ _ReSharper*/
 ~$*
 
 # http://stackoverflow.com/questions/2143956/gitignore-for-visual-studio-projects-and-solutions
-=======
+# =======
 log/
 .settings/
->>>>>>> 65d068132225aba830d63ef53d8cebc518a6ac20

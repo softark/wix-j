@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <Product Name='ほげ 1.0'
+           Id='946954CE-903B-474A-B7B6-5C7A1D4E0997'
+           UpgradeCode='37499634-9E8B-4661-9653-026C19CBDDE5'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <Condition Message='このインストーラは完全 UI モードでのみ実行出来ます。'>
+      <![CDATA[UILevel = 5]]>
+    </Condition>
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+     <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='MainExecutable'
+                       Guid='7DF16FCD-A429-4FC4-9433-111123551BF5'>
+              <File Id='HogeEXE'
+                    Name='HogeAppl10.exe' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeAppl100.exe' KeyPath='yes'>
+                <Shortcut Id="startmenuHoge10" Directory="ProgramMenuDir"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopHoge10" Directory="DesktopFolder"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+            <Component Id='HelperLibrary'
+                       Guid='2B013CE0-652C-48A8-ABBB-804A3F89BB2E'>
+              <File Id='HelperDLL' Name='HogeHelper.dll' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeHelper.dll' KeyPath='yes' />
+            </Component>
+
+            <Component Id='Manual'
+                       Guid='A5FEB2A2-B63A-4CA6-9910-DF28CFAD411A'>
+              <File Id='Manual' Name='Manual.pdf' DiskId='1'
+                    Source='$(var.SolutionDir)Common\Manual.pdf' KeyPath='yes'>
+                <Shortcut Id='startmenuManual' Directory='ProgramMenuDir'
+                          Name='取扱説明書' Advertise='yes' />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="ほげ 1.0">
+          <Component Id="ProgramMenuDir"
+                     Guid="486F7B60-8119-4255-AB25-B4E4FED500AF">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU'
+                           Key='Software\[Manufacturer]\[ProductName]'
+                           Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+
+    <Feature Id='Complete' Title='ほげ 1.0'
+             Description='完全パッケージ。' Display='expand'
+             Level='1' ConfigurableDirectory='INSTALLDIR'>
+      <Feature Id='MainProgram' Title='プログラム'
+               Description='メインの実行ファイル。' Level='1'>
+        <ComponentRef Id='MainExecutable' />
+        <ComponentRef Id='HelperLibrary' />
+        <ComponentRef Id='ProgramMenuDir' />
+      </Feature>
+
+      <Feature Id='Documentation' Title='説明書'
+               Description='取扱説明書。' Level='1000'>
+        <ComponentRef Id='Manual' />
+      </Feature>
+    </Feature>
+
+    <UI Id="MyWixUI_Mondo">
+      <UIRef Id="WixUI_Mondo" />
+
+      <DialogRef Id="UserRegistrationDlg" />
+
+      <Publish Dialog="LicenseAgreementDlg" Control="Next"
+               Event="NewDialog" Value="UserRegistrationDlg"
+               Order="2">
+        LicenseAccepted = "1"
+      </Publish>
+      <Publish Dialog="SetupTypeDlg" Control="Back"
+               Event="NewDialog" Value="UserRegistrationDlg">
+        1
+      </Publish>
+    </UI>
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Property Id="PIDTemplate"><![CDATA[12345<### ###>@@@@@]]></Property>
+
+    <CustomAction Id="CheckingPID" BinaryKey="CheckPID" DllEntry="CheckPID" />
+    <CustomAction Id="RefusePID" Error="無効なキーです。インストールを中止します。" />
+
+    <InstallExecuteSequence>
+      <Custom Action="CheckingPID" After="CostFinalize" />
+      <Custom Action="RefusePID" After="CheckingPID">
+        PIDACCEPTED = "0" AND NOT Installed
+      </Custom>
+    </InstallExecuteSequence>
+
+    <Binary Id="CheckPID" SourceFile="$(var.SolutionDir)3-3-CheckPID\bin\Release\3-3-CheckPID.dll" />
+    <Icon Id="Hoge10.exe" SourceFile="$(var.SolutionDir)Release\HogeAppl100.exe" />
+
+  </Product>
+</Wix>

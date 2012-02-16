@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="hu-hu" Codepage="1250" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="ProductGUID" Overridable="yes">{3B69CFE0-07AC-4468-AE94-6931528F24A8}</String>
+  <String Id="ProductUpgradeCode" Overridable="yes">{50CAEBB6-FFD9-4017-8238-1C2A0255805F}</String>
+  <String Id="MainExecutableGUID" Overridable="yes">{1C7246AB-717E-4206-AD03-514F71E66FF1}</String>
+  <String Id="HelperLibraryGUID" Overridable="yes">{A7891E52-1A53-46BC-8FFD-35FF5420B215}</String>
+  <String Id="ManualGUID" Overridable="yes">{3B92E61E-9CBA-4D3B-94B4-140AE586141C}</String>
+  <String Id="ProgramMenuDirGUID" Overridable="yes">{BF6C9D2B-CDCA-46B0-9B93-13E8169163D7}</String>
+  <String Id="ProductName" Overridable="yes">Hoge 1.0 E</String>
+  <String Id="ProductName" Overridable="yes">Hoge 1.0 H</String>
+  <String Id="LanguageCode" Overridable="yes">1038</String>
+  <String Id="CodepageCode" Overridable="yes">1250</String>
+  <String Id="Culture" Overridable="yes">hu-hu</String>
+  <String Id="Manufacturer" Overridable="yes">Piyo Szoftvert</String>
+  <String Id="PackageKeywords" Overridable="yes">Telepítőt</String>
+  <String Id="PackageDescription" Overridable="yes">Piyo Szoftvert's Hoge 1.0 H Telepítőt</String>
+  <String Id="PackageComments" Overridable="yes">Hoge bejegyzett védjegye Piyo Szoftver.</String>
+  <String Id="DiskPrompt_1" Overridable="yes">CD-ROM #1</String>
+  <String Id="DiskPromptFormat" Overridable="yes">Piyo Szoftvert's Hoge 1.0 H Telepítőt [1]</String>
+  <String Id="ExeShortcutName" Overridable="yes">Hoge 1.0 H</String>
+  <String Id="ManualShortcutName" Overridable="yes">Operációs kézikönyv</String>
+  <String Id="ProgramMenuDirName" Overridable="yes">Hoge 1.0 H</String>
+  <String Id="FeatureCompleteTitle" Overridable="yes">Hoge 1.0 H</String>
+  <String Id="FeatureCompleteDescription" Overridable="yes">Teljes csomag.</String>
+  <String Id="FeatureProgramTitle" Overridable="yes">Program</String>
+  <String Id="FeatureProgramDescription" Overridable="yes">Fő kivihető műsor.</String>
+  <String Id="FeatureDocTitle" Overridable="yes">Kézikönyv</String>
+  <String Id="FeatureDocDescription" Overridable="yes">Operációs kézikönyv.</String>
+</WixLocalization>

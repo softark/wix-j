@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="UserRegistrationDlg_Title" Overridable="yes">[ProductName] Setup</String>
+  <String Id="UserRegistrationDlg_UserName" Overridable="yes">&amp;User Name:</String>
+  <String Id="UserRegistrationDlg_Organization" Overridable="yes">&amp;Organization:</String>
+  <String Id="UserRegistrationDlg_Key" Overridable="yes">CD &amp;Key:</String>
+  <String Id="UserRegistrationDlgNext" Overridable="yes">&amp;Next</String>
+  <String Id="UserRegistrationDlgBack" Overridable="yes">&amp;Back</String>
+  <String Id="UserRegistrationDlgCancel" Overridable="yes">Cancel</String>
+  <String Id="UserRegistrationDlg_Description" Overridable="yes">Please enter your customer information</String>
+  <String Id="UserRegistrationDlgTitle" Overridable="yes">Customer Information</String>
+</WixLocalization>

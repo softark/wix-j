@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Module Id="MergeDll" Language="0" Version="1.0.0">
+
+    <Package Id="2BC23F1B-523F-4B97-B28F-CAA328F96A7F" InstallerVersion="100"
+             Manufacturer="PiyoSoftware" SummaryCodepage="0"
+             AdminImage="no" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='HelperLibrary'
+                       Guid='0DA51719-6D45-473E-917E-8176364A5ACE'>
+              <File Id='HelperDLL' Name='HogeHelper.dll' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeHelper.dll' KeyPath='yes' />
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+  </Module>
+</Wix>

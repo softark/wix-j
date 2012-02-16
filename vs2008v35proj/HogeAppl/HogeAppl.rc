@@ -1,0 +1,469 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_HOGEAPPL MENU 
+BEGIN
+    POPUP "ファイル(&F)"
+    BEGIN
+        MENUITEM "アプリケーションの終了(&X)",             IDM_EXIT
+    END
+    POPUP "ヘルプ(&H)"
+    BEGIN
+        MENUITEM "バージョン情報(&A)...",              IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_HOGEAPPL ACCELERATORS 
+BEGIN
+    "?",            IDM_ABOUT,              ASCII,  ALT
+    "/",            IDM_ABOUT,              ASCII,  ALT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+#if defined(APSTUDIO_INVOKED) || \
+    !(defined(_VER_100P) || defined(_VER_101) || defined(_VER_110) || \
+    defined(_VER_120))
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 HogeAppl"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDI_HOGE,IDC_STATIC,14,14,20,20
+    LTEXT           "ほげ Version 1.0.0.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009, ぴよソフト",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_100P)
+#if defined(APSTUDIO_INVOKED)
+IDD_ABOUTBOX$(_VER_100P) DIALOGEX 0, 0, 170, 62
+#else
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 HogeAppl"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDI_HOGE,IDC_STATIC,14,14,20,20
+    LTEXT           "ほげ Version 1.0.0.1 Patched",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009, ぴよソフト",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_101)
+#if defined(APSTUDIO_INVOKED)
+IDD_ABOUTBOX$(_VER_101) DIALOGEX 0, 0, 170, 62
+#else
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 HogeAppl"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDI_HOGE,IDC_STATIC,14,14,20,20
+    LTEXT           "ほげ Version 1.0.1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009, ぴよソフト",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_110)
+#if defined(APSTUDIO_INVOKED)
+IDD_ABOUTBOX$(_VER_110) DIALOGEX 0, 0, 170, 62
+#else
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 HogeAppl"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDI_HOGE,IDC_STATIC,14,14,20,20
+    LTEXT           "ほげ Version 1.1.0.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009, ぴよソフト",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_120)
+#if defined(APSTUDIO_INVOKED)
+IDD_ABOUTBOX$(_VER_120) DIALOGEX 0, 0, 170, 62
+#else
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 HogeAppl"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDI_HOGE,IDC_STATIC,14,14,20,20
+    LTEXT           "ほげ Version 1.2.0.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009, ぴよソフト",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    "IDD_ABOUTBOX$(_VER_100P)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    "IDD_ABOUTBOX$(_VER_101)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    "IDD_ABOUTBOX$(_VER_110)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    "IDD_ABOUTBOX$(_VER_120)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_HOGE                ICON                    "hoge.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+#if defined(APSTUDIO_INVOKED) || \
+    !(defined(_VER_100P) || defined(_VER_101) || defined(_VER_110) || \
+    defined(_VER_120))
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041104b0"
+        BEGIN
+            VALUE "Comments", "ほげはぴよソフトの登録商標です。"
+            VALUE "CompanyName", "ぴよソフト"
+            VALUE "FileDescription", "ぴよソフト's ほげ"
+            VALUE "FileVersion", "1, 0, 0, 0"
+            VALUE "InternalName", "HogeAppl"
+            VALUE "LegalCopyright", "Copyright (C) 2009, ぴよソフト"
+            VALUE "OriginalFilename", "HogeAppl.exe"
+            VALUE "ProductName", "ほげ"
+            VALUE "ProductVersion", "1, 0, 0, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 1200
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_100P)
+#if defined(APSTUDIO_INVOKED)
+VS_VERSION_INFO$(_VER_100P) VERSIONINFO
+#else
+VS_VERSION_INFO VERSIONINFO
+#endif
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041104b0"
+        BEGIN
+            VALUE "Comments", "ほげはぴよソフトの登録商標です。"
+            VALUE "CompanyName", "ぴよソフト"
+            VALUE "FileDescription", "ぴよソフト's ほげ"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "HogeAppl"
+            VALUE "LegalCopyright", "Copyright (C) 2009, ぴよソフト"
+            VALUE "OriginalFilename", "HogeAppl.exe"
+            VALUE "ProductName", "ほげ"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 1200
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_101)
+#if defined(APSTUDIO_INVOKED)
+VS_VERSION_INFO$(_VER_101) VERSIONINFO
+#else
+VS_VERSION_INFO VERSIONINFO
+#endif
+ FILEVERSION 1,0,1,0
+ PRODUCTVERSION 1,0,1,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041104b0"
+        BEGIN
+            VALUE "Comments", "ほげはぴよソフトの登録商標です。"
+            VALUE "CompanyName", "ぴよソフト"
+            VALUE "FileDescription", "ぴよソフト's ほげ"
+            VALUE "FileVersion", "1, 0, 1, 0"
+            VALUE "InternalName", "HogeAppl"
+            VALUE "LegalCopyright", "Copyright (C) 2009, ぴよソフト"
+            VALUE "OriginalFilename", "HogeAppl.exe"
+            VALUE "ProductName", "ほげ"
+            VALUE "ProductVersion", "1, 0, 1, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 1200
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_110)
+#if defined(APSTUDIO_INVOKED)
+VS_VERSION_INFO$(_VER_110) VERSIONINFO
+#else
+VS_VERSION_INFO VERSIONINFO
+#endif
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041104b0"
+        BEGIN
+            VALUE "Comments", "ほげはぴよソフトの登録商標です。"
+            VALUE "CompanyName", "ぴよソフト"
+            VALUE "FileDescription", "ぴよソフト's ほげ"
+            VALUE "FileVersion", "1, 1, 0, 0"
+            VALUE "InternalName", "HogeAppl"
+            VALUE "LegalCopyright", "Copyright (C) 2009, ぴよソフト"
+            VALUE "OriginalFilename", "HogeAppl.exe"
+            VALUE "ProductName", "ほげ"
+            VALUE "ProductVersion", "1, 1, 0, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 1200
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_VER_120)
+#if defined(APSTUDIO_INVOKED)
+VS_VERSION_INFO$(_VER_120) VERSIONINFO
+#else
+VS_VERSION_INFO VERSIONINFO
+#endif
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041104b0"
+        BEGIN
+            VALUE "Comments", "ほげはぴよソフトの登録商標です。"
+            VALUE "CompanyName", "ぴよソフト"
+            VALUE "FileDescription", "ぴよソフト's ほげ"
+            VALUE "FileVersion", "1, 2, 0, 0"
+            VALUE "InternalName", "HogeAppl"
+            VALUE "LegalCopyright", "Copyright (C) 2009, ぴよソフト"
+            VALUE "OriginalFilename", "HogeAppl.exe"
+            VALUE "ProductName", "ほげ"
+            VALUE "ProductVersion", "1, 2, 0, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 1200
+    END
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "ほげ"
+    IDS_VERSION             "ほげ Version 1.0.0.0"
+    IDC_HOGEAPPL            "HOGEAPPL"
+END
+
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

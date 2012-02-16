@@ -1,4 +1,4 @@
-?@charset "UTF-8";
+@charset "UTF-8";
 
 body {
   margin: 0pt;
@@ -236,10 +236,14 @@ p.contributor {
 
 .transnote {
   font-size: 80%;
-  color: #008800;
+  color: #006600;
   margin-top:  -0.5em;
   margin-left: 2em;
   margin-bottom:  1.5em;
+}
+
+.transnote.wix35 {
+  color: #660066;
 }
 
 address {

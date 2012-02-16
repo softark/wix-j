@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+
+  <Product Name='ほげ 1.0'
+           Id='0DEC2C1E-ED80-4848-90A0-9236A8D089F5'
+           UpgradeCode='0C8F76DC-4590-49D3-86DD-E3D6390D2ADB'
+           Language='1041' Codepage='932'
+           Version='1.0.0' Manufacturer='ぴよソフト'>
+
+    <Package Id='*' Keywords='インストーラ'
+             Description="ぴよソフト's ほげ 1.0 インストーラ"
+             Comments='ほげはぴよソフトの登録商標です。'
+             Manufacturer='ぴよソフト' InstallerVersion='100'
+             Languages='1041' Compressed='yes' SummaryCodepage='932' />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM 1枚目' />
+    <Property Id='DiskPrompt' Value="ぴよソフト's ほげ 1.0 インストーラ [1]" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Piyo' Name='Piyo'>
+          <Directory Id='INSTALLDIR' Name='Hoge 1.0'>
+
+            <Component Id='MainExecutable'
+                       Guid='CED46294-5260-404E-ADFD-0405F52C34B4'>
+              <File Id='HogeEXE'
+                    Name='HogeAppl10.exe' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeAppl100.exe' KeyPath='yes'>
+                <Shortcut Id="startmenuHoge10" Directory="ProgramMenuDir"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopHoge10" Directory="DesktopFolder"
+                          Name="ほげ 1.0" WorkingDirectory='INSTALLDIR'
+                          Icon="Hoge10.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+            <Component Id='HelperLibrary'
+                       Guid='89373D51-D711-4D83-880F-628574C82C81'>
+              <File Id='HelperDLL' Name='HogeHelper.dll' DiskId='1'
+                    Source='$(var.SolutionDir)Release\HogeHelper.dll' KeyPath='yes' />
+            </Component>
+
+            <Component Id='Manual'
+                       Guid='F971C4B9-5CE2-42BB-BAEE-5C34B6C8C338'>
+              <File Id='Manual' Name='Manual.pdf' DiskId='1'
+                    Source='$(var.SolutionDir)Common\Manual.pdf' KeyPath='yes'>
+                <Shortcut Id='startmenuManual' Directory='ProgramMenuDir'
+                          Name='取扱説明書' Advertise='yes' />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="ほげ 1.0">
+          <Component Id="ProgramMenuDir"
+                     Guid="7C40FB55-6008-474B-92A6-9B8AFAEAEDB7">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU'
+                           Key='Software\[Manufacturer]\[ProductName]'
+                           Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+
+    <Feature Id='Complete' Title='ほげ 1.0' Description='完全パッケージ。'
+             TypicalDefault='install' Display='expand' Level='1'
+             ConfigurableDirectory='INSTALLDIR'>
+      <Feature Id='MainProgram' Title='プログラム' Description='メインの実行ファイル。'
+               TypicalDefault='install' Level='1'>
+        <ComponentRef Id='MainExecutable' />
+        <ComponentRef Id='HelperLibrary' />
+        <ComponentRef Id='ProgramMenuDir' />
+      </Feature>
+
+      <Feature Id='Documentation' Title='説明書'
+               Description='取扱説明書。' Level='1'>
+        <ComponentRef Id='Manual' />
+      </Feature>
+    </Feature>
+
+    <UI>
+      <UIRef Id="UI_Texts" />
+      <Property Id="DefaultUIFont">DlgFont8</Property>
+
+      <Dialog Id="CustomizeDlg" Width="370" Height="270"
+              Title="[ProductName] [Setup]" NoMinimize="yes" TrackDiskSpace="yes">
+        <Control Id="Tree" Type="SelectionTree"
+                 X="25" Y="85" Width="175" Height="105"
+                 Property="_BrowseProperty" Sunken="yes" TabSkip="no" Text="選択ツリー" />
+        <Control Id="Browse" Type="PushButton"
+                 X="304" Y="210" Width="56" Height="17"
+                 Text="[ButtonText_Browse]">
+          <Publish Event="SelectionBrowse" Value="BrowseDlg">1</Publish>
+        </Control>
+        <Control Id="Reset" Type="PushButton"
+                 X="42" Y="243" Width="56" Height="17"
+                 Text="[ButtonText_Reset]">
+          <Publish Event="Reset" Value="0">1</Publish>
+          <Subscribe Event="SelectionNoItems" Attribute="Enabled" />
+        </Control>
+        <Control Id="Next" Type="PushButton"
+                 X="236" Y="243" Width="56" Height="17" Default="yes"
+                 Text="[ButtonText_Next]">
+          <Publish Event="NewDialog" Value="InstallDlg">1</Publish>
+          <Subscribe Event="SelectionNoItems" Attribute="Enabled" />
+          <Condition Action="enable">1</Condition>
+        </Control>
+        <Control Id="Cancel" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17" Cancel="yes"
+                 Text="[ButtonText_Cancel]">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        <Control Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+        <Control Id="Description" Type="Text"
+                 X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>機能のインストールの仕方を選択して下さい。</Text>
+        </Control>
+        <Control Id="Text" Type="Text"
+                 X="25" Y="55" Width="320" Height="20">
+          <Text>下のツリーのアイコンをクリックして、機能のインストールの仕方を変更して下さい。</Text>
+        </Control>
+        <Control Id="BottomLine" Type="Line"
+                 X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text"
+                 X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>{\DlgTitleFont}カスタム・セットアップ</Text>
+        </Control>
+        <Control Id="BannerLine" Type="Line"
+                 X="0" Y="44" Width="370" Height="0" />
+        <Control Id="Box" Type="GroupBox"
+                 X="210" Y="81" Width="140" Height="108" />
+        <Control Id="ItemDescription" Type="Text"
+                 X="215" Y="90" Width="131" Height="30">
+          <Text>現在選ばれている項目の複数行の説明。</Text>
+          <Subscribe Event="SelectionDescription" Attribute="Text" />
+        </Control>
+        <Control Id="ItemSize" Type="Text"
+                 X="215" Y="130" Width="131" Height="55">
+          <Text>現在選ばれている項目のサイズ。</Text>
+          <Subscribe Event="SelectionSize" Attribute="Text" />
+        </Control>
+        <Control Id="Location" Type="Text"
+                 X="75" Y="210" Width="215" Height="20">
+          <Text>現在選ばれている項目のパス</Text>
+          <Subscribe Event="SelectionPath" Attribute="Text" />
+          <Subscribe Event="SelectionPathOn" Attribute="Visible" />
+        </Control>
+        <Control Id="LocationLabel" Type="Text"
+                 X="25" Y="210" Width="50" Height="10" Text="場所:">
+          <Subscribe Event="SelectionPathOn" Attribute="Visible" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="BrowseDlg" Width="370" Height="270"
+              Title="[ProductName] [Setup]" NoMinimize="yes">
+        <Control Id="PathEdit" Type="PathEdit"
+                 X="84" Y="202" Width="261" Height="18"
+                 Property="_BrowseProperty" Indirect="yes" />
+        <Control Id="OK" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17" Default="yes"
+                 Text="[ButtonText_OK]">
+          <Publish Event="SetTargetPath" Value="[_BrowseProperty]">1</Publish>
+          <Publish Event="EndDialog" Value="Return">1</Publish>
+        </Control>
+        <Control Id="Cancel" Type="PushButton"
+                 X="240" Y="243" Width="56" Height="17" Cancel="yes"
+                 Text="[ButtonText_Cancel]">
+          <Publish Event="Reset" Value="0">1</Publish>
+          <Publish Event="EndDialog" Value="Return">1</Publish>
+        </Control>
+        <Control Id="ComboLabel" Type="Text"
+                 X="25" Y="58" Width="44" Height="10" TabSkip="no" Text="場所(&amp;L):" />
+        <Control Id="DirectoryCombo" Type="DirectoryCombo"
+                 X="70" Y="55" Width="220" Height="80"
+                 Property="_BrowseProperty" Indirect="yes" Fixed="yes" Remote="yes">
+          <Subscribe Event="IgnoreChange" Attribute="IgnoreChange" />
+        </Control>
+        <Control Id="Up" Type="PushButton"
+                 X="298" Y="55" Width="19" Height="19"
+                 ToolTip="一つ上のフォルダへ" Icon="yes" FixedSize="yes" IconSize="16" Text="Up">
+          <Publish Event="DirectoryListUp" Value="0">1</Publish>
+        </Control>
+        <Control Id="NewFolder" Type="PushButton"
+                 X="325" Y="55" Width="19" Height="19"
+                 ToolTip="新しいフォルダを作成" Icon="yes" FixedSize="yes" IconSize="16" Text="New">
+          <Publish Event="DirectoryListNew" Value="0">1</Publish>
+        </Control>
+        <Control Id="DirectoryList" Type="DirectoryList"
+                 X="25" Y="83" Width="320" Height="110"
+                 Property="_BrowseProperty" Sunken="yes" Indirect="yes" TabSkip="no" />
+        <Control Id="PathLabel" Type="Text"
+                 X="25" Y="205" Width="59" Height="10" TabSkip="no"
+                 Text="フォルダ名(&amp;F):" />
+        <Control Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44" TabSkip="no"
+                 Text="[BannerBitmap]" />
+        <Control Id="Description" Type="Text"
+                 X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>インストール先フォルダを選択して下さい。</Text>
+        </Control>
+        <Control Id="BottomLine" Type="Line"
+                 X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text"
+                 X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>{\DlgTitleFont}インストール先フォルダの変更</Text>
+        </Control>
+        <Control Id="BannerLine" Type="Line"
+                 X="0" Y="44" Width="370" Height="0" />
+      </Dialog>
+
+      <Dialog Id="InstallDlg" Width="370" Height="270"
+              Title="[ProductName] [Setup]" NoMinimize="yes">
+        <Control Id="Install" Type="PushButton"
+                 X="236" Y="243" Width="56" Height="17"
+                 Default="yes" Text="[ButtonText_Install]">
+          <Publish Event="NewDialog" Value="ProgressDlg" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17"
+                 Cancel="yes" Text="[ButtonText_Cancel]">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        <Control Id="Back" Type="PushButton"
+                 X="180" Y="243" Width="56" Height="17" Text="[ButtonText_Back]">
+          <Publish Event="NewDialog" Value="CustomizeDlg">1</Publish>
+        </Control>
+        <Control Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44"
+                 TabSkip="no" Text="[BannerBitmap]" />
+        <Control Id="Description" Type="Text"
+                 X="25" Y="23" Width="280" Height="15"
+                 Transparent="yes" NoPrefix="yes">
+          <Text>[Wizard] がインストールを開始する準備が完了しました。</Text>
+        </Control>
+        <Control Id="Text" Type="Text"
+                 X="25" Y="70" Width="320" Height="20">
+          <Text>[\[]インストール[\]] をクリックして、インストールを開始して下さい。</Text>
+        </Control>
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text"
+                 X="15" Y="6" Width="200" Height="15"
+                 Transparent="yes" NoPrefix="yes">
+          <Text>{\DlgTitleFont}インストール準備完了</Text>
+        </Control>
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+      </Dialog>
+
+      <Dialog Id="CancelDlg" Width="260" Height="85"
+              Title="[ProductName] [Setup]" NoMinimize="yes">
+        <Control Id="No" Type="PushButton"
+                 X="132" Y="57" Width="56" Height="17"
+                 Default="yes" Cancel="yes" Text="[ButtonText_No]">
+          <Publish Event="EndDialog" Value="Return">1</Publish>
+        </Control>
+        <Control Id="Yes" Type="PushButton"
+                 X="72" Y="57" Width="56" Height="17" Text="[ButtonText_Yes]">
+          <Publish Event="EndDialog" Value="Exit">1</Publish>
+        </Control>
+        <Control Id="Text" Type="Text"
+                 X="48" Y="15" Width="194" Height="30">
+          <Text>[ProductName] のインストールを中止してよろしいですか？</Text>
+        </Control>
+        <Control Id="Icon" Type="Icon"
+                 X="15" Y="15" Width="24" Height="24" ToolTip="情報アイコン"
+                 FixedSize="yes" IconSize="32" Text="[InfoIcon]" />
+      </Dialog>
+
+      <Dialog Id="ProgressDlg" Width="370" Height="270"
+              Title="[ProductName] [Setup]" Modeless="yes">
+        <Control Id="Cancel" Type="PushButton"
+                 X="304" Y="243" Width="56" Height="17" Default="yes" Cancel="yes"
+                 Text="[ButtonText_Cancel]">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        <Control Id="BannerBitmap" Type="Bitmap"
+                 X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+        <Control Id="Back" Type="PushButton"
+                 X="180" Y="243" Width="56" Height="17" Disabled="yes"
+                 Text="[ButtonText_Back]" />
+        <Control Id="Next" Type="PushButton"
+                 X="236" Y="243" Width="56" Height="17" Disabled="yes"
+                 Text="[ButtonText_Next]" />
+        <Control Id="ActionText" Type="Text"
+                 X="70" Y="100" Width="265" Height="10">
+          <Subscribe Event="ActionText" Attribute="Text" />
+        </Control>
+        <Control Id="Text" Type="Text"
+                 X="35" Y="65" Width="300" Height="20">
+          <Text>[Wizard] が [ProductName] を [Progress2] する間、しばらくお待ち下さい。数分かかる場合があります。</Text>
+        </Control>
+        <Control Id="BottomLine" Type="Line"
+                 X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text"
+                 X="20" Y="15" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>{\DlgTitleFont}[ProductName] を [Progress1] しています</Text>
+        </Control>
+        <Control Id="BannerLine" Type="Line"
+                 X="0" Y="44" Width="370" Height="0" />
+        <Control Id="ProgressBar" Type="ProgressBar"
+                 X="35" Y="115" Width="300" Height="10" ProgressBlocks="yes" Text="Progress done">
+          <Subscribe Event="SetProgress" Attribute="Progress" />
+        </Control>
+        <Control Id="StatusLabel" Type="Text"
+                 X="35" Y="100" Width="35" Height="10"
+                 Text="状態:" />
+      </Dialog>
+
+      <TextStyle Id="DlgFont8" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
+
+      <InstallUISequence>
+        <Show Dialog="CustomizeDlg" After="MigrateFeatureStates">NOT Installed</Show>
+      </InstallUISequence>
+    </UI>
+
+    <Property Id="Setup">セットアップ</Property>
+    <Property Id="ButtonText_Back">&lt; 戻る(&amp;B)</Property>
+    <Property Id="ButtonText_Browse">参照(&amp;O)</Property>
+    <Property Id="ButtonText_Cancel">キャンセル</Property>
+    <Property Id="ButtonText_Exit">終了(&amp;E)</Property>
+    <Property Id="ButtonText_Finish">完了(&amp;F)</Property>
+    <Property Id="ButtonText_Ignore">無視(&amp;I)</Property>
+    <Property Id="ButtonText_Install">インストール(&amp;I)</Property>
+    <Property Id="ButtonText_Next">次へ(&amp;N) &gt;</Property>
+    <Property Id="ButtonText_No">いいえ(&amp;N)</Property>
+    <Property Id="ButtonText_OK">OK</Property>
+    <Property Id="ButtonText_Remove">削除(&amp;R)</Property>
+    <Property Id="ButtonText_Repair">修復(&amp;R)</Property>
+    <Property Id="ButtonText_Reset">リセット(&amp;R)</Property>
+    <Property Id="ButtonText_Resume">再開(&amp;R)</Property>
+    <Property Id="ButtonText_Retry">再試行(&amp;R)</Property>
+    <Property Id="ButtonText_Return">戻る(&amp;R)</Property>
+    <Property Id="ButtonText_Yes">はい(&amp;Y)</Property>
+    <Property Id="BannerBitmap">bannrbmp</Property>
+    <Property Id="Wizard">セットアップ・ウィザード</Property>
+    <Property Id="InfoIcon">info</Property>
+    <Property Id="Progress1">インストール</Property>
+    <Property Id="Progress2">インストール</Property>
+
+    <Binary Id="Up" SourceFile="$(var.SolutionDir)Binary\Up.ico" />
+    <Binary Id="New" SourceFile="$(var.SolutionDir)Binary\New.ico" />
+    <Binary Id="info" SourceFile="$(var.SolutionDir)Binary\Info.ico" />
+    <Binary Id="bannrbmp" SourceFile="$(var.SolutionDir)Binary\Banner.bmp" />
+    <Icon Id="Hoge10.exe" SourceFile="$(var.SolutionDir)Release\HogeAppl100.exe" />
+
+  </Product>
+</Wix>
