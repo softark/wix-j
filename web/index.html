@@ -37,7 +37,7 @@
 
 <p>WiX はオープン・ソースのプロジェクトで、元来は Microsoft が開発したものですが、現在は <em>Rob Mensching</em> によってメンテナンスされています。SourceForge から<a href="http://sourceforge.net/projects/wix/">最新のバイナリとソース・コードのリリースをダウンロードする</a>ことが出来ます。このチュートリアルは、最近リリースされた安定バージョンである 3.0 をカバーしています。</p>
 
-<p class="transnote">&dagger; 訳註：本文書は、Gábor DEÁK JAHN による <a href="http://www.tramontana.co.hu/wix/index.php" title="WiX tutorial 原文"><strong>WiX tutorial</strong></a> を日本語に翻訳したものです。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。</p>
+<p class="transnote">&dagger; 訳註：本文書は、Gábor DEÁK JAHN による <a href="http://wix.tramontana.co.hu" title="WiX tutorial 原文"><strong>WiX tutorial</strong></a> を日本語に翻訳したものです。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。</p>
 <p class="transnote wix35">&dagger; 訳註：2011年3月現在、WiX の最新安定バージョンは 3.5 です。3.5 の主要な特徴は、(1) Visual Studio 2010 への対応の追加、(2) IIS7 への対応の追加、(3) 地域化言語の追加 の3点です。WiX 本体のコアは、3.0 との互換性を保ちながら、若干の機能拡張と多くの障害修正がなされています。ただし、WiX 3.0 と 3.5 は、同一マシン上に共存させることは出来ません。本文書のサンプル・ソースの大部分は、WiX 3.5 でも、そのままビルドすることが可能です。</p>
 
 <p>ツールセットは C# で書かれていて、起動するためには <a href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5">.NET Framework 2.0</a> と、その <a href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=79bc3b77-e02c-4ad3-aacf-a7633f706ba5">Service Pack 1</a> が必要です。と言っても、これはツールセット自体にのみ当てはまることです。このツールセットで作成したパッケージは、対象のコンピュータに何か追加のフレームワークやソフトウェアがインストールされていることを要求するものではありません。同様に、ある種の特殊なアプリケーション(マージ・モジュールやパッチ)では、いくつか追加のユーティリティが必要になりますが、それも、パッケージをビルドするコンピュータで必要になるだけです。クライアントは、出来上った自己完結的なインストーラ・パッケージ以外には、何も必要としません。</p>
