@@ -11,7 +11,7 @@
 <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 4 アップグレードとモジュラー化">
 <meta name="Author" content="Gábor DEÁK JAHN">
 <link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://www.softark.net/">
+<link rev="made" href="http://softark.net/">
 <link rel="index" href="./index.html">
 <link rel="prev" href="lesson03.html">
 <link rel="next" href="lesson05.html">
@@ -31,7 +31,7 @@
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson03.html'>&laquo; 前へ</a>
  | <a href='lesson05.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson4.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
 </div>
 
 <div class='main'>
@@ -87,7 +87,7 @@
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>今回の <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleupgrade.zip&amp;type=application/zip">SampleUpgrade</a> は、二つのインストーラ・パッケージから成り立っています。両方とも、簡単な UI のインストーラ、SampleWixUI を元にしています。</p>
+<p>今回の <a href="http://wix.tramontana.co.hu/system/files/samples/SampleUpgrade.zip">SampleUpgrade</a> は、二つのインストーラ・パッケージから成り立っています。両方とも、簡単な UI のインストーラ、SampleWixUI を元にしています。</p>
 
 <p class="transnote">&dagger; 訳註：SampleUpgrade の日本語版は <a href="download/Sample-4-1-Upgrade.zip">Sample-4-1-Upgrade.zip</a> です。</p>
 
@@ -208,7 +208,7 @@ msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
 
 <p id="patch">更新しなければならない小さなファイルが一つか二つ混じっているというだけの理由で、何メガバイトものファイルを入れたアップグレード・インストーラ・パッケージを作ることは、あまり効率的だとは言えないでしょう。従来から、そういう場合には、いつでも、パッチの方が良い解決策でした。パッチは、基本的には旧バージョンと新バージョンの異なる部分を入れたもので、ユーザーのコンピュータにある古いファイルを魔法のごとく自動的に新しいものに変えることが出来るものです。パッチ・パッケージには新規に配置するファイルを入れることも出来ます。</p>
 
-<p id="msp">WiX ツールセットもパッチ・インストーラ・パッケージ(<kbd>.msp</kbd> ファイル)を作成することが出来ます。パッチ・インストーラ・パッケージは、二つの通常のインストーラ・パッケージ(一つは、バグのある古いファイルを持つ元のパッケージ、もう一つは、修正されたファイルを持つ新しいパッケージ)から作成されます。ダウンロードできる <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplepatch.zip&amp;type=application/zip">SamplePatch</a> の中には、ユーザー・インタフェイスを持たない非常に簡単な二つのインストーラ・パッケージが入っています。両方ともファイルを一つだけインストールしますが、そのファイルが元のバージョンとパッチを当てられたバージョンで変ります。ソース・ファイルの詳細は、もう今では、完全に見慣れたものになっている筈です。<kbd>Error.wxs</kbd> と <kbd>Fixed.wxs</kbd> のソース・ファイルの唯一の違いは、<strong>Source</strong> のファイルの参照だけです。</p>
+<p id="msp">WiX ツールセットもパッチ・インストーラ・パッケージ(<kbd>.msp</kbd> ファイル)を作成することが出来ます。パッチ・インストーラ・パッケージは、二つの通常のインストーラ・パッケージ(一つは、バグのある古いファイルを持つ元のパッケージ、もう一つは、修正されたファイルを持つ新しいパッケージ)から作成されます。ダウンロードできる <a href="http://wix.tramontana.co.hu/system/files/samples/SamplePatch.zip">SamplePatch</a> の中には、ユーザー・インタフェイスを持たない非常に簡単な二つのインストーラ・パッケージが入っています。両方ともファイルを一つだけインストールしますが、そのファイルが元のバージョンとパッチを当てられたバージョンで変ります。ソース・ファイルの詳細は、もう今では、完全に見慣れたものになっている筈です。<kbd>Error.wxs</kbd> と <kbd>Fixed.wxs</kbd> のソース・ファイルの唯一の違いは、<strong>Source</strong> のファイルの参照だけです。</p>
 
 <p class="transnote">&dagger; 訳註：SamplePatch の日本語版は <a href="download/Sample-4-3-Patch.zip">Sample-4-3-Patch.zip</a> です。</p>
 
@@ -307,7 +307,7 @@ msiexec /fvomus //server/Patch.msi
 
 <p id="fragment">フラグメント(Fragment)は、大きなインストール・プロジェクトを分割する方法を提供してくれます。基本的には、フラグメントは WiX ソースのひとかたまりを包み込むラッパーです。中身は、好みに応じて、どんなに簡単でも、どんなに複雑でも構いません。プログラム開発で使用するオブジェクト・ファイルやライブラリと同じように、フラグメントは他の製品のインストーラ・パッケージにリンクして組み込むことが出来ます。もし WiX の二つのツール、<em>Candle</em> と <em>Light</em> をコンパイラとリンカであると考えるなら、フラグメントは、ちょうどソース・コード・モジュールのように、それぞれ独立してオブジェクト・コード(<kbd>.wixobj</kbd> ファイル)にコンパイル出来るものです。大規模なインストーラ・パッケージのリビルドは、おなじみの makefile の手法を使うことで、劇的に加速することが出来ます。makefile の手法では、最後のコンパイルの後で変化があった <kbd>.wxs</kbd> ソース・ファイルだけを再コンパイルし、<kbd>.wixobj</kbd> ファイルを、新しいものも、古いものも、まとめてリンクして、最終的なパッケージを作成します。</p>
 
-<p>チュートリアルの中ではそんなに大規模で複雑なプロジェクトをサンプルにすることは出来ませんので、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplefragment.zip&amp;type=application/zip">SampleFragment</a> は多少わざとらしいものにならざるを得ません。最初のインストーラを再利用しますが、論点を説明するために、いくつかの部分を切り出して、独立したフラグメントに外部委託します。ユーザー・マニュアルのファイルをインストールするコンポーネントはメインのソースから削除しました。従って、下記の参照は指し示すものが無いものになります。</p>
+<p>チュートリアルの中ではそんなに大規模で複雑なプロジェクトをサンプルにすることは出来ませんので、<a href="http://wix.tramontana.co.hu/system/files/samples/SampleFragment.zip">SampleFragment</a> は多少わざとらしいものにならざるを得ません。最初のインストーラを再利用しますが、論点を説明するために、いくつかの部分を切り出して、独立したフラグメントに外部委託します。ユーザー・マニュアルのファイルをインストールするコンポーネントはメインのソースから削除しました。従って、下記の参照は指し示すものが無いものになります。</p>
 
 <p class="transnote">&dagger; 訳註：SampleFragment の日本語版は <a href="download/Sample-4-4-Fragment.zip">Sample-4-4-Fragment.zip</a> です。</p>
 
@@ -452,7 +452,7 @@ light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplemergemodule.zip&amp;type=application/zip">SampleMergeModule</a> をダウンロードすることが出来ます。マージ・モジュールは、個別にビルドする必要があります。</p>
+<p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleMergeModule.zip">SampleMergeModule</a> をダウンロードすることが出来ます。マージ・モジュールは、個別にビルドする必要があります。</p>
 
 <p class="transnote">&dagger; 訳註：SampleMergeModulet の日本語版は <a href="download/Sample-4-5-MergeModule.zip">Sample-4-5-MergeModule.zip</a> です。</p>
 
@@ -475,30 +475,23 @@ light.exe SampleMerge.wixobj
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson03.html'>&laquo; 前へ</a>
  | <a href='lesson05.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson4.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
 </div>
 
 <script type="text/javascript">
 <!--
-xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
 yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
 -->
 </script>
 
 <address>
-Copyright &copy; 2004-2010,
-<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
 <br>
-何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
-<br>
-注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
-送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
-そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+日本語翻訳 Copyright &copy; 2010, 2013, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
 <br>
 原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
 </address>

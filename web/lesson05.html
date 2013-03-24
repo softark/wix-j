@@ -11,7 +11,7 @@
 <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 5 Net と .NET">
 <meta name="Author" content="Gábor DEÁK JAHN">
 <link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://www.softark.net/">
+<link rev="made" href="http://softark.net/">
 <link rel="index" href="./index.html">
 <link rel="prev" href="lesson04.html">
 <link rel="next" href="lesson06.html">
@@ -31,7 +31,7 @@
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson04.html'>&laquo; 前へ</a>
  | <a href='lesson06.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson5.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/net-and-net">&lowast; 原文</a>
 </div>
 
 <div class="main">
@@ -95,7 +95,7 @@ candle.exe SampleDotNET.wxs
 light.exe -ext WixNetFxExtension SampleDotNET.wixobj
 </pre>
 
-<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampledotnet.zip&amp;type=application/zip">SampleDotNET</a> をダウンロードすることが出来ます。</p>
+<p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleDotNET.zip">SampleDotNET</a> をダウンロードすることが出来ます。</p>
 
 <p class="transnote">&dagger; 訳註：SampleDotNET の日本語版は <a href="download/Sample-5-1-DotNET.zip">Sample-5-1-DotNET.zip</a> です。</p>
 
@@ -133,7 +133,7 @@ light.exe -ext WixNetFxExtension SampleDotNET.wixobj
 &lt;/<strong>InstallExecuteSequence</strong>&gt;
 </pre>
 
-<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplebrowser.zip&amp;type=application/zip">SampleBrowser</a> をダウンロードすることが出来ます。</p>
+<p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleBrowser.zip">SampleBrowser</a> をダウンロードすることが出来ます。</p>
 
 <p class="transnote">&dagger; 訳註：SampleBrowser の日本語版は <a href="download/Sample-5-2-Browser.zip">Sample-5-2-Browser.zip</a> です。</p>
 
@@ -199,7 +199,7 @@ light.exe -ext WixNetFxExtension SampleDotNET.wixobj
 light.exe -out SampleWebDir.msi SampleWebDir.wixobj <span class="path">path</span>\sca.wixlib
 </pre>
 
-<p>完全な <a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewebdir.zip&amp;type=application/zip">SampleWebDir</a> をダウンロードすることが出来ます。</p>
+<p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleWebDir.zip">SampleWebDir</a> をダウンロードすることが出来ます。</p>
 
 <p class="transnote">&dagger; 訳註：上記は WiX 2 の IIS 拡張に基づくものであり、WiX 3 には適用出来ない所があります。また、提供されている SampleWebDir も、そのままでは、WiX 3 でビルド出来ません。</p>
 <p class="transnote">(1) WiX 3 では IIS 拡張が独立の名前空間に移動されたために、<em>Wix</em> 要素で IIS 拡張のスキーマを参照する必要があります(&lt;Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' <em>xmlns:iis='http://schemas.microsoft.com/wix/IIsExtension'</em>&gt;)。同様に、IIS 拡張に属する要素には IIS 拡張の名前空間の修飾が必要です(<em>iis:WebVirtualDir</em>, <em>iis:WebApplication</em>, <em>iis:WebSite</em> および <em>iis:WebAddress</em>)。</p>
@@ -243,30 +243,23 @@ light.exe -out SampleWebDir.msi SampleWebDir.wixobj <span class="path">path</spa
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson04.html'>&laquo; 前へ</a>
  | <a href='lesson06.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson5.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/net-and-net">&lowast; 原文</a>
 </div>
 
 <script type="text/javascript">
 <!--
-xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
 yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
 -->
 </script>
 
 <address>
-Copyright &copy; 2004-2010,
-<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
 <br>
-何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
-<br>
-注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
-送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
-そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+日本語翻訳 Copyright &copy; 2010, 2013, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
 <br>
 原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
 </address>

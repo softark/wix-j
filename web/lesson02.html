@@ -11,7 +11,7 @@
 <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 2 ユーザー・インタフェイス">
 <meta name="Author" content="Gábor DEÁK JAHN">
 <link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://www.softark.net/">
+<link rev="made" href="http://softark.net/">
 <link rel="index" href="./index.html">
 <link rel="prev" href="lesson01.html">
 <link rel="next" href="lesson03.html">
@@ -32,7 +32,7 @@
 <a href='index.html#TOC'>&bull; 目次</a>
 | <a href='lesson01.html'>&laquo; 前へ</a>
 | <a href='lesson03.html'>次へ &raquo;</a>
-| <a href="http://www.tramontana.co.hu/wix/lesson2.php">&lowast; 原文</a>
+| <a href="http://wix.tramontana.co.hu/tutorial/user-interface">&lowast; 原文</a>
 </div>
 
 <div class='main'>
@@ -41,13 +41,13 @@
 
 <p>Windows Installer は(既に見た簡単な進捗ダイアログと、ポップ・アップしてユーザーにいろんなエラーを通知するメッセージ・ボックスを除いて)内蔵されたユーザー・インタフェイスを持っていません。インストーラ・パッケージは自分自身のユーザー・インタフェイスを定義してコンパイルし、自分の <kbd>.msi</kbd> ファイルに入れて持って回らなければなりません。このため、ファイルのサイズは多少大きくなります(典型的なユーザー・インタフェイスを持った <kbd>.msi</kbd> ファイルは、内部に持つアイコンや他のグラフィカルな要素のサイズにも左右されますが、最小でも 300 KB をちょっと下回る程度のサイズになってしまいます)。しかし、サイズと引き替えに、考えられる限りのどんな要求に対してでも、カスタマイズして対応することが可能になっています。</p>
 
-<p>完全なユーザー・インタフェイスを自力で開発することを始めるのは、あまり面白いことではないでしょう。幸いなことに、そんなことをする必要はありません。WiX ツールセットには、標準のユーザー・インタフェイス・ライブラリである WixUI が付属しています。このユーザー・インタフェイスは MSI SDK の作成済みインタフェイスに基づいたものです（MSI SDK は、Microsoft のビジュアル・プログラミング環境に付属していますが、<a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">単体として自由にダウンロード</a>することも可能です)。このライブラリが標準的なインストーラ・パッケージの完全なユーザー・インタフェイスを提供してくれます。その中には、使用許諾契約、顧客情報、標準/カスタム/完全のセットアップ・タイプ、インストール先フォルダの変更、必要なディスク容量の計算、変更/修復/削除およびロールバックなど、標準的なウィザード・ページが全て含まれています。唯一の違いは &mdash; 個性を演出するために &mdash; 基調色が青でなく赤になっていることです。しかし、それをカスタマイズしたい場合は、二～三のビットマップとアイコンを修正するだけで済みます。</p>
+<p>完全なユーザー・インタフェイスを自力で開発することを始めるのは、あまり面白いことではないでしょう。幸いなことに、そんなことをする必要はありません。WiX ツールセットには、標準のユーザー・インタフェイス・ライブラリである WixUI が付属しています。このユーザー・インタフェイスは MSI SDK の作成済みインタフェイスに基づいたものです（MSI SDK は、Microsoft のビジュアル・プログラミング環境に付属していますが、<a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&displaylang=en">単体として自由にダウンロード</a>することも可能です)。このライブラリが標準的なインストーラ・パッケージの完全なユーザー・インタフェイスを提供してくれます。その中には、使用許諾契約、顧客情報、標準/カスタム/完全のセットアップ・タイプ、インストール先フォルダの変更、必要なディスク容量の計算、変更/修復/削除およびロールバックなど、標準的なウィザード・ページが全て含まれています。唯一の違いは &mdash; 個性を演出するために &mdash; 基調色が青でなく赤になっていることです。しかし、それをカスタマイズしたい場合は、二～三のビットマップとアイコンを修正するだけで済みます。</p>
 
 <div class='section'>
 
 <h2 id="CH-2.1">2.1 最初のステップ</h2>
 
-<p>前のサンプルを素敵なユーザー・インタフェイスで拡張しましょう。しかし、詳細に踏み込む前に、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixui.zip&amp;type=application/zip">SampleWixUI</a> をダウンロードし、コンパイルして走らせて、どんなことが出来るか、だいたいの感じをつかんで下さい。次のコマンドでビルドして下さい(リンカのコマンドの新しい引数については、後で説明します)。</p>
+<p>前のサンプルを素敵なユーザー・インタフェイスで拡張しましょう。しかし、詳細に踏み込む前に、<a href="http://wix.tramontana.co.hu/system/files/samples/SampleWixUI.zip">SampleWixUI</a> をダウンロードし、コンパイルして走らせて、どんなことが出来るか、だいたいの感じをつかんで下さい。次のコマンドでビルドして下さい(リンカのコマンドの新しい引数については、後で説明します)。</p>
 
 <p class="transnote">&dagger; 訳註：SampleWixUI の日本語版は <a href="download/Sample-2-1-WixUI.zip">Sample-2-1-WixUI.zip</a> です。</p>
 
@@ -310,7 +310,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 
 <h2 id="CH-2.4">2.4 アナタハ 英語ヲ 話シマスカ？</h2>
 
-<p id="loc">現在の所、WiX でサポートされているのは下記の言語です(他の言語の状態については、<a href="http://www.tramontana.co.hu/wix/loc/index.php">地域化(ローカライゼーション)プロジェクトのページ</a> を参照してください)。<strong>Product</strong> および <strong>Package</strong> の両方のタグで、言語とコードページの両方を正しく指定するように気をつけて下さい。言語の設定が正しくないと、インストーラの基本言語とは異なる、予期しない言語のエラー・メッセージがポップ・アップすることがあります。また、コードページが正しくないと、アクセント記号付き文字や非欧文文字がまったく表示されないことがあります。</p>
+<p id="loc">現在の所、WiX でサポートされているのは下記の言語です(他の言語の状態については、<a href="http://wix.tramontana.co.hu/localization">地域化(ローカライゼーション)プロジェクトのページ</a> を参照してください)。<strong>Product</strong> および <strong>Package</strong> の両方のタグで、言語とコードページの両方を正しく指定するように気をつけて下さい。言語の設定が正しくないと、インストーラの基本言語とは異なる、予期しない言語のエラー・メッセージがポップ・アップすることがあります。また、コードページが正しくないと、アクセント記号付き文字や非欧文文字がまったく表示されないことがあります。</p>
 
 <table summary="WixUI の言語サポート" class="table" width="100%">
 
@@ -330,7 +330,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 <td align="left">中国語(繁体字)</td>
 <td>完了</td>
 <td>zh-tw</td>
-<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_zh-tw.wxl&amp;type=text/plain'>WixUI_zh-tw.wxl</a><BR></td>
+<td align="left">WixUI_zh-tw.wxl<BR></td>
 <td>1028</td>
 <td>950</td>
 </tr>
@@ -348,7 +348,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 <td align="left">デンマーク語</td>
 <td>完了</td>
 <td>da-dk</td>
-<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_da-dk.wxl&amp;type=text/plain'>WixUI_da-dk.wxl</a></td>
+<td align="left">WixUI_da-dk.wxl</td>
 <td>1030</td>
 <td>1252</td>
 </tr>
@@ -366,7 +366,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 <td align="left">英語</td>
 <td>リリース済み</td>
 <td>en-us</td>
-<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_en-us.wxl&amp;type=text/plain'>WixUI_en-us.wxl</a> *</td>
+<td align="left">WixUI_en-us.wxl *</td>
 <td>1033</td>
 <td>1252</td>
 </tr>
@@ -384,7 +384,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 <td align="left">ドイツ語</td>
 <td>リリース済み</td>
 <td>de-de</td>
-<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixext_de-de.wxl&amp;type=text/plain'>WixExt_de-de.wxl</a> *</td>
+<td align="left">WixExt_de-de.wxl *</td>
 <td>1031</td>
 <td>1252</td>
 </tr>
@@ -393,7 +393,7 @@ light.exe -ext WixUIExtension SampleWixUI.wixobj
 <td align="left">ハンガリー語</td>
 <td>リリース済み</td>
 <td>hu-hu</td>
-<td align="left"><a href='http://www.tramontana.co.hu/wix/download.php?file=loc/wixui_hu-hu.wxl&amp;type=text/plain'>WixUI_hu-hu.wxl</a> *</td>
+<td align="left">WixUI_hu-hu.wxl *</td>
 <td>1038</td>
 <td>1250</td>
 </tr>
@@ -482,7 +482,7 @@ light.exe -ext WixUIExtension -loc path/WixUI_hu-hu.wxl
 
 <p>WixUI インタフェイス・ライブラリは、通常のセットアップ・シナリオのほとんどを扱うことが出来ますが、ときには修正や追加が必要になることもあります。そういう場合に対処するためには、<a href="http://sourceforge.net/projects/wix/">WiX ソース・コード</a> もダウンロードしなければなりません。と言うのは、いくつかのソース・ファイルを覗き見する必要があるからです。</p>
 
-<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixuiadddlg.zip&amp;type=application/zip">サンプル SampleWixUIAddDlg</a>では、<em>WixUI_Mondo</em> ライブラリを修正して、ユーザーに登録情報(名前、組織、シリアル番号)を入力してもらうダイアログを追加します。新しいダイアログは、「使用許諾契約」ダイアログと「セットアップ・タイプ」ダイアログの間に出現します。</p>
+<p><a href="http://wix.tramontana.co.hu/system/files/samples/SampleWixUIAddDlg.zip">サンプル SampleWixUIAddDlg</a>では、<em>WixUI_Mondo</em> ライブラリを修正して、ユーザーに登録情報(名前、組織、シリアル番号)を入力してもらうダイアログを追加します。新しいダイアログは、「使用許諾契約」ダイアログと「セットアップ・タイプ」ダイアログの間に出現します。</p>
 
 <p class="transnote">&dagger; 訳註：SampleWixUIAddDlg の日本語版は <a href="download/Sample-2-5-WixUIAddDlg.zip">Sample-2-5-WixUIAddDlg.zip</a> です。</p>
 
@@ -645,7 +645,7 @@ light.exe -ext WixUIExtension -out SampleWixUIAddDlg.msi
 &lt;/<strong>WixLocalization</strong>&gt;
 </pre>
 
-<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/samplewixuiadddlgloc.zip&amp;type=application/zip">サンプル・ソース(SampleWixUIAddDlgLoc)</a>からインストーラをビルドするためには、地域化ファイルも参照する必要があります。統合環境では、地域化ファイルは、プロジェクトに含めるだけで、自動的に使用されるようになります。</p>
+<p><a href="http://wix.tramontana.co.hu/system/files/samples/SampleWixUIAddDlgLoc.zip">サンプル・ソース(SampleWixUIAddDlgLoc)</a>からインストーラをビルドするためには、地域化ファイルも参照する必要があります。統合環境では、地域化ファイルは、プロジェクトに含めるだけで、自動的に使用されるようになります。</p>
 
 <pre class="command">
 candle.exe SampleWixUIAddDlgLoc.wxs UserRegistrationDlg.wxs
@@ -666,30 +666,23 @@ light.exe -ext WixUIExtension -cultures:fr-fr
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson01.html'>&laquo; 前へ</a>
  | <a href='lesson03.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson2.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/user-interface">&lowast; 原文</a>
 </div>
 
 <script type="text/javascript">
 <!--
-xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
 yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
 -->
 </script>
 
 <address>
-Copyright &copy; 2004-2010,
-<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
 <br>
-何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
-<br>
-注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
-送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
-そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+日本語翻訳 Copyright &copy; 2010, 2013, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
 <br>
 原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
 </address>

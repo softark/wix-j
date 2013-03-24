@@ -11,8 +11,8 @@
 <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) 目次">
 <meta name="Author" content="Gábor DEÁK JAHN">
 <link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://www.softark.net/">
-<link rel="index" href="../index.htm">
+<link rev="made" href="http://softark.net/">
+<link rel="index" href="http://www.softark.net/index.htm">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
 <title>WiX チュートリアル (日本語訳) &mdash; Windows Installer XML ツールセット入門</title>
@@ -28,7 +28,7 @@
 <div class="navigation">
 <a href="index.html#TOC">&bull; 目次</a>
  | <a href="lesson01.html">開始 &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/index.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
 </div>
 
 <div class="main">
@@ -77,6 +77,10 @@
 </ul>
 
 <p>WiX の成熟度について疑念が有るかもしれませんね。多数のファイルを配置する必要がある大規模で複雑なアプリケーションでも、WiX でインストーラを作れるだろうか、と。それに対しては、Microsoft 自身が主要なソフトウェア・パッケージを全部 WiX に切り替えつつある、という事を言っておきます。ほんの一例ですが、<em>Microsoft Office 2007</em> のセットアップはすべて WiX で開発されたものです。</p>
+
+<hr>
+
+<p>まず最初に、WiX ツールセットの作成について Rob Menshing に謝意を表したいと思います。そして、このチュートリアルに素材を寄稿してくれた Neil Sleightholm、Vadym Stetsyak、Robert Pickering、Marc Borgers、John DeSoi、Markus Karg、Greg Glass、Stefan Krüger、Nobuo Kihara、Phil Wilson、Peter Tewkesbury、Nicholas Muguira、David Adams、Mike Green、Chesong Lee および Christophe Michel に謝意を表します。</p>
 
 </div>
 
@@ -193,8 +197,6 @@
 
 <p class="transnote">&dagger; 訳註：日本語のサンプル・コードを全てまとめたものを <a href="download/Samples.zip">Samples.zip</a> として提供しています。</p>
 
-<p>まず最初に、WiX ツールセットの作成について Rob Menshing に謝意を表したいと思います。そして、このチュートリアルに素材を寄稿してくれた Neil Sleightholm、Vadym Stetsyak、Robert Pickering、Marc Borgers、John DeSoi、Markus Karg、Greg Glass、Stefan Kruger、Phil Wilson、Peter Tewkesbury、Nicholas Muguira、David Adams、Mike Green、Chesong Lee および Christophe Michel に謝意を表します。</p>
-
 <p class="transnote">&dagger; 訳註：この「WiX チュートリアル(日本語訳)」の HTML ソース、サンプル・コード（コマンド・ライン版および VS2008 WiX Project 版）を、<a href="https://bitbucket.org/">bitbucket</a> のパブリック・リポジトリ ( <a href="https://bitbucket.org/softark/wix-j">https://bitbucket.org/softark/wix-j</a> ) で公開しています。自由にクローンしてお使い下さい。</p>
 
 </div>
@@ -202,29 +204,23 @@
 <div class="navigation">
 <a href="index.html#TOC">&bull; 目次</a>
  | <a href="lesson01.html">開始 &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/index.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
 </div>
 
 <script type="text/javascript">
 <!--
-xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
 yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
 -->
 </script>
 
 <address>
-Copyright &copy; 2004-2010, <a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
 <br>
-何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
-<br>
-注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
-送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
-そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+日本語翻訳 Copyright &copy; 2010, 2013, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
 <br>
 原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
 </address>

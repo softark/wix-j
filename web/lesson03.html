@@ -11,7 +11,7 @@
 <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 3 イベントとアクション">
 <meta name="Author" content="Gábor DEÁK JAHN">
 <link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://www.softark.net/">
+<link rev="made" href="http://softark.net/">
 <link rel="index" href="./index.html">
 <link rel="prev" href="lesson02.html">
 <link rel="next" href="lesson04.html">
@@ -32,7 +32,7 @@
 <a href='index.html#TOC'>&bull; 目次</a>
 | <a href='lesson02.html'>&laquo; 前へ</a>
 | <a href='lesson04.html'>次へ &raquo;</a>
-| <a href="http://www.tramontana.co.hu/wix/lesson3.php">&lowast; 原文</a>
+| <a href="http://wix.tramontana.co.hu/tutorial/events-and-actions">&lowast; 原文</a>
 </div>
 
 <div class="main">
@@ -203,7 +203,7 @@ extern "C" UINT __stdcall CheckPID (MSIHANDLE hInstall) {
 }
 </pre>
 
-<p>この DLL を使うために、下記の数行を適切な場所に追加します(今や、三回目のレッスンの終り近くですから、これぐらいは自分で出来るでしょうが、ずるをしたい場合は、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleca.zip&amp;type=application/zip">SampleCA</a> をダウンロードして下さい)。</p>
+<p>この DLL を使うために、下記の数行を適切な場所に追加します(今や、三回目のレッスンの終り近くですから、これぐらいは自分で出来るでしょうが、ずるをしたい場合は、<a href="http://wix.tramontana.co.hu/system/files/samples/SampleCA.zip">SampleCA</a> をダウンロードして下さい)。</p>
 
 <p class="transnote">&dagger; 訳註：SampleCA の日本語版は <a href="download/Sample-3-3-CA.zip">Sample-3-3-CA.zip</a> です。</p>
 
@@ -308,7 +308,7 @@ msiexec /i SampleCA.msi /l*v SampleCA.log
   &lt;<strong>Binary</strong> Id="Exclam.ico" SourceFile="Exclam.ico" /&gt;
 </pre>
 
-<p>全体のソースは、<a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleaskkey.zip&amp;type=application/zip">SampleAskKey</a> として、ダウンロードすることが出来ます。</p>
+<p>全体のソースは、<a href="http://wix.tramontana.co.hu/system/files/samples/SampleAskKey.zip">SampleAskKey</a> として、ダウンロードすることが出来ます。</p>
 
 <p class="transnote">&dagger; 訳註：SampleAskKey の日本語版は <a href="download/Sample-3-4-AskKey.zip">Sample-3-4-AskKey.zip</a> です。</p>
 
@@ -351,7 +351,7 @@ namespace WiXTutorial.Samples
 }
 </pre>
 
-<p><a href="http://www.tramontana.co.hu/wix/download.php?file=samples/sampleaskkeynet.zip&amp;type=application/zip">SampleAskKeyNET</a> のソース・コードには、ほんの一箇所だけ、修正が必要なところがあります。DLL の名前は違うものになります。と言うのは、Windows Installer とマネージされた世界の間隙を埋めるために、純粋なマネージ DLL を特殊なパッケージに包む必要があるためです。</p>
+<p><a href="http://wix.tramontana.co.hu/system/files/samples/SampleAskKeyNET.zip">SampleAskKeyNET</a> のソース・コードには、ほんの一箇所だけ、修正が必要なところがあります。DLL の名前は違うものになります。と言うのは、Windows Installer とマネージされた世界の間隙を埋めるために、純粋なマネージ DLL を特殊なパッケージに包む必要があるためです。</p>
 
 <p class="transnote">&dagger; 訳註：SampleAskKeyNET の日本語版は <a href="download/Sample-3-5-AskKeyNet.zip">Sample-3-5-AskKeyNet.zip</a> です。</p>
 
@@ -465,30 +465,23 @@ extern "C" UINT __stdcall MyAction (MSIHANDLE hInstall) {
 <a href='index.html#TOC'>&bull; 目次</a>
  | <a href='lesson02.html'>&laquo; 前へ</a>
  | <a href='lesson04.html'>次へ &raquo;</a>
- | <a href="http://www.tramontana.co.hu/wix/lesson3.php">&lowast; 原文</a>
+ | <a href="http://wix.tramontana.co.hu/tutorial/events-and-actions">&lowast; 原文</a>
 </div>
 
 <script type="text/javascript">
 <!--
-xxx4746 = String.fromCharCode (100,106,103,64,116,114,97,109,111,110,116,97,110,97,46,99,111,46,104,117)
 yyy0702 = String.fromCharCode (107,105,104,97,114,97,64,115,111,102,116,97,114,107,46,110,101,116)
 -->
 </script>
 
 <address>
-Copyright &copy; 2004-2010,
-<a onmouseover="this.href='mailto:'+xxx4746+'?subject=WixTutorial'">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu/index_en.php">Tramontána</a>
+Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
 <br>
-何よりもコメントと寄稿を歓迎します。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a style="color: white" href="http://www.eszpresszo.com">何よりもコメントと寄稿を歓迎します。</a>
-<br>
-注記 : スパム・フィルターリングについて、実際には余計なスパムを追加生産することになる、脳死状態のアイデアを使う人がときどきいます。
-送信者に確認メッセージを送って応答するように求め、応答した者だけをホワイトリストに登録してメールを通過させる、というものです。
-そういう事をする人には、申し訳ありませんが、私からの返信は決して届きません。私はこのアイデアを理論的にも実践的にも拒絶しています。
+何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://www.softark.net/">softark</a>
+日本語翻訳 Copyright &copy; 2010, 2013, <a onmouseover="this.href='mailto:'+yyy0702+'?subject=WixTutorial Translation'">Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
 <br>
 原作者と同じように、コメントを歓迎します。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いを指摘して下さると助かります。
 </address>

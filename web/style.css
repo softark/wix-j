@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 body {
-  margin: 0pt;
-  padding: 0pt;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 20px 0px;
   background-color: white;
   }
 body, p, ul {
@@ -15,7 +15,7 @@ p, ul, ol {
   }
 
 div.main {
-  padding: 0pt 10pt 0pt 10pt;
+  padding: 8px 30px 8px 30px;
   }
 div.main > p:first-child:first-letter {
   font-size: 200%;
@@ -247,7 +247,7 @@ p.contributor {
 }
 
 address {
-  padding: 3pt;
+  padding: 8px 30px 8px 30px;
   /* font: italic 8pt "Georgia", "Palatino Linotype", "Palatino", Times, serif;*/
   font-style: normal;
   font-size: 80%;
