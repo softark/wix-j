@@ -49,3 +49,5 @@ _ReSharper*/
 # =======
 log/
 .settings/
+
+web/google*
