@@ -51,3 +51,5 @@ log/
 .settings/
 
 web/google*
+
+.idea
