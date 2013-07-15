@@ -1,50 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="ja">
 <head>
-<meta name="GENERATOR" content="By hand">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
-<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
-<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
-<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 10 標準ライブラリ">
-<meta name="Author" content="Gábor DEÁK JAHN">
-<link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://softark.net/">
-<link rel="index" href="./index.html">
-<link rel="prev" href="lesson09.html">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
-<title>WiX チュートリアル (日本語訳) &mdash; Lesson 10 標準ライブラリ</title>
+    <meta name="GENERATOR" content="By hand">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+    <meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+    <meta name="Description"
+          content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+    <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 10 標準ライブラリ">
+    <meta name="Author" content="Gábor DEÁK JAHN">
+    <link rel="stylesheet" href="style.css" media="all" type="text/css">
+    <link rev="made" href="http://softark.net/">
+    <link rel="index" href="./index.html">
+    <link rel="prev" href="lesson09.html">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+    <title>WiX チュートリアル (日本語訳) &mdash; Lesson 10 標準ライブラリ</title>
 </head>
 
 <body>
 
 <div class='header'>
-<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
-<h1>Lesson 10 <strong>標準ライブラリ</strong></h1>
+    <h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+
+    <h1>Lesson 10 <strong>標準ライブラリ</strong></h1>
 </div>
 
 <div class='navigation'>
-<a href='index.html#TOC'>&bull; 目次</a>
- | <a href='lesson09.html'>&laquo; 前へ</a>
- | <a href="http://wix.tramontana.co.hu/tutorial/standard-libraries">&lowast; 原文</a>
+    <a href='index.html#TOC'>&bull; 目次</a>
+    | <a href='lesson09.html'>&laquo; 前へ</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial/standard-libraries">&lowast; 原文</a>
 </div>
 
 <div class='main'>
 
-<p>WiX には、よくある課題の達成について、私たちインストーラ開発者を支援してくれる追加のライブラリがいくつか付属しています。詳しく見ていきますが、まずは簡単なサンプルから始めましょう。</p>
+    <p>WiX には、よくある課題の達成について、私たちインストーラ開発者を支援してくれる追加のライブラリがいくつか付属しています。詳しく見ていきますが、まずは簡単なサンプルから始めましょう。</p>
 
-<div class='section'>
+    <div class='section'>
 
-<h2 id="CH=10.1">10.1 カスタム・アクションとユーザー・インタフェイス</h2>
+        <h2 id="CH=10.1">10.1 カスタム・アクションとユーザー・インタフェイス</h2>
 
-<p><a href="http://wix.tramontana.co.hu/system/files/samples/SampleListbox.zip">SampleListbox</a> は、どのようにすれば、ユーザー・インタフェイスに表示されるデータをカスタム・アクションで収集することが出来るかを示しています。これを実現するために、WiX に付属している WcaUtil カスタム・アクション・ライブラリを使います。このライブラリは、C++ でカスタム・アクションを書くことを容易にしてくれる多くのユーティリティ関数を持っています。その中には、プロパティを生の形式および整形された形式で取得および設定する関数や、インストーラ・データベースを修正する関数や、Windows Installer のログ・ファイルにログを吐く関数なども含まれています。</p>
+        <p><a href="http://wix.tramontana.co.hu/system/files/samples/SampleListbox.zip">SampleListbox</a>
+            は、どのようにすれば、ユーザー・インタフェイスに表示されるデータをカスタム・アクションで収集することが出来るかを示しています。これを実現するために、WiX に付属している WcaUtil
+            カスタム・アクション・ライブラリを使います。このライブラリは、C++
+            でカスタム・アクションを書くことを容易にしてくれる多くのユーティリティ関数を持っています。その中には、プロパティを生の形式および整形された形式で取得および設定する関数や、インストーラ・データベースを修正する関数や、Windows
+            Installer のログ・ファイルにログを吐く関数なども含まれています。</p>
 
-<p class="transnote">&dagger; 訳註：SampleListbox の日本語版は <a href="download/Sample-10-1-Listbox.zip">Sample-10-1-Listbox.zip</a> です。</p>
+        <p class="transnote">&dagger; 訳註：SampleListbox の日本語版は <a href="download/Sample-10-1-Listbox.zip">Sample-10-1-Listbox.zip</a>
+            です。</p>
 
-<p>組み込みの UI をわずかに修正して、新しいダイアログ、<em>InstallDlg</em> を作成します。どうやってこれを実現するかは、これまでのレッスンで既に見ています。つまり、ここには、まだ知らないものは何もありません。カスタム・アクションを定義してスケジュールします。リストボックスをパブリックなプロパティにリンクされるように定義します。</p>
+        <p>組み込みの UI をわずかに修正して、新しいダイアログ、<em>InstallDlg</em>
+            を作成します。どうやってこれを実現するかは、これまでのレッスンで既に見ています。つまり、ここには、まだ知らないものは何もありません。カスタム・アクションを定義してスケジュールします。リストボックスをパブリックなプロパティにリンクされるように定義します。
+        </p>
 
 <pre>
 &lt;<strong>CustomAction</strong> Id="FillingListbox" BinaryKey="FillListbox" DllEntry="FillListbox" /&gt;
@@ -66,9 +75,10 @@
 &lt;<strong>Binary</strong> Id="FillListbox" SourceFile="FillListbox.dll" /&gt;
 </pre>
 
-<p class="transnote">&dagger; 訳註：リストボックスで選択された項目を調べて使用する方法については、日本語のサンプルを参照して下さい。</p>
+        <p class="transnote">&dagger; 訳註：リストボックスで選択された項目を調べて使用する方法については、日本語のサンプルを参照して下さい。</p>
 
-<p>カスタム・アクションは、<kbd>Wca</kbd> 関数を使って、インストーラとの接続を初期化したりクローズしたり、パブリックなプロパティに現れる値を挿入したりします。そして、このプロパティに接続されているリストボックスにその値が反映されます。</p>
+        <p>カスタム・アクションは、<kbd>Wca</kbd>
+            関数を使って、インストーラとの接続を初期化したりクローズしたり、パブリックなプロパティに現れる値を挿入したりします。そして、このプロパティに接続されているリストボックスにその値が反映されます。</p>
 
 <pre>
 #include &lt;windows.h&gt;
@@ -100,17 +110,20 @@ extern "C" UINT __stdcall FillListbox(MSIHANDLE hInstall) {
 }
 </pre>
 
-<p>この DLL をビルドするときには、<kbd>msi.lib</kbd> の他に、<kbd>dutil.lib</kbd> と <kbd>wcautil.lib</kbd> もリンクしなければなりません。これらのファイルは WiX ツールセットとともにインストールされています。</p>
+        <p>この DLL をビルドするときには、<kbd>msi.lib</kbd> の他に、<kbd>dutil.lib</kbd> と <kbd>wcautil.lib</kbd>
+            もリンクしなければなりません。これらのファイルは WiX ツールセットとともにインストールされています。</p>
 
-</div>
+    </div>
 
-<div CLASS='section'>
+    <div CLASS='section'>
 
-<h2 id="CH-10.2">10.2 お静かに願います！</h2>
+        <h2 id="CH-10.2">10.2 お静かに願います！</h2>
 
-<p>実行ファイルを開始するためには標準のカスタム・アクションが使えますが、起動されるプログラムが普通のグラフィカルなユーザー・インタフェイスを持っていないコンソール・アプリケーションである場合には、それが最善の方法ではないかも知れません。この場合、コマンド・ライン・コンソールが一瞬だけ開くのを避けたいのではないでしょうか。</p>
+        <p>
+            実行ファイルを開始するためには標準のカスタム・アクションが使えますが、起動されるプログラムが普通のグラフィカルなユーザー・インタフェイスを持っていないコンソール・アプリケーションである場合には、それが最善の方法ではないかも知れません。この場合、コマンド・ライン・コンソールが一瞬だけ開くのを避けたいのではないでしょうか。</p>
 
-<p>標準の <em>WixUtil</em> ライブラリに、そういう場合にちょうど良い <em>CAQuietExec</em> という特殊なカスタム・アクションがあります。このカスタム・アクションを使うためには、<em>QtExecCmdLine</em> という定義済みのプロパティに実行すべきコマンド・ラインを入れなければなりません。コマンドの実行は、即時でも遅延でも構いません。</p>
+        <p>標準の <em>WixUtil</em> ライブラリに、そういう場合にちょうど良い <em>CAQuietExec</em> という特殊なカスタム・アクションがあります。このカスタム・アクションを使うためには、<em>QtExecCmdLine</em>
+            という定義済みのプロパティに実行すべきコマンド・ラインを入れなければなりません。コマンドの実行は、即時でも遅延でも構いません。</p>
 
 <pre>
 &lt;<strong>Property</strong> Id="QtExecCmdLine" Value="something.exe"/&gt;
@@ -122,35 +135,37 @@ extern "C" UINT __stdcall FillListbox(MSIHANDLE hInstall) {
 &lt;/<strong>InstallExecuteSequence</strong>&gt;
 </pre>
 
-<p>64-bit の実行ファイルを実行するためには、<em>CAQuietExec64</em> および <em>QtExec64CmdLine</em> を代りに使って下さい。</p>
+        <p>64-bit の実行ファイルを実行するためには、<em>CAQuietExec64</em> および <em>QtExec64CmdLine</em> を代りに使って下さい。</p>
 
-<p>ビルドするためには、この標準ライブラリをリンクしなければなりません。</p>
+        <p>ビルドするためには、この標準ライブラリをリンクしなければなりません。</p>
 
 <pre class="command">
 candle.exe Sample.wxs
 light.exe -ext WixUtilExtension Sample.wixobj
 </pre>
 
-</div>
+    </div>
 
 </div>
 
 <div class='navigation'>
-<a href='index.html#TOC'>&bull; 目次</a>
- | <a href='lesson09.html'>&laquo; 前へ</a>
- | <a href="http://wix.tramontana.co.hu/tutorial/standard-libraries">&lowast; 原文</a>
+    <a href='index.html#TOC'>&bull; 目次</a>
+    | <a href='lesson09.html'>&laquo; 前へ</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial/standard-libraries">&lowast; 原文</a>
 </div>
 
 <address>
-Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
-<br>
-何よりもコメントと寄稿を歓迎します。
+    Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a
+        href="http://www.tramontana.co.hu">Tramontána</a>
+    <br>
+    何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
-<br>
-読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a> のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
+    日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara, <a href="http://softark.net/">softark</a>
+    <br>
+    読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a>
+    のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
 </address>
 
 </body>

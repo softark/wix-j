@@ -1,216 +1,268 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="ja">
 <head>
-<meta name="GENERATOR" content="By hand">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
-<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
-<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
-<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) 目次">
-<meta name="Author" content="Gábor DEÁK JAHN">
-<link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://softark.net/">
-<link rel="index" href="http://www.softark.net/index.htm">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
-<title>WiX チュートリアル (日本語訳) &mdash; Windows Installer XML ツールセット入門</title>
+    <meta name="GENERATOR" content="By hand">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+    <meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+    <meta name="Description"
+          content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+    <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) 目次">
+    <meta name="Author" content="Gábor DEÁK JAHN">
+    <link rel="stylesheet" href="style.css" media="all" type="text/css">
+    <link rev="made" href="http://softark.net/">
+    <link rel="index" href="http://www.softark.net/index.htm">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+    <title>WiX チュートリアル (日本語訳) &mdash; Windows Installer XML ツールセット入門</title>
 </head>
 
 <body>
 
 <div class="maintitle">
-<h1 class="main">WiX チュートリアル <span class="trans">(日本語訳)</span></h1>
-<p style="text-align: center"><img class="title" src="images/wix3.gif" width="800" height="560" alt="Title page"></p>
+    <h1 class="main">WiX チュートリアル <span class="trans">(日本語訳)</span></h1>
+
+    <p style="text-align: center"><img class="title" src="images/wix3.gif" width="800" height="560" alt="Title page">
+    </p>
 </div>
 
 <div class="navigation">
-<a href="index.html#TOC">&bull; 目次</a>
- | <a href="lesson01.html">開始 &raquo;</a>
- | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
+    <a href="index.html#TOC">&bull; 目次</a>
+    | <a href="lesson01.html">開始 &raquo;</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
 </div>
 
 <div class="main">
 
-<p><strong><a href="http://sourceforge.net/projects/wix/">Windows Installer XML (WiX)</a></strong> は、XML ソース・コードから Windows のインストーラ・パッケージをビルドするツールセットです。このツールセットはコマンド・ライン・ツールを提供しており、古いスタイルの Makefile によるビルド・プロセスに組み込んで使用することが出来るだけでなく、新しい MSBuild テクノロジを使って <em>Microsoft の Visual Studio</em> や <em>SharpDevelop</em> のような統合開発環境の中で MSI や MSM のセットアップ・パッケージをビルドすることも出来ます。</p>
+    <p><strong><a href="http://sourceforge.net/projects/wix/">Windows Installer XML (WiX)</a></strong> は、XML ソース・コードから
+        Windows のインストーラ・パッケージをビルドするツールセットです。このツールセットはコマンド・ライン・ツールを提供しており、古いスタイルの Makefile
+        によるビルド・プロセスに組み込んで使用することが出来るだけでなく、新しい MSBuild テクノロジを使って <em>Microsoft の Visual Studio</em> や
+        <em>SharpDevelop</em> のような統合開発環境の中で MSI や MSM のセットアップ・パッケージをビルドすることも出来ます。</p>
 
-<p>WiX はオープン・ソースのプロジェクトで、元来は Microsoft が開発したものですが、現在は <em>Rob Mensching</em> によってメンテナンスされています。SourceForge から<a href="http://sourceforge.net/projects/wix/">最新のバイナリとソース・コードのリリースをダウンロードする</a>ことが出来ます。このチュートリアルは、最近リリースされた安定バージョンである 3.0 をカバーしています。</p>
+    <p>WiX はオープン・ソースのプロジェクトで、元来は Microsoft が開発したものですが、現在は <em>Rob Mensching</em> によってメンテナンスされています。SourceForge から<a
+            href="http://sourceforge.net/projects/wix/">最新のバイナリとソース・コードのリリースをダウンロードする</a>ことが出来ます。このチュートリアルは、最近リリースされた安定バージョンである
+        3.0 をカバーしています。</p>
 
-<p class="transnote">&dagger; 訳註：本文書は、Gábor DEÁK JAHN による <a href="http://wix.tramontana.co.hu" title="WiX tutorial 原文"><strong>WiX tutorial</strong></a> を日本語に翻訳したものです。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。</p>
-<p class="transnote wix35">&dagger; 訳註：2011年3月現在、WiX の最新安定バージョンは 3.5 です。3.5 の主要な特徴は、(1) Visual Studio 2010 への対応の追加、(2) IIS7 への対応の追加、(3) 地域化言語の追加 の3点です。WiX 本体のコアは、3.0 との互換性を保ちながら、若干の機能拡張と多くの障害修正がなされています。ただし、WiX 3.0 と 3.5 は、同一マシン上に共存させることは出来ません。本文書のサンプル・ソースの大部分は、WiX 3.5 でも、そのままビルドすることが可能です。</p>
+    <p class="transnote">&dagger; 訳註：本文書は、Gábor DEÁK JAHN による <a href="http://wix.tramontana.co.hu"
+                                                                 title="WiX tutorial 原文"><strong>WiX
+        tutorial</strong></a> を日本語に翻訳したものです。読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。</p>
 
-<p>ツールセットは C# で書かれていて、起動するためには <a href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5">.NET Framework 2.0</a> と、その <a href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=79bc3b77-e02c-4ad3-aacf-a7633f706ba5">Service Pack 1</a> が必要です。と言っても、これはツールセット自体にのみ当てはまることです。このツールセットで作成したパッケージは、対象のコンピュータに何か追加のフレームワークやソフトウェアがインストールされていることを要求するものではありません。同様に、ある種の特殊なアプリケーション(マージ・モジュールやパッチ)では、いくつか追加のユーティリティが必要になりますが、それも、パッケージをビルドするコンピュータで必要になるだけです。クライアントは、出来上った自己完結的なインストーラ・パッケージ以外には、何も必要としません。</p>
+    <p class="transnote wix35">&dagger; 訳註：2011年3月現在、WiX の最新安定バージョンは 3.5 です。3.5 の主要な特徴は、(1) Visual Studio 2010
+        への対応の追加、(2) IIS7 への対応の追加、(3) 地域化言語の追加 の3点です。WiX 本体のコアは、3.0 との互換性を保ちながら、若干の機能拡張と多くの障害修正がなされています。ただし、WiX 3.0 と 3.5
+        は、同一マシン上に共存させることは出来ません。本文書のサンプル・ソースの大部分は、WiX 3.5 でも、そのままビルドすることが可能です。</p>
 
-<p>WiX の開発者とユーザーの友好的なコミュニティーが、SourceForge が運営している専用のメーリング・リストの中に存在します。このメーリング・リストは、WiX のあらゆる面についてアドバイスを求めるための最善の場所です。SourceForge のアカウントを既に持っているのであれば、ウェブサイトからでも、メーリング・リストに参加することが可能です。しかし、もっと簡単な方法は、<a href="mailto:wix-users-request@lists.sourceforge.net?subject=subscribe">メーリング・リストの参加申し込みアドレス</a>に空のメッセージを送信することです。今日、このようなメーリング・リストでは当り前のことですが、最初に参加申し込みをしなければ、何も質問をすることは出来ません。そうでなければ、メーリング・リストのユーザーはスパムに耐えられないでしょう。</p>
+    <p>ツールセットは C# で書かれていて、起動するためには <a
+            href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5">.NET
+        Framework 2.0</a> と、その <a
+            href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;FamilyID=79bc3b77-e02c-4ad3-aacf-a7633f706ba5">Service
+        Pack 1</a>
+        が必要です。と言っても、これはツールセット自体にのみ当てはまることです。このツールセットで作成したパッケージは、対象のコンピュータに何か追加のフレームワークやソフトウェアがインストールされていることを要求するものではありません。同様に、ある種の特殊なアプリケーション(マージ・モジュールやパッチ)では、いくつか追加のユーティリティが必要になりますが、それも、パッケージをビルドするコンピュータで必要になるだけです。クライアントは、出来上った自己完結的なインストーラ・パッケージ以外には、何も必要としません。
+    </p>
 
-<p class="transnote">&dagger; 訳註：日本語のメーリング・リストとしては、<a href="http://www.freeml.com/msi">Windows Installer/WiX/InstallShield メーリングリスト</a>があります。</p>
+    <p>WiX の開発者とユーザーの友好的なコミュニティーが、SourceForge が運営している専用のメーリング・リストの中に存在します。このメーリング・リストは、WiX
+        のあらゆる面についてアドバイスを求めるための最善の場所です。SourceForge のアカウントを既に持っているのであれば、ウェブサイトからでも、メーリング・リストに参加することが可能です。しかし、もっと簡単な方法は、<a
+                href="mailto:wix-users-request@lists.sourceforge.net?subject=subscribe">メーリング・リストの参加申し込みアドレス</a>に空のメッセージを送信することです。今日、このようなメーリング・リストでは当り前のことですが、最初に参加申し込みをしなければ、何も質問をすることは出来ません。そうでなければ、メーリング・リストのユーザーはスパムに耐えられないでしょう。
+    </p>
 
-<div class="section">
+    <p class="transnote">&dagger; 訳註：日本語のメーリング・リストとしては、<a href="http://www.freeml.com/msi">Windows
+        Installer/WiX/InstallShield メーリングリスト</a>があります。</p>
 
-<h2>前書き</h2>
+    <div class="section">
 
-<p>アプリケーションの開発が終了しても、まだ終りと言うには程遠いものがあります。近年では、ユーザーは、本格的で完璧なセットアップ・ソリューションが製品に付属しているのを当り前の事として要求するようになっています &mdash; そして、セットアップはエンド・ユーザーがアプリケーションに接する一番最初の部分ですから、セットアップの完全さと信頼性が重要であることはいくら強調しても足りません。</p>
+        <h2>前書き</h2>
 
-<p>従来からあるセットアップ・ツールは、プログラム的なスクリプト・ベースの手法を使って、アプリケーションのインストールに関係するさまざまなステップを記述してきました。ファイルのコピー、レジストリ設定の作成、デバイス・ドライバーやサービスの開始など、すべてそうです。一方、Windows Installer の背景にあるテクノロジは、エンド・ユーザーに対しては同じような見た目や使い勝手を維持しながらも、重要な哲学的変更をいくつか経ています。根本的な変更は、命令的な記述から宣言的な記述への移行でした。すなわち、インストールの個々のステップを記述するのではなく、インストールやアンインストールのさまざまな段階を経た後に、対象のマシンがどんな状態になっているべきかを、宣言的な形式で定義するのです。命令的な記述は非常に効率的であるように見えますが、それには、何かエラーが発生しない限りは、という条件が付きます。しかし、<em>宣言的な記述であれば、予想外の条件、対象マシンの環境の違い、インストールの中断、リソースの共有などに起因するエラーが生じても、うまく対処することが出来ます。</em>セットアップの開発者にとって最も優先すべき課題は、インストールの過程でどのような事態が発生しようとも、対象のマシンを既知の安定した状態に保って、有害な副作用を与えないことです。</p>
+        <p>
+            アプリケーションの開発が終了しても、まだ終りと言うには程遠いものがあります。近年では、ユーザーは、本格的で完璧なセットアップ・ソリューションが製品に付属しているのを当り前の事として要求するようになっています &mdash;
+            そして、セットアップはエンド・ユーザーがアプリケーションに接する一番最初の部分ですから、セットアップの完全さと信頼性が重要であることはいくら強調しても足りません。</p>
 
-<p>広く使われているセットアップ・ツールの開発者たちも、この新しいテクノロジを採用した新しいバージョンのツールを提供して、そういう性格を持ったセットアップ・プログラムを作成できるようにし始めています。しかし、多くの開発者の経験が示すように、それらのツールは、比較的単純なインストーラ・パッケージの作成は完璧にこなしますが、多少複雑な要求に出会った場合には、制約が厳しすぎたり柔軟性が欠けていたりすることが多いのです。</p>
+        <p>
+            従来からあるセットアップ・ツールは、プログラム的なスクリプト・ベースの手法を使って、アプリケーションのインストールに関係するさまざまなステップを記述してきました。ファイルのコピー、レジストリ設定の作成、デバイス・ドライバーやサービスの開始など、すべてそうです。一方、Windows
+            Installer
+            の背景にあるテクノロジは、エンド・ユーザーに対しては同じような見た目や使い勝手を維持しながらも、重要な哲学的変更をいくつか経ています。根本的な変更は、命令的な記述から宣言的な記述への移行でした。すなわち、インストールの個々のステップを記述するのではなく、インストールやアンインストールのさまざまな段階を経た後に、対象のマシンがどんな状態になっているべきかを、宣言的な形式で定義するのです。命令的な記述は非常に効率的であるように見えますが、それには、何かエラーが発生しない限りは、という条件が付きます。しかし、<em>宣言的な記述であれば、予想外の条件、対象マシンの環境の違い、インストールの中断、リソースの共有などに起因するエラーが生じても、うまく対処することが出来ます。</em>セットアップの開発者にとって最も優先すべき課題は、インストールの過程でどのような事態が発生しようとも、対象のマシンを既知の安定した状態に保って、有害な副作用を与えないことです。
+        </p>
 
-<p>ここで紹介しようとしているツールセット、<strong>WiX</strong> は、それらとは違う手法を取っています。従来のセットアップ・ツールでは、グラフィカルなインタフェイスが付属していて、インストールのプロセスを構成するファイルや関連タスクを開発者が手作業で収集できるようになっているのが通例ですが、WiX はそういうものではありません。むしろ、プログラミング言語によく似たものです。WiX では、<em>アプリケーションを作成する通常のプロセスと全く同じように</em>、テキスト・ファイルを使って、インストールのプロセスに関する全ての要素を記述します。テキスト・ファイルは、急速に普及してきた XML 形式のものです。そして、通常のコンパイラがソース・ファイルからアプリケーションを作成するのと全く同じように、WiX のコンパイラとリンカがセットアップ・プログラムを作成します。このため、WiX は、自動化されたアプリケーション作成プロセスの一部として組み込むことが、非常に容易に出来るようになっています。組み込む先は、makefile による古典的なテクノロジに基づいたものでも構いませんし、現代的な統合開発環境の類似した機構であっても構いません。</p>
+        <p>
+            広く使われているセットアップ・ツールの開発者たちも、この新しいテクノロジを採用した新しいバージョンのツールを提供して、そういう性格を持ったセットアップ・プログラムを作成できるようにし始めています。しかし、多くの開発者の経験が示すように、それらのツールは、比較的単純なインストーラ・パッケージの作成は完璧にこなしますが、多少複雑な要求に出会った場合には、制約が厳しすぎたり柔軟性が欠けていたりすることが多いのです。</p>
 
-<p>この統合は、基本的には開発者に快適さを提供するだけのものですが、<strong>WiX</strong> は、それに加えて、更に別のレベルの統合をも提供します。それは、第一の統合よりもはるかに利点が多い、<em>セットアップ開発プロセスとアプリケーション開発プロセスの統合</em>です。伝統的に、セットアップ・プログラムが書かれるのは、メインのアプリケーションがほとんど完成してからの事でした。しかも、多くの場合は、別の開発者によって書かれるのです。この手法は、アプリケーションを構成する全てのリソースについて情報を収集するという、退屈で間違いの多いプロセスを必要とします。通常、ファイルそのものは明白ですが、レジストリ・エントリ、サービス、その他の形式のリソース間依存関係は、大抵は、後になってからでは再構成するのが困難なものです。しっかりした開発ドキュメントが欠如している場合、セットアップの開発者は、全ての情報の断片をアプリケーションの開発者から聞き出すか、もしくはソース・コードから抽出しなければなりません。</p>
+        <p>ここで紹介しようとしているツールセット、<strong>WiX</strong>
+            は、それらとは違う手法を取っています。従来のセットアップ・ツールでは、グラフィカルなインタフェイスが付属していて、インストールのプロセスを構成するファイルや関連タスクを開発者が手作業で収集できるようになっているのが通例ですが、WiX
+            はそういうものではありません。むしろ、プログラミング言語によく似たものです。WiX では、<em>アプリケーションを作成する通常のプロセスと全く同じように</em>、テキスト・ファイルを使って、インストールのプロセスに関する全ての要素を記述します。テキスト・ファイルは、急速に普及してきた
+            XML 形式のものです。そして、通常のコンパイラがソース・ファイルからアプリケーションを作成するのと全く同じように、WiX のコンパイラとリンカがセットアップ・プログラムを作成します。このため、WiX
+            は、自動化されたアプリケーション作成プロセスの一部として組み込むことが、非常に容易に出来るようになっています。組み込む先は、makefile
+            による古典的なテクノロジに基づいたものでも構いませんし、現代的な統合開発環境の類似した機構であっても構いません。</p>
 
-<p>統合されたアプリケーション/セットアップ開発環境においては、元の開発者がアプリケーションの開発と同期して <strong>WiX</strong> のソース・ファイルを修正すべきことになります。新しいモジュールの開発を開始したり、新しいレジストリ・エントリを追加したり、サービスなどの依存関係を作成したりすると同時に、並行して、セットアップに対する適切な修正が施されなければなりません。この手法をとれば、重要な情報が欠落することは決してありませんし、おまけとして、アプリケーションそのものが完成するのと一緒にセットアップ・プログラムも実質的に完成することになります。</p>
+        <p>この統合は、基本的には開発者に快適さを提供するだけのものですが、<strong>WiX</strong> は、それに加えて、更に別のレベルの統合をも提供します。それは、第一の統合よりもはるかに利点が多い、<em>セットアップ開発プロセスとアプリケーション開発プロセスの統合</em>です。伝統的に、セットアップ・プログラムが書かれるのは、メインのアプリケーションがほとんど完成してからの事でした。しかも、多くの場合は、別の開発者によって書かれるのです。この手法は、アプリケーションを構成する全てのリソースについて情報を収集するという、退屈で間違いの多いプロセスを必要とします。通常、ファイルそのものは明白ですが、レジストリ・エントリ、サービス、その他の形式のリソース間依存関係は、大抵は、後になってからでは再構成するのが困難なものです。しっかりした開発ドキュメントが欠如している場合、セットアップの開発者は、全ての情報の断片をアプリケーションの開発者から聞き出すか、もしくはソース・コードから抽出しなければなりません。
+        </p>
 
-<p>このような事の結果として、<strong>WiX</strong> は全ての開発者に平等に適している訳ではない、という事が言えます。学習曲線の勾配が比較的きついこと(このチュートリアルの主要な目的はその困難の克服を支援することではあるのですが)、不可避的に内部の詳細事項に関わる必要があること、そして、基礎を構成する Windows Installer のテクノロジが複雑であることを考慮に入れると、経験の少ない開発者や、<strong>WiX</strong> によって得られる無制限の圧倒的なパフォーマンスが本当は必要でない人にとっては、もっと単純な、GUI ベースのセットアップ・オーサリング・ツールの方が適しているでしょう。そういうツールとしては、市販製品でもフリーウェアでも、入手できるソリューションがいくつか有ります。</p>
+        <p>統合されたアプリケーション/セットアップ開発環境においては、元の開発者がアプリケーションの開発と同期して <strong>WiX</strong>
+            のソース・ファイルを修正すべきことになります。新しいモジュールの開発を開始したり、新しいレジストリ・エントリを追加したり、サービスなどの依存関係を作成したりすると同時に、並行して、セットアップに対する適切な修正が施されなければなりません。この手法をとれば、重要な情報が欠落することは決してありませんし、おまけとして、アプリケーションそのものが完成するのと一緒にセットアップ・プログラムも実質的に完成することになります。
+        </p>
 
-<p>WiX ツールセットの特徴と利点を要約すると以下の通りです。</p>
+        <p>このような事の結果として、<strong>WiX</strong>
+            は全ての開発者に平等に適している訳ではない、という事が言えます。学習曲線の勾配が比較的きついこと(このチュートリアルの主要な目的はその困難の克服を支援することではあるのですが)、不可避的に内部の詳細事項に関わる必要があること、そして、基礎を構成する
+            Windows Installer のテクノロジが複雑であることを考慮に入れると、経験の少ない開発者や、<strong>WiX</strong>
+            によって得られる無制限の圧倒的なパフォーマンスが本当は必要でない人にとっては、もっと単純な、GUI
+            ベースのセットアップ・オーサリング・ツールの方が適しているでしょう。そういうツールとしては、市販製品でもフリーウェアでも、入手できるソリューションがいくつか有ります。</p>
 
-<ul>
-  <li>宣言的な手法</li>
-  <li>Windows Installer の機能に対する制約のないアクセス</li>
-  <li>GUI ベースの情報の収集ではなく、ソース・コード</li>
-  <li>アプリケーションのビルド・プロセスへの完全な統合</li>
-  <li>アプリケーション開発との統合の可能性</li>
-  <li>(社内および第三者との)チーム開発のサポート</li>
-  <li>無料、オープン・ソース</li>
-</ul>
+        <p>WiX ツールセットの特徴と利点を要約すると以下の通りです。</p>
 
-<p>WiX の成熟度について疑念が有るかもしれませんね。多数のファイルを配置する必要がある大規模で複雑なアプリケーションでも、WiX でインストーラを作れるだろうか、と。それに対しては、Microsoft 自身が主要なソフトウェア・パッケージを全部 WiX に切り替えつつある、という事を言っておきます。ほんの一例ですが、<em>Microsoft Office 2007</em> のセットアップはすべて WiX で開発されたものです。</p>
+        <ul>
+            <li>宣言的な手法</li>
+            <li>Windows Installer の機能に対する制約のないアクセス</li>
+            <li>GUI ベースの情報の収集ではなく、ソース・コード</li>
+            <li>アプリケーションのビルド・プロセスへの完全な統合</li>
+            <li>アプリケーション開発との統合の可能性</li>
+            <li>(社内および第三者との)チーム開発のサポート</li>
+            <li>無料、オープン・ソース</li>
+        </ul>
 
-<hr>
+        <p>WiX の成熟度について疑念が有るかもしれませんね。多数のファイルを配置する必要がある大規模で複雑なアプリケーションでも、WiX でインストーラを作れるだろうか、と。それに対しては、Microsoft
+            自身が主要なソフトウェア・パッケージを全部 WiX に切り替えつつある、という事を言っておきます。ほんの一例ですが、<em>Microsoft Office 2007</em> のセットアップはすべて WiX
+            で開発されたものです。</p>
 
-<p>まず最初に、WiX ツールセットの作成について Rob Menshing に謝意を表したいと思います。そして、このチュートリアルに素材を寄稿してくれた Neil Sleightholm、Vadym Stetsyak、Robert Pickering、Marc Borgers、John DeSoi、Markus Karg、Greg Glass、Stefan Krüger、Nobuo Kihara、Phil Wilson、Peter Tewkesbury、Nicholas Muguira、David Adams、Mike Green、Chesong Lee および Christophe Michel に謝意を表します。</p>
+        <hr>
 
-</div>
+        <p>まず最初に、WiX ツールセットの作成について Rob Menshing に謝意を表したいと思います。そして、このチュートリアルに素材を寄稿してくれた Neil Sleightholm、Vadym
+            Stetsyak、Robert Pickering、Marc Borgers、John DeSoi、Markus Karg、Greg Glass、Stefan Krüger、Nobuo Kihara、Phil
+            Wilson、Peter Tewkesbury、Nicholas Muguira、David Adams、Mike Green、Chesong Lee および Christophe Michel
+            に謝意を表します。</p>
 
-<div class="section">
+    </div>
 
-<h2 id="TOC">目次</h2>
+    <div class="section">
 
-<h3><a href="lesson01.html">Lesson 1 <strong>始めよう</strong></a></h3>
-<ol>
-<li><a href="lesson01.html#CH-1.1">ソフトウェア・パッケージ</a></li>
-<li><a href="lesson01.html#CH-1.2">中に入れるファイル</a></li>
-<li><a href="lesson01.html#CH-1.3">使ってみる</a></li>
-<li><a href="lesson01.html#CH-1.4">便利な追加機能</a></li>
-<li><a href="lesson01.html#CH-1.5">どこにインストールするか？</a></li>
-<li><a href="lesson01.html#CH-1.6">条件付きインストール</a></li>
-<li><a href="lesson01.html#CH-1.7">ファイル以外</a></li>
-<li><a href="lesson01.html#CH-1.8">削除時の孤児化</a></li>
-</ol>
+        <h2 id="TOC">目次</h2>
 
-<h3><a href="lesson02.html">Lesson 2 <strong>ユーザー・インタフェイス</strong></a></h3>
-<ol>
-<li><a href="lesson02.html#CH-2.1">最初のステップ</a></li>
-<li><a href="lesson02.html#CH-2.2">カスタムの設定</a></li>
-<li><a href="lesson02.html#CH-2.3">UI の魔法</a></li>
-<li><a href="lesson02.html#CH-2.4">アナタハ 英語ヲ 話シマスカ？</a></li>
-<li><a href="lesson02.html#CH-2.5">チェーンの新しい環</a></li>
-<li><a href="lesson02.html#CH-2.6">地域化を考える</a></li>
-</ol>
+        <h3><a href="lesson01.html">Lesson 1 <strong>始めよう</strong></a></h3>
+        <ol>
+            <li><a href="lesson01.html#CH-1.1">ソフトウェア・パッケージ</a></li>
+            <li><a href="lesson01.html#CH-1.2">中に入れるファイル</a></li>
+            <li><a href="lesson01.html#CH-1.3">使ってみる</a></li>
+            <li><a href="lesson01.html#CH-1.4">便利な追加機能</a></li>
+            <li><a href="lesson01.html#CH-1.5">どこにインストールするか？</a></li>
+            <li><a href="lesson01.html#CH-1.6">条件付きインストール</a></li>
+            <li><a href="lesson01.html#CH-1.7">ファイル以外</a></li>
+            <li><a href="lesson01.html#CH-1.8">削除時の孤児化</a></li>
+        </ol>
 
-<h3><a href="lesson03.html">Lesson 3 <strong>イベントとアクション</strong></a></h3>
-<ol>
-<li><a href="lesson03.html#CH-3.1">列に並んで</a></li>
-<li><a href="lesson03.html#CH-3.2">追加のアクション</a></li>
-<li><a href="lesson03.html#CH-3.3">本に書かれていないこと</a></li>
-<li><a href="lesson03.html#CH-3.4">コントロールのカスタム・アクション</a></li>
-<li><a href="lesson03.html#CH-3.5">カスタム・アクションをマネージする方法？</a></li>
-<li><a href="lesson03.html#CH-3.6">後の段階で</a></li>
-</ol>
+        <h3><a href="lesson02.html">Lesson 2 <strong>ユーザー・インタフェイス</strong></a></h3>
+        <ol>
+            <li><a href="lesson02.html#CH-2.1">最初のステップ</a></li>
+            <li><a href="lesson02.html#CH-2.2">カスタムの設定</a></li>
+            <li><a href="lesson02.html#CH-2.3">UI の魔法</a></li>
+            <li><a href="lesson02.html#CH-2.4">アナタハ 英語ヲ 話シマスカ？</a></li>
+            <li><a href="lesson02.html#CH-2.5">チェーンの新しい環</a></li>
+            <li><a href="lesson02.html#CH-2.6">地域化を考える</a></li>
+        </ol>
 
-<h3><a href="lesson04.html">Lesson 4 <strong>アップグレードとモジュラー化</strong></a></h3>
-<ol>
-<li><a href="lesson04.html#CH-4.1">古いのを調べる</a></li>
-<li><a href="lesson04.html#CH-4.2">自分自身を置き換える</a></li>
-<li><a href="lesson04.html#CH-4.3">パッチワーク</a></li>
-<li><a href="lesson04.html#CH-4.4">断片</a></li>
-<li><a href="lesson04.html#CH-4.5">融合するもの</a></li>
-</ol>
+        <h3><a href="lesson03.html">Lesson 3 <strong>イベントとアクション</strong></a></h3>
+        <ol>
+            <li><a href="lesson03.html#CH-3.1">列に並んで</a></li>
+            <li><a href="lesson03.html#CH-3.2">追加のアクション</a></li>
+            <li><a href="lesson03.html#CH-3.3">本に書かれていないこと</a></li>
+            <li><a href="lesson03.html#CH-3.4">コントロールのカスタム・アクション</a></li>
+            <li><a href="lesson03.html#CH-3.5">カスタム・アクションをマネージする方法？</a></li>
+            <li><a href="lesson03.html#CH-3.6">後の段階で</a></li>
+        </ol>
 
-<h3><a href="lesson05.html">Lesson 5 <strong>Net と .NET</strong></a></h3>
-<ol>
-<li><a href="lesson05.html#CH-5.1">.NET の枠組み</a></li>
-<li><a href="lesson05.html#CH-5.2">インターネットを起動する</a></li>
-<li><a href="lesson05.html#CH-5.3">ウェブ・ディレクトリ</a></li>
-<li><a href="lesson05.html#CH-5.4">サービスの提供</a></li>
-</ol>
+        <h3><a href="lesson04.html">Lesson 4 <strong>アップグレードとモジュラー化</strong></a></h3>
+        <ol>
+            <li><a href="lesson04.html#CH-4.1">古いのを調べる</a></li>
+            <li><a href="lesson04.html#CH-4.2">自分自身を置き換える</a></li>
+            <li><a href="lesson04.html#CH-4.3">パッチワーク</a></li>
+            <li><a href="lesson04.html#CH-4.4">断片</a></li>
+            <li><a href="lesson04.html#CH-4.5">融合するもの</a></li>
+        </ol>
 
-<h3><a href="lesson06.html">Lesson 6 <strong>COM、式の構文、その他いろいろ</strong></a></h3>
-<ol>
-<li><a href="lesson06.html#CH-6.1">違う色のコンポーネント</a></li>
-<li><a href="lesson06.html#CH-6.2">式の構文</a></li>
-<li><a href="lesson06.html#CH-6.3">書式指定文字列</a></li>
-<li><a href="lesson06.html#CH-6.4">DDE 接続</a></li>
-<li><a href="lesson06.html#CH-6.5">ディレクトリの作成</a></li>
-<li><a href="lesson06.html#CH-6.6">複数メディアのインストーラ</a></li>
-<li><a href="lesson06.html#CH-6.7">プログラムの追加と削除の項目</a></li>
-<li><a href="lesson06.html#CH-6.8">新顔のユーザー</a></li>
-<li><a href="lesson06.html#CH-6.9">環境に優しく</a></li>
-<li><a href="lesson06.html#CH-6.10">XML</a></li>
-<li><a href="lesson06.html#CH-6.11">COM+ アプリケーション</a></li>
-<li><a href="lesson06.html#CH-6.12">バージョンごとに</a></li>
-</ol>
+        <h3><a href="lesson05.html">Lesson 5 <strong>Net と .NET</strong></a></h3>
+        <ol>
+            <li><a href="lesson05.html#CH-5.1">.NET の枠組み</a></li>
+            <li><a href="lesson05.html#CH-5.2">インターネットを起動する</a></li>
+            <li><a href="lesson05.html#CH-5.3">ウェブ・ディレクトリ</a></li>
+            <li><a href="lesson05.html#CH-5.4">サービスの提供</a></li>
+        </ol>
 
-<h3><a href="lesson07.html">Lesson 7 <strong>SQL</strong></a></h3>
-<ol>
-<li><a href="lesson07.html#CH-7.1">データベースを作成する</a></li>
-</ol>
+        <h3><a href="lesson06.html">Lesson 6 <strong>COM、式の構文、その他いろいろ</strong></a></h3>
+        <ol>
+            <li><a href="lesson06.html#CH-6.1">違う色のコンポーネント</a></li>
+            <li><a href="lesson06.html#CH-6.2">式の構文</a></li>
+            <li><a href="lesson06.html#CH-6.3">書式指定文字列</a></li>
+            <li><a href="lesson06.html#CH-6.4">DDE 接続</a></li>
+            <li><a href="lesson06.html#CH-6.5">ディレクトリの作成</a></li>
+            <li><a href="lesson06.html#CH-6.6">複数メディアのインストーラ</a></li>
+            <li><a href="lesson06.html#CH-6.7">プログラムの追加と削除の項目</a></li>
+            <li><a href="lesson06.html#CH-6.8">新顔のユーザー</a></li>
+            <li><a href="lesson06.html#CH-6.9">環境に優しく</a></li>
+            <li><a href="lesson06.html#CH-6.10">XML</a></li>
+            <li><a href="lesson06.html#CH-6.11">COM+ アプリケーション</a></li>
+            <li><a href="lesson06.html#CH-6.12">バージョンごとに</a></li>
+        </ol>
 
-<h3><a href="lesson08.html">Lesson 8 <strong>ユーザー・インタフェイス再び</strong></a></h3>
-<ol>
-<li><a href="lesson08.html#CH-8.1">一つだけのダイアログ</a></li>
-<li><a href="lesson08.html#CH-8.2">チューニング・アップ</a></li>
-<li><a href="lesson08.html#CH-8.3">相互作用</a></li>
-<li><a href="lesson08.html#CH-8.4">カスタマイズがいっぱい</a></li>
-<li><a href="lesson08.html#CH-8.5">これが進捗ですか？</a></li>
-<li><a href="lesson08.html#CH-8.6">よく出来ました</a></li>
-<li><a href="lesson08.html#CH-8.7">法律用語</a></li>
-<li><a href="lesson08.html#CH-8.8">順番外</a></li>
-<li><a href="lesson08.html#CH-8.9" title="#CH-8.9">アナタハ 英語ヲ 話シマスカ？</a></li>
-</ol>
+        <h3><a href="lesson07.html">Lesson 7 <strong>SQL</strong></a></h3>
+        <ol>
+            <li><a href="lesson07.html#CH-7.1">データベースを作成する</a></li>
+        </ol>
 
-<h3><a href="lesson09.html">Lesson 9 <strong>トランスフォーム</strong></a></h3>
-<ol>
-<li><a href="lesson09.html#CH-9.1">インストーラを変形する</a></li>
-</ol>
+        <h3><a href="lesson08.html">Lesson 8 <strong>ユーザー・インタフェイス再び</strong></a></h3>
+        <ol>
+            <li><a href="lesson08.html#CH-8.1">一つだけのダイアログ</a></li>
+            <li><a href="lesson08.html#CH-8.2">チューニング・アップ</a></li>
+            <li><a href="lesson08.html#CH-8.3">相互作用</a></li>
+            <li><a href="lesson08.html#CH-8.4">カスタマイズがいっぱい</a></li>
+            <li><a href="lesson08.html#CH-8.5">これが進捗ですか？</a></li>
+            <li><a href="lesson08.html#CH-8.6">よく出来ました</a></li>
+            <li><a href="lesson08.html#CH-8.7">法律用語</a></li>
+            <li><a href="lesson08.html#CH-8.8">順番外</a></li>
+            <li><a href="lesson08.html#CH-8.9" title="#CH-8.9">アナタハ 英語ヲ 話シマスカ？</a></li>
+        </ol>
 
-<h3><a href="lesson10.html">Lesson 10 <strong>標準ライブラリ</strong></a></h3>
-<ol>
-<li><a href="lesson10.html#CH-10.1">カスタム・アクションとユーザー・インタフェイス</a></li>
-<li><a href="lesson10.html#CH-10.2">お静かに願います！</a></li>
-</ol>
+        <h3><a href="lesson09.html">Lesson 9 <strong>トランスフォーム</strong></a></h3>
+        <ol>
+            <li><a href="lesson09.html#CH-9.1">インストーラを変形する</a></li>
+        </ol>
 
-<h3>付録</h3>
-<ul class="TOC">
-<li><a href="appendix.html">索引</a></li>
-</ul>
+        <h3><a href="lesson10.html">Lesson 10 <strong>標準ライブラリ</strong></a></h3>
+        <ol>
+            <li><a href="lesson10.html#CH-10.1">カスタム・アクションとユーザー・インタフェイス</a></li>
+            <li><a href="lesson10.html#CH-10.2">お静かに願います！</a></li>
+        </ol>
 
-</div>
+        <h3>付録</h3>
+        <ul class="TOC">
+            <li><a href="appendix.html">索引</a></li>
+        </ul>
 
-<p class="transnote">&dagger; 訳註：日本語のサンプル・コードを全てまとめたものを <a href="download/Samples.zip">Samples.zip</a> として提供しています。</p>
+    </div>
 
-<p class="transnote">&dagger; 訳註：この「WiX チュートリアル(日本語訳)」の HTML ソース、サンプル・コード（コマンド・ライン版および VS2008 WiX Project 版）を、<a href="https://github.com/">github</a> のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) で公開しています。</p>
+    <p class="transnote">&dagger; 訳註：日本語のサンプル・コードを全てまとめたものを <a href="download/Samples.zip">Samples.zip</a> として提供しています。
+    </p>
+
+    <p class="transnote">&dagger; 訳註：この「WiX チュートリアル(日本語訳)」の HTML ソース、サンプル・コード（コマンド・ライン版および VS2008 WiX Project 版）を、<a
+            href="https://github.com/">github</a> のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a>
+        ) で公開しています。</p>
 
 </div>
 
 <div class="navigation">
-<a href="index.html#TOC">&bull; 目次</a>
- | <a href="lesson01.html">開始 &raquo;</a>
- | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
+    <a href="index.html#TOC">&bull; 目次</a>
+    | <a href="lesson01.html">開始 &raquo;</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial">&lowast; 原文</a>
 </div>
 
 <address>
-Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
-<br>
-何よりもコメントと寄稿を歓迎します。
+    Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a
+        href="http://www.tramontana.co.hu">Tramontána</a>
+    <br>
+    何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
-<br>
-読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a> のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
+    日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara, <a href="http://softark.net/">softark</a>
+    <br>
+    読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a>
+    のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
 </address>
 
 </body>

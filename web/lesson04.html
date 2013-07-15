@@ -1,68 +1,94 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="ja">
 <head>
-<meta name="GENERATOR" content="By hand">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
-<meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
-<meta name="Description" content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
-<meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 4 アップグレードとモジュラー化">
-<meta name="Author" content="Gábor DEÁK JAHN">
-<link rel="stylesheet" href="style.css" media="all" type="text/css">
-<link rev="made" href="http://softark.net/">
-<link rel="index" href="./index.html">
-<link rel="prev" href="lesson03.html">
-<link rel="next" href="lesson05.html">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
-<title>WiX チュートリアル (日本語訳) &mdash; Lesson 4 アップグレードとモジュラー化</title>
+    <meta name="GENERATOR" content="By hand">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta name="Keywords" content="WiX, Windows Installer, MSI, Tutorial, Japanese Translation">
+    <meta name="Keywords" lang="ja" content="WiX, Windows Installer, MSI, チュートリアル, 日本語訳">
+    <meta name="Description"
+          content="Tutorial on the WiX toolset, Microsoft&#39;s open source software to create installer packages (.msi files) for Windows applications.">
+    <meta name="description" lang="ja" content="WiX ツールセットのチュートリアル(日本語訳) Lesson 4 アップグレードとモジュラー化">
+    <meta name="Author" content="Gábor DEÁK JAHN">
+    <link rel="stylesheet" href="style.css" media="all" type="text/css">
+    <link rev="made" href="http://softark.net/">
+    <link rel="index" href="./index.html">
+    <link rel="prev" href="lesson03.html">
+    <link rel="next" href="lesson05.html">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="Shortcut Icon" type="img/x-icon" href="favicon.ico">
+    <title>WiX チュートリアル (日本語訳) &mdash; Lesson 4 アップグレードとモジュラー化</title>
 </head>
 
 <body>
 
 <div class='header'>
-<h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
-<h1>Lesson 4 <strong>アップグレードとモジュラー化</strong></h1>
+    <h2><a href="index.html">WiX チュートリアル <span class="trans">(日本語訳)</span></a></h2>
+
+    <h1>Lesson 4 <strong>アップグレードとモジュラー化</strong></h1>
 </div>
 
 <div class='navigation'>
-<a href='index.html#TOC'>&bull; 目次</a>
- | <a href='lesson03.html'>&laquo; 前へ</a>
- | <a href='lesson05.html'>次へ &raquo;</a>
- | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
+    <a href='index.html#TOC'>&bull; 目次</a>
+    | <a href='lesson03.html'>&laquo; 前へ</a>
+    | <a href='lesson05.html'>次へ &raquo;</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
 </div>
 
 <div class='main'>
 
-<p>前回のレッスンを終って、インストーラ・パッケージに関する限りでは、考えられる全てのことについて、やり方を学びました。そうですよね？ 結局の所、Windows Installer が直接的な解決を提供してくれない場合でも、昔なじみの信頼できるコンパイラに点火して自分で書けば良いのだ、と。そうですよね？</p>
+<p>前回のレッスンを終って、インストーラ・パッケージに関する限りでは、考えられる全てのことについて、やり方を学びました。そうですよね？ 結局の所、Windows Installer
+    が直接的な解決を提供してくれない場合でも、昔なじみの信頼できるコンパイラに点火して自分で書けば良いのだ、と。そうですよね？</p>
 
-<p>ある意味ではその通りです。しかし、ある意味ではそうではありません。私たちは元のインストーラ・パッケージを作る方法は知っていますが、アップグレードを出荷するとなったら何をすればよいのでしょうか？ あるいは、パッチは？ ユーザーに前のバージョンをアンインストールして新しいのを再インストールしてくれるように頼むのでしょうか？ そして、ユーザーがソフトウェアを使っている間に設定したデータはどうなるのでしょう？ 最初から全部をやり直してもらうのでしょうか？</p>
+<p>ある意味ではその通りです。しかし、ある意味ではそうではありません。私たちは元のインストーラ・パッケージを作る方法は知っていますが、アップグレードを出荷するとなったら何をすればよいのでしょうか？ あるいは、パッチは？
+    ユーザーに前のバージョンをアンインストールして新しいのを再インストールしてくれるように頼むのでしょうか？ そして、ユーザーがソフトウェアを使っている間に設定したデータはどうなるのでしょう？
+    最初から全部をやり直してもらうのでしょうか？</p>
 
-<p>もちろん、そうではありません。と言うわけで、Windows Installer がそういう問題を解決するのにどのような支援をしてくれるのか、見ていきましょう。Windows Installer は、製品の変更を三つのカテゴリに分けています。</p>
+<p>もちろん、そうではありません。と言うわけで、Windows Installer がそういう問題を解決するのにどのような支援をしてくれるのか、見ていきましょう。Windows Installer
+    は、製品の変更を三つのカテゴリに分けています。</p>
 
 <ul class="space">
 
-<li><strong>スモール・アップデート</strong> は、一つまたは少数のファイルに対する小さな変更で、製品のバージョン (major.minor.build) を変更すべき理由が無いものを意味します。<strong>Product</strong> GUID も変更する必要はありません。<!-- You can record the revision changes in the <em>RevisionNumberSummary</em> summary property. --><em>しかし、どんな点であれ、前のものと異なる <kbd>.msi</kbd> ファイルを作成する場合は、常に <strong>Package</strong> GUID を変更しなければならない、という事に注意して下さい。</em>Windows Installer は、インストールされたプログラムを追跡して記録し、ユーザーがインストールを変更または削除しようとしたときに、該当するプログラムを探し出すために GUID を使用します。違うパッケージに同じ GUID を使用すると、Windows Installer を混乱させることになります。</li>
+    <li><strong>スモール・アップデート</strong> は、一つまたは少数のファイルに対する小さな変更で、製品のバージョン (major.minor.build) を変更すべき理由が無いものを意味します。<strong>Product</strong>
+        GUID も変更する必要はありません。
+        <!-- You can record the revision changes in the <em>RevisionNumberSummary</em> summary property. --><em>しかし、どんな点であれ、前のものと異なる
+            <kbd>.msi</kbd> ファイルを作成する場合は、常に <strong>Package</strong> GUID を変更しなければならない、という事に注意して下さい。</em>Windows
+        Installer は、インストールされたプログラムを追跡して記録し、ユーザーがインストールを変更または削除しようとしたときに、該当するプログラムを探し出すために GUID を使用します。違うパッケージに同じ GUID
+        を使用すると、Windows Installer を混乱させることになります。
+    </li>
 
-<li><strong>マイナー・アップグレード</strong> は、製品のバージョンが変るほどの変更を意味します。<strong>Product</strong> タグの <strong>Version</strong> 属性を修正して下さい。製品は変りませんので <strong>Product</strong> GUID は変更する必要がありませんが、もちろん、<strong>Package</strong> GUID は新しいものを生成して下さい。</li>
+    <li><strong>マイナー・アップグレード</strong> は、製品のバージョンが変るほどの変更を意味します。<strong>Product</strong> タグの <strong>Version</strong>
+        属性を修正して下さい。製品は変りませんので <strong>Product</strong> GUID は変更する必要がありませんが、もちろん、<strong>Package</strong> GUID
+        は新しいものを生成して下さい。
+    </li>
 
-<li><strong>メジャー・アップグレード</strong> は、あるメジャー・バージョンから別のメジャー・バージョンへ、というような大幅な変更を意味します。<strong>Version</strong> 属性、<strong>Product</strong> GUID、<strong>Package</strong> GUID の全てを変更して下さい。</li>
+    <li><strong>メジャー・アップグレード</strong> は、あるメジャー・バージョンから別のメジャー・バージョンへ、というような大幅な変更を意味します。<strong>Version</strong>
+        属性、<strong>Product</strong> GUID、<strong>Package</strong> GUID の全てを変更して下さい。
+    </li>
 
 </ul>
 
-<p>メジャー・アップグレードを使うこと(換言すると、<strong>Product</strong> GUID を変更すること)を Windows Installer が強要する場合がいくつかあります &mdash; 古いバージョンと新しいバージョンをユーザーのコンピュータに共存させたい場合。どんな理由であれ、<kbd>.msi</kbd> ファイルの名前を変更する場合。パッケージに含まれるどれかの <strong>Component</strong> の GUID を変更する必要がある場合。コンポーネントを削除した場合。機能の階層構造に何らかの変更がある(子の機能が親から出て行ったり、親の機能が新しい子を追加したりする)場合  &mdash; これらの場合には、メジャー・アップグレードにしなければなりません。</p>
+<p>メジャー・アップグレードを使うこと(換言すると、<strong>Product</strong> GUID を変更すること)を Windows Installer が強要する場合がいくつかあります &mdash;
+    古いバージョンと新しいバージョンをユーザーのコンピュータに共存させたい場合。どんな理由であれ、<kbd>.msi</kbd> ファイルの名前を変更する場合。パッケージに含まれるどれかの
+    <strong>Component</strong> の GUID
+    を変更する必要がある場合。コンポーネントを削除した場合。機能の階層構造に何らかの変更がある(子の機能が親から出て行ったり、親の機能が新しい子を追加したりする)場合 &mdash;
+    これらの場合には、メジャー・アップグレードにしなければなりません。</p>
 
-<p>という訳で、メジャー・アップグレードは輪郭がはっきりしていますが、スモール・アップデートとマイナー・アップグレードの境界線はいくらか不鮮明です。それについては、こういう風に考えて下さい。将来の製品において、現在のバージョンと新しいバージョンを区別する必要が少しでもあるなら、マイナー・アップグレードに一票を投じましょう。そして、いつものように、間違うなら安全な側に間違う方が良いですね。</p>
+<p>
+    という訳で、メジャー・アップグレードは輪郭がはっきりしていますが、スモール・アップデートとマイナー・アップグレードの境界線はいくらか不鮮明です。それについては、こういう風に考えて下さい。将来の製品において、現在のバージョンと新しいバージョンを区別する必要が少しでもあるなら、マイナー・アップグレードに一票を投じましょう。そして、いつものように、間違うなら安全な側に間違う方が良いですね。</p>
 
 <p>GUID を変更するときは、古いのを記録しておいて下さい。Windows Installer の精巧なアップグレード機能を使う時に、前の GUID が必要になります。</p>
 
 <div class='section'>
 
-<h2 id="CH-4.1">4.1 古いのを調べる</h2>
+    <h2 id="CH-4.1">4.1 古いのを調べる</h2>
 
-<p id="upgrade">何らかのアップデートやアップグレードをするときに最初にすることは、変更したい前のバージョンが有ることを確認することです。Windows Installer はそれを確認するために <strong>Product</strong> タグの <strong>UpgradeCode</strong> 属性を頼りにします。<strong>そのため、現在のプログラムを後でアップグレードする予定が無い場合であっても、常に製品に UpgradeCode を持たせておくことが非常に重要です。</strong>将来のことは決して分りませんし、一旦外に出してしまってからでは、もう出荷し直すことは出来ません。製品を同じアップグレード・バージョンでアップグレードしようとする限りは、同一の <strong>UpgradeCode</strong> GUID を保持してください。通常の場合、このことは、Version 1.x の全てに一つのコード、Version 2.x にもう一つ別のコード、、、ということを意味します。</p>
+    <p id="upgrade">何らかのアップデートやアップグレードをするときに最初にすることは、変更したい前のバージョンが有ることを確認することです。Windows Installer はそれを確認するために <strong>Product</strong>
+        タグの <strong>UpgradeCode</strong> 属性を頼りにします。<strong>そのため、現在のプログラムを後でアップグレードする予定が無い場合であっても、常に製品に UpgradeCode
+            を持たせておくことが非常に重要です。</strong>将来のことは決して分りませんし、一旦外に出してしまってからでは、もう出荷し直すことは出来ません。製品を同じアップグレード・バージョンでアップグレードしようとする限りは、同一の
+        <strong>UpgradeCode</strong> GUID を保持してください。通常の場合、このことは、Version 1.x の全てに一つのコード、Version 2.x
+        にもう一つ別のコード、、、ということを意味します。</p>
 
 <pre>
 &lt;?xml version='1.0' encoding='utf-8'?&gt;
@@ -87,11 +113,15 @@
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>今回の <a href="http://wix.tramontana.co.hu/system/files/samples/SampleUpgrade.zip">SampleUpgrade</a> は、二つのインストーラ・パッケージから成り立っています。両方とも、簡単な UI のインストーラ、SampleWixUI を元にしています。</p>
+    <p>今回の <a href="http://wix.tramontana.co.hu/system/files/samples/SampleUpgrade.zip">SampleUpgrade</a>
+        は、二つのインストーラ・パッケージから成り立っています。両方とも、簡単な UI のインストーラ、SampleWixUI を元にしています。</p>
 
-<p class="transnote">&dagger; 訳註：SampleUpgrade の日本語版は <a href="download/Sample-4-1-Upgrade.zip">Sample-4-1-Upgrade.zip</a> です。</p>
+    <p class="transnote">&dagger; 訳註：SampleUpgrade の日本語版は <a href="download/Sample-4-1-Upgrade.zip">Sample-4-1-Upgrade.zip</a>
+        です。</p>
 
-<p>SampleUpgrade の第二のバージョンは、配置されたファイルの一つを新しいバージョンで置き換えるためのものです。私たちはこれを<em>マイナー・アップグレード</em>だと考えて、<strong>Version</strong> を変えています。外見上の変更が、人間が読むことが出来る <strong>Name</strong> と <strong>Description</strong> に対して加えられていることは言うまでもありません。</p>
+    <p>SampleUpgrade
+        の第二のバージョンは、配置されたファイルの一つを新しいバージョンで置き換えるためのものです。私たちはこれを<em>マイナー・アップグレード</em>だと考えて、<strong>Version</strong>
+        を変えています。外見上の変更が、人間が読むことが出来る <strong>Name</strong> と <strong>Description</strong> に対して加えられていることは言うまでもありません。</p>
 
 <pre>
 &lt;<strong>Product</strong> Name='ほげ 1.0.1'
@@ -104,9 +134,18 @@
            Description="ぴよソフト's ほげ 1.0.1 アップデータ" ... &gt;
 </pre>
 
-<p id="detectremove">製品のどのバージョンをこのアップグレードによって置き換える予定なのか、ということについての記述も必要です。<strong>Upgrade</strong> タグの <strong>Id</strong> 属性が、元のインストーラ・パッケージ(この例では古い方の SampleUpgrade)の <strong>UpgradeCode</strong> GUID を参照しています。内部の <strong>UpgradeVersion</strong> タグは、更新対象となるバージョンの詳細を記述しています。<strong>OnlyDetect</strong> は、インストーラに、前の製品を削除しないように指示しています(思い出してください。私たちはマイナー・アップグレードをやっています。製品の古いバージョンを維持しながら、ファイルを一つだけ置き換えるのです。もし、メジャー・アップグレードをやっているのだとしたら、そうする代りに、1.0.0 を<em>削除</em>して、1.1.0 を<em>インストール</em>するでしょう)。</p>
+    <p id="detectremove">製品のどのバージョンをこのアップグレードによって置き換える予定なのか、ということについての記述も必要です。<strong>Upgrade</strong> タグの
+        <strong>Id</strong> 属性が、元のインストーラ・パッケージ(この例では古い方の SampleUpgrade)の <strong>UpgradeCode</strong> GUID を参照しています。内部の
+        <strong>UpgradeVersion</strong> タグは、更新対象となるバージョンの詳細を記述しています。<strong>OnlyDetect</strong>
+        は、インストーラに、前の製品を削除しないように指示しています(思い出してください。私たちはマイナー・アップグレードをやっています。製品の古いバージョンを維持しながら、ファイルを一つだけ置き換えるのです。もし、メジャー・アップグレードをやっているのだとしたら、そうする代りに、1.0.0
+        を<em>削除</em>して、1.1.0 を<em>インストール</em>するでしょう)。</p>
 
-<p><strong>Minimum</strong> と <strong>Maximum</strong> が、このアップグレード・パッケージで更新することになるバージョンの範囲を示しています。<strong>IncludeMaximum</strong> と <strong>IncludeMinimum</strong> は、境界値が範囲に含まれるか否かを指定します(<strong>IncludeMaximum&nbsp;=&nbsp;yes</strong> は <strong>Maximum</strong> で指定されたバージョン<em>より低いか等しい</em>バージョンを探すことを意味し、<strong>IncludeMaximum&nbsp;=&nbsp;no</strong> は <strong>Maximum</strong> <em>より低い</em> ものだけを探すことを意味します)。これらの属性には既定値がありますが、ここでは、既定値には頼らず、常に明示的に記述することにします &ndash; 明解さと自己完結的な説明性のためには、省略せずに書く方が良いでしょう。</p>
+    <p><strong>Minimum</strong> と <strong>Maximum</strong> が、このアップグレード・パッケージで更新することになるバージョンの範囲を示しています。<strong>IncludeMaximum</strong>
+        と <strong>IncludeMinimum</strong> は、境界値が範囲に含まれるか否かを指定します(<strong>IncludeMaximum&nbsp;=&nbsp;yes</strong> は
+        <strong>Maximum</strong>
+        で指定されたバージョン<em>より低いか等しい</em>バージョンを探すことを意味し、<strong>IncludeMaximum&nbsp;=&nbsp;no</strong> は
+        <strong>Maximum</strong> <em>より低い</em> ものだけを探すことを意味します)。これらの属性には既定値がありますが、ここでは、既定値には頼らず、常に明示的に記述することにします &ndash;
+        明解さと自己完結的な説明性のためには、省略せずに書く方が良いでしょう。</p>
 
 <pre>
   &lt;<strong>Upgrade</strong> Id='YOURGUID-7349-453F-94F6-BCB5110BA4FD'&gt;
@@ -118,15 +157,23 @@
   &lt;/<strong>Upgrade</strong>&gt;
 </pre>
 
-<p class="transnote">&dagger; 訳註：実際にここで探そうとしているのは、更新する対象のバージョンではありません。そうではなくて、更新する必要のないバージョン、すなわち自分自身(SELFFOUND)、および、更新してはいけないバージョン、すなわち自分よりも新しいバージョン(NEWERFOUND)を探そうとしています。</p>
+    <p class="transnote">&dagger;
+        訳註：実際にここで探そうとしているのは、更新する対象のバージョンではありません。そうではなくて、更新する必要のないバージョン、すなわち自分自身(SELFFOUND)、および、更新してはいけないバージョン、すなわち自分よりも新しいバージョン(NEWERFOUND)を探そうとしています。</p>
 
-<p>ソース・ファイルの中で <strong>Upgrade</strong> タグを使うと、新しい標準的なアクション、<em>FindRelatedProducts</em> が導入されます。このアクションは、もし有れば、<em>LaunchConditions</em> の直後に走るようにスケジュールされます。必要な場合には、<strong>InstallExecuteSequence</strong> タグの中で、スケジュールを変更することも出来ます。</p>
+    <p>ソース・ファイルの中で <strong>Upgrade</strong> タグを使うと、新しい標準的なアクション、<em>FindRelatedProducts</em> が導入されます。このアクションは、もし有れば、<em>LaunchConditions</em>
+        の直後に走るようにスケジュールされます。必要な場合には、<strong>InstallExecuteSequence</strong> タグの中で、スケジュールを変更することも出来ます。</p>
 
-<p><em>FindRelatedProducts</em> は <strong>Upgrade</strong> タグの中を全部見て、リスト・アップされている全てのバージョンを探します。該当するバージョンが存在した場合は、<strong>UpgradeVersion</strong> タグで指定されているプロパティ(この例では <em>SELFFOUND</em> または <em>NEWERFOUND</em>)に、そのバージョンの <strong>Product</strong> GUID が追記されます。言うまでもなく、Windows Installer が探すことが出来るのは、指定された <strong>UpgradeCode</strong> を持っている <kbd>.msi</kbd> パッケージでインストールされた製品だけです &mdash; UpgradeCode を常に指定することが重要だという意味がこれで分ったでしょう。</p>
+    <p><em>FindRelatedProducts</em> は <strong>Upgrade</strong>
+        タグの中を全部見て、リスト・アップされている全てのバージョンを探します。該当するバージョンが存在した場合は、<strong>UpgradeVersion</strong> タグで指定されているプロパティ(この例では <em>SELFFOUND</em>
+        または <em>NEWERFOUND</em>)に、そのバージョンの <strong>Product</strong> GUID が追記されます。言うまでもなく、Windows Installer
+        が探すことが出来るのは、指定された <strong>UpgradeCode</strong> を持っている <kbd>.msi</kbd> パッケージでインストールされた製品だけです &mdash; UpgradeCode
+        を常に指定することが重要だという意味がこれで分ったでしょう。</p>
 
-<p>もし、地域化されたソフトウェア・パッケージを開発しているのであれば、<strong>UpgradeVersion</strong> と <strong>Product</strong> タグの両方で <strong>Language</strong> 属性を指定することが可能です。言語を指定するためには、いつものように Windows の言語識別子の数値を使って下さい。言語を指定すると、<em>FindRelatedProducts</em> は、該当する言語の製品だけを探します。</p>
+    <p>もし、地域化されたソフトウェア・パッケージを開発しているのであれば、<strong>UpgradeVersion</strong> と <strong>Product</strong> タグの両方で <strong>Language</strong>
+        属性を指定することが可能です。言語を指定するためには、いつものように Windows の言語識別子の数値を使って下さい。言語を指定すると、<em>FindRelatedProducts</em>
+        は、該当する言語の製品だけを探します。</p>
 
-<p>私たちは、チェックが走った後で、関連するプロパティの存在および値に基づいて、適切な行動を取ることが出来ます。</p>
+    <p>私たちは、チェックが走った後で、関連するプロパティの存在および値に基づいて、適切な行動を取ることが出来ます。</p>
 
 <pre>
   &lt;<strong>CustomAction</strong> Id='AlreadyUpdated'
@@ -140,15 +187,20 @@
   &lt;/<strong>InstallExecuteSequence</strong>&gt;
 </pre>
 
-<p>どういう理由かは知りませんが、スモール・アップデートとマイナー・アップグレードは、<kbd>.msi</kbd> ファイルをダブル・クリックするだけでは走らせることが出来ません。&quot;この製品の別のバージョンが既にインストールされています&quot; というエラーが出るのです。知っとるわぃ、ボケ ... とにかく、コマンド・ラインから起動しなくてはならないのです。</p>
+    <p>どういう理由かは知りませんが、スモール・アップデートとマイナー・アップグレードは、<kbd>.msi</kbd> ファイルをダブル・クリックするだけでは走らせることが出来ません。&quot;この製品の別のバージョンが既にインストールされています&quot;
+        というエラーが出るのです。知っとるわぃ、ボケ ... とにかく、コマンド・ラインから起動しなくてはならないのです。</p>
 
 <pre class="command">
 msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
 </pre>
 
-<p>どうやってこんな事を平均的なユーザーにやって貰おうか、などと尋ねるのはやめて下さいね。<kbd>Autorun.inf</kbd> ファイルから起動したり、起動用の <kbd>Setup.exe</kbd> ラッパー・シェルをひねり出したりする方が良いですよ。</p>
+    <p>どうやってこんな事を平均的なユーザーにやって貰おうか、などと尋ねるのはやめて下さいね。<kbd>Autorun.inf</kbd> ファイルから起動したり、起動用の <kbd>Setup.exe</kbd>
+        ラッパー・シェルをひねり出したりする方が良いですよ。</p>
 
-<p>ご覧のように、このアップグレード・バージョンは双方向に正しく動作します。これは自分より古いパッケージを置き換えますが、それだけでなく、将来、プログラムがもっと先まで(例えば 1.0.2 以降に)更新されていた場合でも、対処出来ます。より新しいバージョンを 1.0.1 にダウングレードして戻すようなことはしません。絶対確実に間違いが無いようにするためには、このことは前もって計画しておかなくてはいけません。一番初めに出荷するインストーラであっても、このセーフティー・ロックが組み込まれていなくてはなりません(その事を現在のサンプルの<em>古い</em>方のバージョンで確認して下さい)。</p>
+    <p>ご覧のように、このアップグレード・バージョンは双方向に正しく動作します。これは自分より古いパッケージを置き換えますが、それだけでなく、将来、プログラムがもっと先まで(例えば 1.0.2
+        以降に)更新されていた場合でも、対処出来ます。より新しいバージョンを 1.0.1
+        にダウングレードして戻すようなことはしません。絶対確実に間違いが無いようにするためには、このことは前もって計画しておかなくてはいけません。一番初めに出荷するインストーラであっても、このセーフティー・ロックが組み込まれていなくてはなりません(その事を現在のサンプルの<em>古い</em>方のバージョンで確認して下さい)。
+    </p>
 
 <pre>
   &lt;<strong>Upgrade</strong> Id='YOURGUID-7349-453F-94F6-BCB5110BA4FD'&gt;
@@ -164,18 +216,32 @@ msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
   &lt;/<strong>InstallExecuteSequence</strong>&gt;
 </pre>
 
-<p class="transnote">&dagger; 訳註：この章で説明されている「セーフティー・ロック」機構は、実際には、プロダクト・コードが異なるパッケージ同士の間でなければ、期待している通りの動作はしません。</p>
-<p class="transnote">スモール・アップデートおよびマイナー・アップグレードの場合、すなわち、プロダクト・コードが同じパッケージ同士の間では、<kbd>&quot;msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus&quot;</kbd> によってパッケージを起動する必要があることは、本文で述べられている通りです。この場合、Windows Installer は<em>メンテナンス・モード</em>で走ることになります。ところが、<em>メンテナンス・モード</em>においては、<em>FindRelatedProducts</em> は<strong>何もせずに</strong>帰ってきてしまいます。つまり、<em>SELFFOUND</em> も <em>NEWERFOUND</em> も設定されず、結果として、<em>'AlreadyUpdated'</em> も <em>'NoDowngrade'</em> も、実行されることは決してありません。具体的に言うと、<em>1.0.1</em> をインストールした後に <em>1.0.0</em> のインストーラを上記のコマンド・ラインで起動すると、何の警告も表示せずに、最後まで走ってしまうのです。</p>
-<p class="transnote"><kbd>&quot;REINSTALLMODE=vomus&quot;</kbd> の場合、Windows Installer がファイルのバージョン番号(ファイルにバージョン番号がある場合)や更新日付を見て、ファイル単位でダウングレードを防止しますので、致命的な実害は生じません。しかし、実際の動作と、ユーザーに対するフィードバックとの間に無視できないズレが生じますので、気持ちが悪いことは否定できません。</p>
-<p class="transnote">なお、プロダクト・コードが異なるパッケージ同士の間では、この「セーフティー・ロック」機構が有効に働きます。</p>
+    <p class="transnote">&dagger; 訳註：この章で説明されている「セーフティー・ロック」機構は、実際には、プロダクト・コードが異なるパッケージ同士の間でなければ、期待している通りの動作はしません。</p>
+
+    <p class="transnote">スモール・アップデートおよびマイナー・アップグレードの場合、すなわち、プロダクト・コードが同じパッケージ同士の間では、<kbd>&quot;msiexec /i
+        SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus&quot;</kbd>
+        によってパッケージを起動する必要があることは、本文で述べられている通りです。この場合、Windows Installer
+        は<em>メンテナンス・モード</em>で走ることになります。ところが、<em>メンテナンス・モード</em>においては、<em>FindRelatedProducts</em>
+        は<strong>何もせずに</strong>帰ってきてしまいます。つまり、<em>SELFFOUND</em> も <em>NEWERFOUND</em>
+        も設定されず、結果として、<em>'AlreadyUpdated'</em> も <em>'NoDowngrade'</em> も、実行されることは決してありません。具体的に言うと、<em>1.0.1</em>
+        をインストールした後に <em>1.0.0</em> のインストーラを上記のコマンド・ラインで起動すると、何の警告も表示せずに、最後まで走ってしまうのです。</p>
+
+    <p class="transnote"><kbd>&quot;REINSTALLMODE=vomus&quot;</kbd> の場合、Windows Installer
+        がファイルのバージョン番号(ファイルにバージョン番号がある場合)や更新日付を見て、ファイル単位でダウングレードを防止しますので、致命的な実害は生じません。しかし、実際の動作と、ユーザーに対するフィードバックとの間に無視できないズレが生じますので、気持ちが悪いことは否定できません。
+    </p>
+
+    <p class="transnote">なお、プロダクト・コードが異なるパッケージ同士の間では、この「セーフティー・ロック」機構が有効に働きます。</p>
 
 </div>
 
 <div class='section'>
 
-<h2 id="CH-4.2">4.2 自分自身を置き換える</h2>
+    <h2 id="CH-4.2">4.2 自分自身を置き換える</h2>
 
-<p>もし私たちの意図がメジャー・アップグレード、つまり、前のバージョンを完全かつ自動的に削除して新しいバージョンを入れる、というものである場合、必要なことは、<strong>OnlyDetect</strong> を <em>no</em> に設定することと、バージョン番号をそれに応じたものに変更することだけです。このとき <strong>Minimum</strong> は現在のバージョンによって置き換えることを許す最初のバージョンを指定します(この最小値は範囲に含めます)が、<strong>Maximum</strong> は現在のバージョン番号を指定することが出来ます(ただし<em>範囲には含めません</em>)。このようにすると、最初のバージョンから、現在の一つ前のバージョンまでのすべてのものが、現在のバージョンをインストールするときに自動的に削除されます。この同じインストーラを最初に使うインストーラとして使用することも出来る、ということにも注意してください。前のバージョンを見つけた場合は、前のバージョンを削除して現在のものをインストールします。しかし、クリーンなシステムで起動された場合は、単に現在のバージョンのアプリケーションをインストールするだけです。アップグレードのインストーラとフルセットのインストーラを個別に作る必要はありません。</p>
+    <p>もし私たちの意図がメジャー・アップグレード、つまり、前のバージョンを完全かつ自動的に削除して新しいバージョンを入れる、というものである場合、必要なことは、<strong>OnlyDetect</strong> を
+        <em>no</em> に設定することと、バージョン番号をそれに応じたものに変更することだけです。このとき <strong>Minimum</strong>
+        は現在のバージョンによって置き換えることを許す最初のバージョンを指定します(この最小値は範囲に含めます)が、<strong>Maximum</strong> は現在のバージョン番号を指定することが出来ます(ただし<em>範囲には含めません</em>)。このようにすると、最初のバージョンから、現在の一つ前のバージョンまでのすべてのものが、現在のバージョンをインストールするときに自動的に削除されます。この同じインストーラを最初に使うインストーラとして使用することも出来る、ということにも注意してください。前のバージョンを見つけた場合は、前のバージョンを削除して現在のものをインストールします。しかし、クリーンなシステムで起動された場合は、単に現在のバージョンのアプリケーションをインストールするだけです。アップグレードのインストーラとフルセットのインストーラを個別に作る必要はありません。
+    </p>
 
 <pre>
 &lt;<strong>Upgrade</strong> Id='YOURGUID-7349-453F-94F6-BCB5110BA4FD'&gt;
@@ -185,7 +251,9 @@ msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
 &lt;/<strong>Upgrade</strong>&gt;
 </pre>
 
-<p>前のバージョンの削除は完全に自動的に行われます。どんな理由であれ、前のバージョンが削除される時に何らかの操作をする必要がある場合は、<em>UPGRADINGPRODUCTCODE</em> プロパティを条件にしたカスタム・アクションを書いて対応することが出来ます。Windows Installer は、自動的な削除が行われるときにだけ、このプロパティを設定します。<em>プログラムの追加と削除</em>によってアプリケーションが手作業で削除される場合には、このプロパティを設定しません。</p>
+    <p>前のバージョンの削除は完全に自動的に行われます。どんな理由であれ、前のバージョンが削除される時に何らかの操作をする必要がある場合は、<em>UPGRADINGPRODUCTCODE</em>
+        プロパティを条件にしたカスタム・アクションを書いて対応することが出来ます。Windows Installer は、自動的な削除が行われるときにだけ、このプロパティを設定します。<em>プログラムの追加と削除</em>によってアプリケーションが手作業で削除される場合には、このプロパティを設定しません。
+    </p>
 
 <pre>
 &lt;<strong>InstallExecuteSequence</strong>&gt;
@@ -193,38 +261,61 @@ msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
 &lt;/<strong>InstallExecuteSequence</strong>&gt;
 </pre>
 
-<p class="transnote">&dagger; 訳註：本文では言及されていませんが、メジャー・アップグレードでは、<em>RemoveExistingProducts</em> カスタム・アクションを <em>InstallExecuteSequence</em> の中にスケジュールする必要があります。実際、そうしないと、コンパイルが通りません。</p>
-<p class="transnote">SDK ドキュメントによれば、<em>RemoveExistingProducts</em> をスケジュールするタイミングとしては、以下の四つの選択肢があります。すなわち、(1) <em>InstallValidate</em> の後で、<em>InstallInitialize</em> の前、(2) <em>InstallInitialize</em> の直後、(3) <em>InstallExecute</em> または <em>InstallExecuteAgain</em> の後で、<em>InstallFinalize</em> の前、そして、(4) <em>InstallFinalize</em> の直後の四つです。ドキュメントには、第四の位置が最も効率的であると述べられています。</p>
-<p class="transnote">(3) と (4) の場合は、新バージョンをインストールした後に旧バージョンをアンインストールします。このとき、新旧ともに同一のパスを持つファイルが有る場合は、インストール時には上書きで更新し、アンインストール時には削除しないようにします。このことを Windows Installer はコンポーネントに対する参照カウントを使うことによって実現しています。従って、メジャー・アップグレードにおいても、コンポーネントの一貫性は非常に重要です。同一名のファイルを持つコンポーネントの GUID を変更したり、逆に、含まれているファイルの名前を変更したのにも関わらずコンポーネントの GUID を以前と同じままにしたりすると、コンポーネントに対する参照カウントと実際のファイルとの関係に食い違いが生じて、インストールしたはずのファイルがインストールされていなかったり、削除した筈のファイルが孤児となって残っていたりする結果になることがあります。</p>
-<p class="transnote">前章で取り上げられたスモール・アップデートおよびマイナー・アップグレードが、作成においても使用においても、いろいろと厄介な問題がある形式だということを考えると、プログラムの更新を配布する最も手軽で現実的な方法は、ここで説明されているメジャー・アップグレードであると言って良いでしょう。ただし、旧バージョンから新バージョンへの移行時にどうやってユーザー・データを保護するか、という問題は残ります。</p>
-<p class="transnote">なお、前章で説明された「セイフティー・ロック」機構は、メジャー・アップグレードでは有効に機能します。本文では、自分より古いバージョンを探して置き換える、ということだけをやっていますが、自分より新しいバージョンが見つかればメッセージを表示して動作を中止する、ということも積極的に行うべきでしょう。ただし、「自分自身と同じバージョンが既にインストールされている場合にアップグレードを中止する」という機能は、実装しても働きません。その場合は、Package の GUID が同じなので、メンテナンス・モードで動作することになり、バージョンの比較は行われません。</p>
-<p class="transnote">前章の日本語版サンプル <a href="download/Sample-4-1-Upgrade.zip">Sample-4-1-Upgrade.zip</a> に、メジャー・アップグレードのサンプルを含めていますので、参照してください(ビルドするためには、<em>WixUtilExtension</em> をリンクする必要があります)。</p>
+    <p class="transnote">&dagger; 訳註：本文では言及されていませんが、メジャー・アップグレードでは、<em>RemoveExistingProducts</em> カスタム・アクションを <em>InstallExecuteSequence</em>
+        の中にスケジュールする必要があります。実際、そうしないと、コンパイルが通りません。</p>
+
+    <p class="transnote">SDK ドキュメントによれば、<em>RemoveExistingProducts</em> をスケジュールするタイミングとしては、以下の四つの選択肢があります。すなわち、(1) <em>InstallValidate</em>
+        の後で、<em>InstallInitialize</em> の前、(2) <em>InstallInitialize</em> の直後、(3) <em>InstallExecute</em> または <em>InstallExecuteAgain</em>
+        の後で、<em>InstallFinalize</em> の前、そして、(4) <em>InstallFinalize</em> の直後の四つです。ドキュメントには、第四の位置が最も効率的であると述べられています。</p>
+
+    <p class="transnote">(3) と (4)
+        の場合は、新バージョンをインストールした後に旧バージョンをアンインストールします。このとき、新旧ともに同一のパスを持つファイルが有る場合は、インストール時には上書きで更新し、アンインストール時には削除しないようにします。このことを
+        Windows Installer
+        はコンポーネントに対する参照カウントを使うことによって実現しています。従って、メジャー・アップグレードにおいても、コンポーネントの一貫性は非常に重要です。同一名のファイルを持つコンポーネントの GUID
+        を変更したり、逆に、含まれているファイルの名前を変更したのにも関わらずコンポーネントの GUID
+        を以前と同じままにしたりすると、コンポーネントに対する参照カウントと実際のファイルとの関係に食い違いが生じて、インストールしたはずのファイルがインストールされていなかったり、削除した筈のファイルが孤児となって残っていたりする結果になることがあります。</p>
+
+    <p class="transnote">
+        前章で取り上げられたスモール・アップデートおよびマイナー・アップグレードが、作成においても使用においても、いろいろと厄介な問題がある形式だということを考えると、プログラムの更新を配布する最も手軽で現実的な方法は、ここで説明されているメジャー・アップグレードであると言って良いでしょう。ただし、旧バージョンから新バージョンへの移行時にどうやってユーザー・データを保護するか、という問題は残ります。</p>
+
+    <p class="transnote">
+        なお、前章で説明された「セイフティー・ロック」機構は、メジャー・アップグレードでは有効に機能します。本文では、自分より古いバージョンを探して置き換える、ということだけをやっていますが、自分より新しいバージョンが見つかればメッセージを表示して動作を中止する、ということも積極的に行うべきでしょう。ただし、「自分自身と同じバージョンが既にインストールされている場合にアップグレードを中止する」という機能は、実装しても働きません。その場合は、Package
+        の GUID が同じなので、メンテナンス・モードで動作することになり、バージョンの比較は行われません。</p>
+
+    <p class="transnote">前章の日本語版サンプル <a href="download/Sample-4-1-Upgrade.zip">Sample-4-1-Upgrade.zip</a>
+        に、メジャー・アップグレードのサンプルを含めていますので、参照してください(ビルドするためには、<em>WixUtilExtension</em> をリンクする必要があります)。</p>
 
 </div>
 
 <div class='section'>
 
-<h2 id="CH-4.3">4.3 パッチワーク</h2>
+    <h2 id="CH-4.3">4.3 パッチワーク</h2>
 
-<p id="patch">更新しなければならない小さなファイルが一つか二つ混じっているというだけの理由で、何メガバイトものファイルを入れたアップグレード・インストーラ・パッケージを作ることは、あまり効率的だとは言えないでしょう。従来から、そういう場合には、いつでも、パッチの方が良い解決策でした。パッチは、基本的には旧バージョンと新バージョンの異なる部分を入れたもので、ユーザーのコンピュータにある古いファイルを魔法のごとく自動的に新しいものに変えることが出来るものです。パッチ・パッケージには新規に配置するファイルを入れることも出来ます。</p>
+    <p id="patch">
+        更新しなければならない小さなファイルが一つか二つ混じっているというだけの理由で、何メガバイトものファイルを入れたアップグレード・インストーラ・パッケージを作ることは、あまり効率的だとは言えないでしょう。従来から、そういう場合には、いつでも、パッチの方が良い解決策でした。パッチは、基本的には旧バージョンと新バージョンの異なる部分を入れたもので、ユーザーのコンピュータにある古いファイルを魔法のごとく自動的に新しいものに変えることが出来るものです。パッチ・パッケージには新規に配置するファイルを入れることも出来ます。</p>
 
-<p id="msp">WiX ツールセットもパッチ・インストーラ・パッケージ(<kbd>.msp</kbd> ファイル)を作成することが出来ます。パッチ・インストーラ・パッケージは、二つの通常のインストーラ・パッケージ(一つは、バグのある古いファイルを持つ元のパッケージ、もう一つは、修正されたファイルを持つ新しいパッケージ)から作成されます。ダウンロードできる <a href="http://wix.tramontana.co.hu/system/files/samples/SamplePatch.zip">SamplePatch</a> の中には、ユーザー・インタフェイスを持たない非常に簡単な二つのインストーラ・パッケージが入っています。両方ともファイルを一つだけインストールしますが、そのファイルが元のバージョンとパッチを当てられたバージョンで変ります。ソース・ファイルの詳細は、もう今では、完全に見慣れたものになっている筈です。<kbd>Error.wxs</kbd> と <kbd>Fixed.wxs</kbd> のソース・ファイルの唯一の違いは、<strong>Source</strong> のファイルの参照だけです。</p>
+    <p id="msp">WiX ツールセットもパッチ・インストーラ・パッケージ(<kbd>.msp</kbd>
+        ファイル)を作成することが出来ます。パッチ・インストーラ・パッケージは、二つの通常のインストーラ・パッケージ(一つは、バグのある古いファイルを持つ元のパッケージ、もう一つは、修正されたファイルを持つ新しいパッケージ)から作成されます。ダウンロードできる
+        <a href="http://wix.tramontana.co.hu/system/files/samples/SamplePatch.zip">SamplePatch</a>
+        の中には、ユーザー・インタフェイスを持たない非常に簡単な二つのインストーラ・パッケージが入っています。両方ともファイルを一つだけインストールしますが、そのファイルが元のバージョンとパッチを当てられたバージョンで変ります。ソース・ファイルの詳細は、もう今では、完全に見慣れたものになっている筈です。<kbd>Error.wxs</kbd>
+        と <kbd>Fixed.wxs</kbd> のソース・ファイルの唯一の違いは、<strong>Source</strong> のファイルの参照だけです。</p>
 
-<p class="transnote">&dagger; 訳註：SamplePatch の日本語版は <a href="download/Sample-4-3-Patch.zip">Sample-4-3-Patch.zip</a> です。</p>
+    <p class="transnote">&dagger; 訳註：SamplePatch の日本語版は <a href="download/Sample-4-3-Patch.zip">Sample-4-3-Patch.zip</a>
+        です。</p>
 
 <pre>
   &lt;<strong>File</strong> Id='HogeEXE' Name='HogeAppl10.exe' DiskId='1'
         Source='<span class="red">Error</span>\HogeAppl10.exe' KeyPath='yes' /&gt;
 </pre>
 
-<p>対するに、</p>
+    <p>対するに、</p>
 
 <pre>
   &lt;<strong>File</strong> Id='HogeEXE' Name='HogeAppl10.exe' DiskId='1'
         Source='<span class="red">Fixed</span>\HogeAppl10.exe' KeyPath='yes' /&gt;
 </pre>
 
-<p>パッチは第三のソース・ファイルから作成されます。これは、前と全く同じように、XML ファイルですが、その内容は今まで書いたファイルとは異なるものです。</p>
+    <p>パッチは第三のソース・ファイルから作成されます。これは、前と全く同じように、XML ファイルですが、その内容は今まで書いたファイルとは異なるものです。</p>
 
 <pre>
 &lt;?xml version='1.0' encoding='utf-8'?&gt;
@@ -246,11 +337,14 @@ msiexec /i SampleUpgrade.msi REINSTALL=ALL REINSTALLMODE=vomus
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p id="patchclass"><strong>Classification</strong> 属性は、<em>Hotfix</em>, <em>Security Rollup</em>, <em>Critical Update</em>, <em>Update</em>, <em>Service Pack</em> または <em>Update Rollup</em> のどれかです。<strong>AllowRemoval</strong> は、ユーザーが後でパッチをアンインストールすることが出来るかどうかを決定します。</p>
+    <p id="patchclass"><strong>Classification</strong> 属性は、<em>Hotfix</em>, <em>Security Rollup</em>, <em>Critical
+        Update</em>, <em>Update</em>, <em>Service Pack</em> または <em>Update Rollup</em>
+        のどれかです。<strong>AllowRemoval</strong> は、ユーザーが後でパッチをアンインストールすることが出来るかどうかを決定します。</p>
 
-<p><strong>PatchFamily</strong> タグが、パッチを適用される項目を包み込んでいます。<strong>DiskId</strong> は、インストーラ・パッケージの中にあるどの <strong>Media/@Id</strong> よりも大きくなくてはいけません。そして、<strong>Supersede</strong> は、このパッチが同じファミリーに属する以前のすべてのパッチに取って代るものであるか否かを決定します。</p>
+    <p><strong>PatchFamily</strong> タグが、パッチを適用される項目を包み込んでいます。<strong>DiskId</strong> は、インストーラ・パッケージの中にあるどの <strong>Media/@Id</strong>
+        よりも大きくなくてはいけません。そして、<strong>Supersede</strong> は、このパッチが同じファミリーに属する以前のすべてのパッチに取って代るものであるか否かを決定します。</p>
 
-<p id="pcp">ビルド作業は以前のプロジェクトよりも少し複雑になります。最初に、ベースになる二つのパッケージを通常の方法でビルドします。二つとも、それ自身のフォルダに入れます。</p>
+    <p id="pcp">ビルド作業は以前のプロジェクトよりも少し複雑になります。最初に、ベースになる二つのパッケージを通常の方法でビルドします。二つとも、それ自身のフォルダに入れます。</p>
 
 <pre class="command">
 candle.exe Error.wxs
@@ -260,40 +354,50 @@ candle.exe Fixed.wxs
 light.exe -out Fixed\Product.msi Fixed.wixobj
 </pre>
 
-<p>次に、別の WiX ツール、<em>torch</em> を使って、二つのインストーラ・パッケージの間のトランスフォームを作成します。コマンド・ラインの引数で、プログラムに対して、Windows Installer の形式(<kbd>.msi</kbd> と <kbd>.mst</kbd>)ではなく、WiX 自身の形式である <kbd>.wixpdb</kbd> と <kbd>.wixmst</kbd> を使うように指示を与えます。</p>
+    <p>次に、別の WiX ツール、<em>torch</em> を使って、二つのインストーラ・パッケージの間のトランスフォームを作成します。コマンド・ラインの引数で、プログラムに対して、Windows Installer
+        の形式(<kbd>.msi</kbd> と <kbd>.mst</kbd>)ではなく、WiX 自身の形式である <kbd>.wixpdb</kbd> と <kbd>.wixmst</kbd> を使うように指示を与えます。
+    </p>
 
 <pre class="command">
 torch.exe -p -xi Error\Product.wixpdb Fixed\Product.wixpdb -out Patch.wixmst
 </pre>
 
-<p>さらに、いつもの WiX のコンパイラとリンカを使ってパッチ・パッケージをビルドしなければなりませんが、今回は、出力形式が通常のものとは違う <kbd>.wixmsp</kbd> になります。リンカに対してこのファイル形式で出力するように指示する必要はありません。リンカ自身がソース・ファイルの内容に従って出力形式を自動的に決定します。</p>
+    <p>さらに、いつもの WiX のコンパイラとリンカを使ってパッチ・パッケージをビルドしなければなりませんが、今回は、出力形式が通常のものとは違う <kbd>.wixmsp</kbd>
+        になります。リンカに対してこのファイル形式で出力するように指示する必要はありません。リンカ自身がソース・ファイルの内容に従って出力形式を自動的に決定します。</p>
 
 <pre class="command">
 candle.exe Patch.wxs
 light.exe Patch.wixobj
 </pre>
 
-<p>そして、最後に、前のステップの出力結果と、少し前に作ったトランスフォームから、実際の Windows Installer のパッチ・パッケージをビルドします。パッチ作成を担当する WiX ツールである <em>Pyro</em> に対しては、トランスフォーム・ファイルの名前だけでなく、対応する <strong>PatchBaseline/@Id</strong> 属性も、コマンド・ラインで指定してやる必要があります。</p>
+    <p>そして、最後に、前のステップの出力結果と、少し前に作ったトランスフォームから、実際の Windows Installer のパッチ・パッケージをビルドします。パッチ作成を担当する WiX ツールである
+        <em>Pyro</em> に対しては、トランスフォーム・ファイルの名前だけでなく、対応する <strong>PatchBaseline/@Id</strong> 属性も、コマンド・ラインで指定してやる必要があります。
+    </p>
 
 <pre class="command">
 pyro.exe Patch.wixmsp -out Patch.msp -t Sample Patch.wixmst
 </pre>
 
-<p><kbd>Patch.msp</kbd> が実際に配布されるパッチ・インストーラになります。これをテストするためには、最初にオリジナルのパッケージ(<kbd>Error/Product.msi</kbd>)をインストールし、次にパッチを当てます。</p>
+    <p><kbd>Patch.msp</kbd> が実際に配布されるパッチ・インストーラになります。これをテストするためには、最初にオリジナルのパッケージ(<kbd>Error/Product.msi</kbd>)をインストールし、次にパッチを当てます。
+    </p>
 
 <pre class="command">
 msiexec /p Patch.msp
 </pre>
 
-<p>... そしてファイルが本当に新しいバージョンに変っていることを確認して下さい。次に、<em>プログラムの追加と削除</em> を開いて、<em>更新プログラムの表示</em>にチェックを入れ、最初にパッチを削除し(変更されたファイルは元のファイルに戻ります)、次にプログラムそのものを削除してください。</p>
+    <p>... そしてファイルが本当に新しいバージョンに変っていることを確認して下さい。次に、<em>プログラムの追加と削除</em> を開いて、<em>更新プログラムの表示</em>にチェックを入れ、最初にパッチを削除し(変更されたファイルは元のファイルに戻ります)、次にプログラムそのものを削除してください。
+    </p>
 
-<p>管理者であれば、<kbd>//server/Patch.msi</kbd> に置かれている管理ソース・イメージを、パッチによって新しいソース・イメージに更新することが出来ます。この新しいソース・イメージは、更新されたフルセットの配布メディアから管理インストールによって作成された場合と同一のソース・イメージになります。</p>
+    <p>管理者であれば、<kbd>//server/Patch.msi</kbd>
+        に置かれている管理ソース・イメージを、パッチによって新しいソース・イメージに更新することが出来ます。この新しいソース・イメージは、更新されたフルセットの配布メディアから管理インストールによって作成された場合と同一のソース・イメージになります。
+    </p>
 
 <pre class="command">
 msiexec /a //server/Patch.msi /p Patch.msp
 </pre>
 
-<p>プログラムを使用するワークグループのメンバーは、更新を受け取るために、新しい管理ソース・イメージからアプリケーションを再インストールしなければなりません。アプリケーションを完全に再インストールして、更新された <kbd>.msi</kbd> ファイルをユーザーのコンピュータにキャッシュとして保存するために、ユーザーは以下のコマンドを実行します。</p>
+    <p>プログラムを使用するワークグループのメンバーは、更新を受け取るために、新しい管理ソース・イメージからアプリケーションを再インストールしなければなりません。アプリケーションを完全に再インストールして、更新された <kbd>.msi</kbd>
+        ファイルをユーザーのコンピュータにキャッシュとして保存するために、ユーザーは以下のコマンドを実行します。</p>
 
 <pre class="command">
 msiexec /fvomus //server/Patch.msi
@@ -303,13 +407,23 @@ msiexec /fvomus //server/Patch.msi
 
 <div class='section'>
 
-<h2 id="CH-4.4">4.4 断片</h2>
+    <h2 id="CH-4.4">4.4 断片</h2>
 
-<p id="fragment">フラグメント(Fragment)は、大きなインストール・プロジェクトを分割する方法を提供してくれます。基本的には、フラグメントは WiX ソースのひとかたまりを包み込むラッパーです。中身は、好みに応じて、どんなに簡単でも、どんなに複雑でも構いません。プログラム開発で使用するオブジェクト・ファイルやライブラリと同じように、フラグメントは他の製品のインストーラ・パッケージにリンクして組み込むことが出来ます。もし WiX の二つのツール、<em>Candle</em> と <em>Light</em> をコンパイラとリンカであると考えるなら、フラグメントは、ちょうどソース・コード・モジュールのように、それぞれ独立してオブジェクト・コード(<kbd>.wixobj</kbd> ファイル)にコンパイル出来るものです。大規模なインストーラ・パッケージのリビルドは、おなじみの makefile の手法を使うことで、劇的に加速することが出来ます。makefile の手法では、最後のコンパイルの後で変化があった <kbd>.wxs</kbd> ソース・ファイルだけを再コンパイルし、<kbd>.wixobj</kbd> ファイルを、新しいものも、古いものも、まとめてリンクして、最終的なパッケージを作成します。</p>
+    <p id="fragment">フラグメント(Fragment)は、大きなインストール・プロジェクトを分割する方法を提供してくれます。基本的には、フラグメントは WiX
+        ソースのひとかたまりを包み込むラッパーです。中身は、好みに応じて、どんなに簡単でも、どんなに複雑でも構いません。プログラム開発で使用するオブジェクト・ファイルやライブラリと同じように、フラグメントは他の製品のインストーラ・パッケージにリンクして組み込むことが出来ます。もし
+        WiX の二つのツール、<em>Candle</em> と <em>Light</em>
+        をコンパイラとリンカであると考えるなら、フラグメントは、ちょうどソース・コード・モジュールのように、それぞれ独立してオブジェクト・コード(<kbd>.wixobj</kbd>
+        ファイル)にコンパイル出来るものです。大規模なインストーラ・パッケージのリビルドは、おなじみの makefile の手法を使うことで、劇的に加速することが出来ます。makefile
+        の手法では、最後のコンパイルの後で変化があった <kbd>.wxs</kbd> ソース・ファイルだけを再コンパイルし、<kbd>.wixobj</kbd>
+        ファイルを、新しいものも、古いものも、まとめてリンクして、最終的なパッケージを作成します。</p>
 
-<p>チュートリアルの中ではそんなに大規模で複雑なプロジェクトをサンプルにすることは出来ませんので、<a href="http://wix.tramontana.co.hu/system/files/samples/SampleFragment.zip">SampleFragment</a> は多少わざとらしいものにならざるを得ません。最初のインストーラを再利用しますが、論点を説明するために、いくつかの部分を切り出して、独立したフラグメントに外部委託します。ユーザー・マニュアルのファイルをインストールするコンポーネントはメインのソースから削除しました。従って、下記の参照は指し示すものが無いものになります。</p>
+    <p>チュートリアルの中ではそんなに大規模で複雑なプロジェクトをサンプルにすることは出来ませんので、<a
+            href="http://wix.tramontana.co.hu/system/files/samples/SampleFragment.zip">SampleFragment</a>
+        は多少わざとらしいものにならざるを得ません。最初のインストーラを再利用しますが、論点を説明するために、いくつかの部分を切り出して、独立したフラグメントに外部委託します。ユーザー・マニュアルのファイルをインストールするコンポーネントはメインのソースから削除しました。従って、下記の参照は指し示すものが無いものになります。
+    </p>
 
-<p class="transnote">&dagger; 訳註：SampleFragment の日本語版は <a href="download/Sample-4-4-Fragment.zip">Sample-4-4-Fragment.zip</a> です。</p>
+    <p class="transnote">&dagger; 訳註：SampleFragment の日本語版は <a href="download/Sample-4-4-Fragment.zip">Sample-4-4-Fragment.zip</a>
+        です。</p>
 
 <pre>
   &lt;<strong>Feature</strong> Id='Complete' Title='ほげ 1.0' Description='完全パッケージ。'
@@ -322,7 +436,9 @@ msiexec /fvomus //server/Patch.msi
   &lt;/<strong>Feature</strong>&gt;
 </pre>
 
-<p>削除したコンポーネントは、それ自身のファイルに入れて、<strong>Fragment</strong> タグで囲みます。ここでは、メインのソース・ファイルで既に宣言している <strong>Directory</strong> に対しては、<em>参照する</em>だけにします。なぜなら、同じものを二つの箇所で宣言することは出来ないからです。フラグメントの中に代理を置くことが出来るものは、すべて変異形のタグを持っています。別の場所で定義された機能を参照するためには <strong>FeatureRef</strong> を使い、プロパティを参照するためには <strong>PropertyRef</strong> を使います。</p>
+    <p>削除したコンポーネントは、それ自身のファイルに入れて、<strong>Fragment</strong> タグで囲みます。ここでは、メインのソース・ファイルで既に宣言している
+        <strong>Directory</strong> に対しては、<em>参照する</em>だけにします。なぜなら、同じものを二つの箇所で宣言することは出来ないからです。フラグメントの中に代理を置くことが出来るものは、すべて変異形のタグを持っています。別の場所で定義された機能を参照するためには
+        <strong>FeatureRef</strong> を使い、プロパティを参照するためには <strong>PropertyRef</strong> を使います。</p>
 
 <pre>
 &lt;?xml version='1.0' encoding='utf-8'?&gt;
@@ -342,28 +458,38 @@ msiexec /fvomus //server/Patch.msi
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>私たちは既にこの二つのファイルをコンパイルし、リンクして、一つのインストーラ・パッケージにすることが出来ます。この二つのコンパイルの単位を一緒にリンクするためには、ソースには一行も加える必要が無い、ということに注意して下さい。一つのファイルからもう一つのファイルで定義されているコンポーネントを参照している、という事実さえあれば、期待する通りのリンクが生じます。フラグメントの中にある一つの要素を参照すると、フラグメント全体が開かれて、フラグメント内の全ての要素が直ちにアクセス可能になります。この動作は、いつものプログラミング言語で慣れているものとは異なっています。フラグメントをリンクすると、別の場所で定義されている要素を使うことが出来るようになるだけでなく、参照されているフラグメントの要素を一つでも使うと、常に、<em>全部</em>の要素が有効になるのです。</p>
+    <p>
+        私たちは既にこの二つのファイルをコンパイルし、リンクして、一つのインストーラ・パッケージにすることが出来ます。この二つのコンパイルの単位を一緒にリンクするためには、ソースには一行も加える必要が無い、ということに注意して下さい。一つのファイルからもう一つのファイルで定義されているコンポーネントを参照している、という事実さえあれば、期待する通りのリンクが生じます。フラグメントの中にある一つの要素を参照すると、フラグメント全体が開かれて、フラグメント内の全ての要素が直ちにアクセス可能になります。この動作は、いつものプログラミング言語で慣れているものとは異なっています。フラグメントをリンクすると、別の場所で定義されている要素を使うことが出来るようになるだけでなく、参照されているフラグメントの要素を一つでも使うと、常に、<em>全部</em>の要素が有効になるのです。
+    </p>
 
-<p>サンプルをビルドするためには、下記のコマンドを使います。</p>
+    <p>サンプルをビルドするためには、下記のコマンドを使います。</p>
 
 <pre class="command">
 candle.exe SampleFragment.wxs Manual.wxs
 light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
 </pre>
 
-<p class="common">フラグメントの用途は多岐にわたっていて、単一のセットアップ・プロジェクトの中で使えるだけでなく、異ったプロジェクト間で共通の項目を共有するために使うことも出来ます。例えば、関連する複数のアプリケーションがあって、一つないし複数の共通ファイルを共有している場合(例えば、デバイス・ドライバーや、その他の DLL で提供する機能などを共有している場合)、一つのアプリケーションを削除しても、他のアプリケーションがまだ必要としている共通ファイルは決して削除しないようにする必要があるでしょう。</p>
+    <p class="common">
+        フラグメントの用途は多岐にわたっていて、単一のセットアップ・プロジェクトの中で使えるだけでなく、異ったプロジェクト間で共通の項目を共有するために使うことも出来ます。例えば、関連する複数のアプリケーションがあって、一つないし複数の共通ファイルを共有している場合(例えば、デバイス・ドライバーや、その他の
+        DLL で提供する機能などを共有している場合)、一つのアプリケーションを削除しても、他のアプリケーションがまだ必要としている共通ファイルは決して削除しないようにする必要があるでしょう。</p>
 
-<p>こういう場合、共通ファイルをそれ自身の独立したフラグメントに入れて、別々のアプリケーションの全てのセットアップから、そのフラグメントを参照して下さい。コンポーネントが同一である(従って、コンポーネント GUID が同一である)ため、Windows Installer は、この共通ファイルを必要とする全てのアプリケーションを記録しておくことが出来ます。さらに、新しいバージョンが決して古いもので上書きされないように、バージョン管理のルールを共通ファイルに対して適切に適用することが出来ます。</p>
+    <p>こういう場合、共通ファイルをそれ自身の独立したフラグメントに入れて、別々のアプリケーションの全てのセットアップから、そのフラグメントを参照して下さい。コンポーネントが同一である(従って、コンポーネント GUID
+        が同一である)ため、Windows Installer
+        は、この共通ファイルを必要とする全てのアプリケーションを記録しておくことが出来ます。さらに、新しいバージョンが決して古いもので上書きされないように、バージョン管理のルールを共通ファイルに対して適切に適用することが出来ます。</p>
 
 </div>
 
 <div class='section'>
 
-<h2 id="CH-4.5">4.5 融合するもの</h2>
+    <h2 id="CH-4.5">4.5 融合するもの</h2>
 
-<p>フラグメントを使用すると、大きなパッケージを管理可能なソース・コードの固まりに分割することが出来て、開発者の共同作業やコードの再利用が可能になります。従って、フラグメントは、WiX ソース・コードが共有可能であり、また、実際に共有されるであろう社内開発に最も適していると言えます。しかし、第三者に完全なインストーラ・パッケージを提供することが出来る、もっと強力なもう一つのメカニズムが存在します。すなわち、マージ・モジュールです。例えば、あなたの製品 A が他のベンダーの製品 B に依存しているとしましょう。彼らの製品をインストールするために作られたマージ・モジュールを使えば、彼らの製品をあなたの製品の一部として、同時に二つをインストールすることが出来るようになります。</p>
+    <p>フラグメントを使用すると、大きなパッケージを管理可能なソース・コードの固まりに分割することが出来て、開発者の共同作業やコードの再利用が可能になります。従って、フラグメントは、WiX
+        ソース・コードが共有可能であり、また、実際に共有されるであろう社内開発に最も適していると言えます。しかし、第三者に完全なインストーラ・パッケージを提供することが出来る、もっと強力なもう一つのメカニズムが存在します。すなわち、マージ・モジュールです。例えば、あなたの製品
+        A が他のベンダーの製品 B
+        に依存しているとしましょう。彼らの製品をインストールするために作られたマージ・モジュールを使えば、彼らの製品をあなたの製品の一部として、同時に二つをインストールすることが出来るようになります。</p>
 
-<p id="mergemodule">マージ・モジュールを記述する方法は、今までやってきたスタンドアロンのソース・ファイルの場合と非常によく似ています。ただし、<strong>Product</strong> ではなく、<strong>Module</strong> タグを定義します。また、これまでのパッケージとは違って、一意の GUID は、私たち自身が定義しなければなりません。</p>
+    <p id="mergemodule">マージ・モジュールを記述する方法は、今までやってきたスタンドアロンのソース・ファイルの場合と非常によく似ています。ただし、<strong>Product</strong>
+        ではなく、<strong>Module</strong> タグを定義します。また、これまでのパッケージとは違って、一意の GUID は、私たち自身が定義しなければなりません。</p>
 
 <pre>
 &lt;?xml version='1.0' encoding='utf-8'?&gt;
@@ -393,7 +519,10 @@ light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>サンプルでは、第二のマージ・モジュールも使います。ソース・ファイルは前のものとほとんど同じですが、次の点で違っています。すなわち、配置すべきファイルとして違うファイルを参照し、この第二のモジュールが第一のモジュールに依存していることを示すために <strong>Dependensy</strong> タグを含めます。この依存関係を示すために、<strong>Module ID</strong> 識別子に <strong>Package</strong> GUID を追加したものを使います &mdash; Package GUID は、元のハイフンをアンダースコアで置き換えたものにしなければいけません。</p>
+    <p>
+        サンプルでは、第二のマージ・モジュールも使います。ソース・ファイルは前のものとほとんど同じですが、次の点で違っています。すなわち、配置すべきファイルとして違うファイルを参照し、この第二のモジュールが第一のモジュールに依存していることを示すために
+        <strong>Dependensy</strong> タグを含めます。この依存関係を示すために、<strong>Module ID</strong> 識別子に <strong>Package</strong> GUID
+        を追加したものを使います &mdash; Package GUID は、元のハイフンをアンダースコアで置き換えたものにしなければいけません。</p>
 
 <pre>
   &lt;<strong>Module</strong> Id="File2" Language="1041" Codepage="932" Version="1.2.3"&gt;
@@ -405,7 +534,7 @@ light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
   &lt;/<strong>Module</strong>&gt;
 </pre>
 
-<p>結合されたインストーラ・パッケージを作るために、通常のスタンドアロンの WiX ソース・ファイルを書きます。</p>
+    <p>結合されたインストーラ・パッケージを作るために、通常のスタンドアロンの WiX ソース・ファイルを書きます。</p>
 
 <pre>
 &lt;?xml version='1.0' encoding='utf-8'?&gt;
@@ -430,7 +559,7 @@ light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
           &lt;<strong>Directory</strong> Id='INSTALLDIR' Name='Hoge 1.0'&gt;
 </pre>
 
-<p id="msm">通常のコンポーネントの代りにマージ・モジュールを参照します。<strong>SourceFile</strong> は <kbd>.msm</kbd> ファイルを指し示します。</p>
+    <p id="msm">通常のコンポーネントの代りにマージ・モジュールを参照します。<strong>SourceFile</strong> は <kbd>.msm</kbd> ファイルを指し示します。</p>
 
 <pre>
             &lt;<strong>Merge</strong> Id="file1" Language="1041"
@@ -452,9 +581,11 @@ light.exe -out SampleFragment.msi SampleFragment.wixobj Manual.wixobj
 &lt;/<strong>Wix</strong>&gt;
 </pre>
 
-<p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleMergeModule.zip">SampleMergeModule</a> をダウンロードすることが出来ます。マージ・モジュールは、個別にビルドする必要があります。</p>
+    <p>完全な <a href="http://wix.tramontana.co.hu/system/files/samples/SampleMergeModule.zip">SampleMergeModule</a>
+        をダウンロードすることが出来ます。マージ・モジュールは、個別にビルドする必要があります。</p>
 
-<p class="transnote">&dagger; 訳註：SampleMergeModulet の日本語版は <a href="download/Sample-4-5-MergeModule.zip">Sample-4-5-MergeModule.zip</a> です。</p>
+    <p class="transnote">&dagger; 訳註：SampleMergeModulet の日本語版は <a href="download/Sample-4-5-MergeModule.zip">Sample-4-5-MergeModule.zip</a>
+        です。</p>
 
 <pre class="command">
 candle.exe Module1.wxs
@@ -472,22 +603,24 @@ light.exe SampleMerge.wixobj
 </div>
 
 <div class='navigation'>
-<a href='index.html#TOC'>&bull; 目次</a>
- | <a href='lesson03.html'>&laquo; 前へ</a>
- | <a href='lesson05.html'>次へ &raquo;</a>
- | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
+    <a href='index.html#TOC'>&bull; 目次</a>
+    | <a href='lesson03.html'>&laquo; 前へ</a>
+    | <a href='lesson05.html'>次へ &raquo;</a>
+    | <a href="http://wix.tramontana.co.hu/tutorial/upgrades-and-modularization">&lowast; 原文</a>
 </div>
 
 <address>
-Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a href="http://www.tramontana.co.hu">Tramontána</a>
-<br>
-何よりもコメントと寄稿を歓迎します。
+    Copyright &copy; 2004-2012, <a href="http://wix.tramontana.co.hu/contact">Gábor DEÁK JAHN</a>, <a
+        href="http://www.tramontana.co.hu">Tramontána</a>
+    <br>
+    何よりもコメントと寄稿を歓迎します。
 </address>
 
 <address>
-日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara</a>, <a href="http://softark.net/">softark</a>
-<br>
-読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a> のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
+    日本語翻訳 Copyright &copy; 2010, 2013, Nobuo Kihara, <a href="http://softark.net/">softark</a>
+    <br>
+    読みやすくて正確な翻訳を目指しましたが、解釈の誤りと技術的な間違いが含まれていないという保証は出来ません。間違いの指摘や修正案の提示を歓迎します。<a href="https://github.com/">github</a>
+    のリポジトリ ( <a href="https://github.com/softark/wix-j">https://github.com/softark/wix-j</a> ) をご利用下さい。
 </address>
 
 </body>
