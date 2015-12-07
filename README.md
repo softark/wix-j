@@ -1,9 +1,9 @@
-WiX Tutorial (Japanese Translation)
-===================================
+WiX Tutorial (日本語訳)
+=======================
 
-WiX チュートリアル (日本語訳)
------------------------------
+このレポジトリは、かつて、"WiX チュートリアル (日本語訳)" のサイト (`http://wix.softark.net`) のソースをホストしていました。
 
-Location: http://wix.softark.net
+現在、WiX チュートリアルの日本語訳は、GitHub Page として公開され、そのソースも別のレポジトリでホストされています。
 
-Original text is maintained by Gábor DEÁK JAHN, and should be found at http://wix.tramontana.co.hu
+- [WiX チュートリアル 日本語訳](http://wix-tutorial-ja.github.io)
+- [WiX チュートリアル 日本語訳 レポジトリ](https://github.com/wix-tutorial-ja/wix-tutorial-ja.github.com)
